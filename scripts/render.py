@@ -114,7 +114,7 @@ def render_file(json_path):
     made = dt.datetime.fromtimestamp(json_path.stat().st_mtime)
     prev_id, next_id = neighbours(kind, pid)
 
-    nav = ['<nav class="top"><a href="../../index.html">← 전체 리포트</a><span>']
+    nav = ['<nav class="top"><a href="../../list.html">← 전체 리포트</a><span>']
     if prev_id:
         nav.append(f'<a href="{e(prev_id)}.html">이전</a>')
     if next_id:
@@ -210,4 +210,10 @@ def build_index():
             '<p class="made">매일 아침 9시, 마케터가 알아야 할 아이디어와 밈을 정리합니다. '
             '<a href="office.html">🏢 오피스로 가기 →</a></p></header>'
             f'{hero}<div class="grid">{"".join(cols)}</div></main>')
-    (ROOT / "index.html").write_text(html_page("마케팅 트렌드 리포트", body, "assets/style.css"), encoding="utf-8")
+    (ROOT / "list.html").write_text(html_page("마케팅 트렌드 리포트", body, "assets/style.css"), encoding="utf-8")
+    # 사이트 첫 주소(…/marketing-trend-office/)로 들어와도 오피스가 열리게 한다
+    (ROOT / "index.html").write_text(
+        '<!doctype html><meta charset="utf-8"><title>마케팅팀 오피스</title>'
+        '<meta http-equiv="refresh" content="0; url=office.html">'
+        '<script>location.replace("office.html" + location.search + location.hash)</script>'
+        '<a href="office.html">🏢 오피스로 가기</a>\n', encoding="utf-8")

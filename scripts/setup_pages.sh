@@ -30,7 +30,7 @@ fi
 
 gh api -X POST "repos/$OWNER/$REPO/pages" -f "source[branch]=main" -f "source[path]=/" >/dev/null 2>&1 \
   || echo "(Pages가 이미 켜져 있어요)"
-URL="https://$OWNER.github.io/$REPO/office.html"
+URL="https://$OWNER.github.io/$REPO/"
 
 python3 - "$URL" <<'PY'
 import json, sys

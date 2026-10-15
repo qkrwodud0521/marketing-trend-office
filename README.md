@@ -9,7 +9,7 @@
 | 먼슬리 | 매월 1일 09:20 | 지난달 | 그 달 TOP 트렌드, 밈·키워드, 베스트 캠페인, 업계 변화 |
 | 분기 | 1·4·7·10월 1일 09:30 | 지난 분기 | 브랜드·대기업·대행사·리서치 기관의 트렌드 리포트 정리 |
 
-리포트는 **`office.html`**(마케팅팀 오피스)을 브라우저로 열어서 본다. 새 리포트가 나오면 macOS 알림이 뜬다. 목록형으로 보고 싶으면 `index.html`.
+리포트는 **`office.html`**(마케팅팀 오피스)을 브라우저로 열어서 본다. 새 리포트가 나오면 macOS 알림이 뜬다. 목록형으로 보고 싶으면 `list.html`.
 
 ## 🏢 마케팅팀 오피스 (`office.html`)
 픽셀아트 사무실에 팀원 4명이 스케줄대로 출근해서 리포트를 보고한다.
@@ -48,7 +48,7 @@ cd ~/claudecode/report
 > 정해진 시각에 한 번만 실행하지 않는다. 맥이 깨어 있는 동안 5분마다 `run.py catchup`이 돌면서, 예정 시각이 지났는데 아직 없는 리포트(최근 3일 치)를 만든다. 맥이 잠들어 있었거나 꺼져 있었어도 켜고 인터넷이 연결되면 몇 분 안에 밀린 리포트가 작성된다. 같은 리포트는 하루 3번까지만 다시 시도한다.
 
 ## 📱 휴대폰에서 보기 (GitHub Pages)
-리포트가 생성될 때마다 이 폴더를 GitHub에 올려서, 휴대폰에서도 `https://<아이디>.github.io/marketing-trend-office/office.html`로 볼 수 있다.
+리포트가 생성될 때마다 이 폴더를 GitHub에 올려서, 휴대폰에서도 `https://<아이디>.github.io/marketing-trend-office/`로 볼 수 있다.
 
 처음 한 번만:
 ```bash
@@ -75,13 +75,14 @@ python3 scripts/run.py render                      # 디자인만 바꿨을 때 
    - 위클리는 그 주 데일리를, 먼슬리는 위클리를, 분기는 먼슬리를 먼저 읽고 웹 조사로 보완한다.
    - 데일리는 최근 7일 동안 다룬 항목을 전달받아 같은 소재를 반복하지 않는다.
 3. JSON을 검증한다 (출처 URL 누락, 빈 필드 등). 문제가 있으면 한 번 더 고치게 한다.
-4. `scripts/render.py`가 `reports/<종류>/<기간>.html`, `index.html`, 오피스용 데이터 `assets/reports-data.js`를 만든다.
+4. `scripts/render.py`가 `reports/<종류>/<기간>.html`, `list.html`(목록), `index.html`(오피스로 이동), 오피스용 데이터 `assets/reports-data.js`를 만든다.
 
 ## 폴더 구조
 ```
 report/
 ├── office.html         🏢 마케팅팀 오피스 (여기서 시작)
-├── index.html          전체 리포트 목록
+├── list.html           전체 리포트 목록
+├── index.html          office.html로 이동 (사이트 첫 주소용)
 ├── reports/            생성된 HTML 리포트
 ├── data/               리포트 원본 JSON
 ├── prompts/            종류별 조사 지시문 — 내용을 바꾸고 싶으면 여기를 수정
