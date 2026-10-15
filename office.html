@@ -310,7 +310,7 @@ const LEVELS = [
   { xp: 380, title: "차장", unlock: "소파와 러그" },
   { xp: 540, title: "부장", unlock: "네온사인" },
   { xp: 740, title: "팀장", unlock: "트로피" },
-  { xp: 1000, title: "본부장", unlock: "실적 대시보드" },
+  { xp: 1000, title: "본부장", unlock: "휴게 공간", perk: "리포트를 쓰지 않는 팀원들이 커피를 타서 휴게 공간에서 쉬어요" },
   { xp: 1300, title: "CMO", unlock: "황금빛 야경 창문과 고양이" },
 ];
 
@@ -487,9 +487,67 @@ KINDS.forEach(k => {
 });
 
 function pathDoorToSeat(k) { const s = seatOf(k); return [{ x: DOOR.x, y: AISLE_Y }, { x: s.x, y: AISLE_Y }, s]; }
-function pathSeatToDeliver(k) { const s = seatOf(k), d = deliverSpot(k); return [{ x: s.x, y: AISLE_Y }, { x: CENTER_X, y: AISLE_Y }, { x: CENTER_X, y: 100 }, d]; }
+function pathSeatToDeliver(k) { const d = deliverSpot(k); return [{ x: chars[k].x, y: AISLE_Y }, { x: CENTER_X, y: AISLE_Y }, { x: CENTER_X, y: 100 }, d]; }
 function pathDeliverToSeat(k) { const s = seatOf(k); return [{ x: CENTER_X, y: 100 }, { x: CENTER_X, y: AISLE_Y }, { x: s.x, y: AISLE_Y }, s]; }
-function pathSeatToDoor(k) { const s = seatOf(k); return [{ x: s.x, y: AISLE_Y }, { x: DOOR.x, y: AISLE_Y }, { x: DOOR.x, y: DOOR.y }]; }
+function pathSeatToDoor(k) { return [{ x: chars[k].x, y: AISLE_Y }, { x: DOOR.x, y: AISLE_Y }, { x: DOOR.x, y: DOOR.y }]; }
+
+function pathToSeat(k) { const c = chars[k], s = seatOf(k); return [{ x: c.x, y: AISLE_Y }, { x: s.x, y: AISLE_Y }, s]; }
+function leave(k) { const c = chars[k]; c.mode = "leaving"; c.path = pathSeatToDoor(k); c.onArrive = () => { c.visible = false; c.mode = "away"; }; }
+
+/* 휴게 공간 (Lv.9): 자리에서 일하는 팀원이 가끔 커피를 타서 휴게 공간에서 쉬다 돌아온다 */
+const COFFEE_SPOT = { x: 282, y: 154 };
+const LOUNGE_SEATS = [{ x: 204, y: 190 }, { x: 230, y: 190 }, { x: 284, y: 190 }];
+const ON_BREAK = ["toCoffee", "coffee", "toLounge", "resting", "backFromBreak"];
+const COFFEE_LINES = ["☕ 커피 한 잔!", "☕ 오늘은 라떼로", "☕ 샷 추가해야지"];
+const REST_LINES = ["😌 잠깐 쉬어요", "🍪 당 충전 중", "📱 요즘 뜨는 밈 구경 중"];
+const rnd = (a, b) => a + Math.random() * (b - a);
+const pick = a => a[Math.floor(Math.random() * a.length)];
+// 이동하는 사이에 보고·작성·퇴근할 일이 생겼으면 쉬는 걸 멈추고 그쪽으로 간다
+function breakOver(k) {
+  const c = chars[k], w = targetMode(k, NOW());
+  if (w === "working") return false;
+  if (w === "away") leave(k); else setMode(k, w);
+  return true;
+}
+function updateBreaks(t) {
+  const busy = KINDS.filter(o => ON_BREAK.includes(chars[o].mode));
+  for (const k of KINDS) {
+    const c = chars[k];
+    if (!c.visible || c.path.length) continue;
+    if (c.mode === "working") {
+      if (!c.nextBreak) c.nextBreak = t + rnd(8000, 40000);
+      if (t < c.nextBreak) continue;
+      const seat = LOUNGE_SEATS.findIndex((_, i) => !busy.some(o => chars[o].loungeSeat === i));
+      if (busy.length >= 2 || seat < 0) { c.nextBreak = t + rnd(5000, 15000); continue; }
+      busy.push(k);
+      c.loungeSeat = seat; c.mode = "toCoffee";
+      c.path = [{ x: c.x, y: AISLE_Y }, { x: COFFEE_SPOT.x, y: AISLE_Y }, COFFEE_SPOT];
+      c.onArrive = () => {
+        if (breakOver(k)) return;
+        c.mode = "coffee"; c.dir = "right"; c.breakUntil = performance.now() + 4000;
+        say(k, pick(COFFEE_LINES), 3500); renderRoster();
+      };
+      renderRoster();
+    } else if (c.mode === "coffee" && t >= c.breakUntil) {
+      const s = LOUNGE_SEATS[c.loungeSeat];
+      c.mode = "toLounge";
+      c.path = [{ x: c.x, y: AISLE_Y }, { x: s.x, y: AISLE_Y }, s];
+      c.onArrive = () => {
+        if (breakOver(k)) return;
+        c.mode = "resting"; c.dir = "down"; c.breakUntil = performance.now() + rnd(15000, 25000);
+        say(k, pick(REST_LINES), 3500); renderRoster();
+      };
+    } else if (c.mode === "resting" && t >= c.breakUntil) {
+      c.mode = "backFromBreak";
+      c.path = pathToSeat(k);
+      c.onArrive = () => {
+        c.mode = "working"; c.dir = "up"; c.nextBreak = performance.now() + rnd(45000, 90000);
+        setMode(k, targetMode(k, NOW()));
+      };
+      renderRoster();
+    }
+  }
+}
 
 function say(k, text, ms = 4000) { chars[k].bubble = text; chars[k].bubbleUntil = performance.now() + ms; }
 
@@ -517,7 +575,7 @@ function refreshStates(firstLoad) {
     const want = targetMode(k, now);
     if (want === c.mode && c.visible) continue;
     if (want === "away") {
-      if (c.visible && !firstLoad) { c.mode = "leaving"; c.path = pathSeatToDoor(k); c.onArrive = () => { c.visible = false; c.mode = "away"; }; }
+      if (c.visible && !firstLoad) leave(k);
       else { c.visible = false; c.mode = "away"; }
       continue;
     }
@@ -538,7 +596,8 @@ function refreshStates(firstLoad) {
       }
       continue;
     }
-    if (["arriving", "leaving", "returning", "toDeliver"].includes(c.mode)) continue;
+    if (["arriving", "leaving", "returning", "toDeliver", "toCoffee", "toLounge", "backFromBreak"].includes(c.mode)) continue;
+    if (ON_BREAK.includes(c.mode) && want === "working") continue;
     setMode(k, want);
   }
   persist();
@@ -560,6 +619,11 @@ function setMode(k, want) {
     c.mode = "returning";
     c.path = pathDeliverToSeat(k);
     c.onArrive = () => { c.mode = "working"; c.dir = "up"; renderRoster(); };
+  } else if (ON_BREAK.includes(c.mode)) {
+    // 휴게 공간에 있다가 작성할 일이 생기면 자리로 돌아간다
+    c.mode = "backFromBreak";
+    c.path = pathToSeat(k);
+    c.onArrive = () => { c.mode = "working"; c.dir = "up"; setMode(k, targetMode(k, NOW())); };
   } else if (want !== "delivering") {
     c.mode = want;
   }
@@ -636,10 +700,19 @@ function drawRoom(now, lv) {
   if (lv >= 6) { rect(222, 52, 62, 30, "#d07a8f"); rect(226, 56, 54, 22, "#e797a8"); rect(224, 82, 58, 2, "#8c4a5b"); rect(214, 88, 76, 22, "rgba(255,207,90,.35)"); }
   if (lv >= 7) { ctx.font = "bold 9px monospace"; ctx.fillStyle = night ? "#ff7ad9" : "#d94fb3"; ctx.fillText("TREND", 196, 28); if (night) { ctx.fillStyle = "rgba(255,122,217,.25)"; ctx.fillRect(192, 18, 40, 14); } }
   if (lv >= 8) { rect(4, 52, 10, 6, "#7a5236"); rect(6, 44, 6, 8, "#ffcf5a"); rect(5, 43, 8, 2, "#ffcf5a"); }
-  if (lv >= 9) { rect(296, 92, 20, 16, "#2b2233"); rect(297, 93, 18, 12, night ? "#1f2a44" : "#eaf2ff"); const g = Math.floor(performance.now() / 600) % 4; [[3, "#5b8cff"], [5, "#2bb37e"], [7, "#ffcf5a"], [6 + g, "#ff5a36"]].forEach(([h, c], i) => rect(299 + i * 4, 104 - h, 3, h, c)); rect(305, 108, 2, 12, "#5a5a6a"); rect(299, 120, 14, 3, "#5a5a6a"); }
+  if (lv >= 9) drawLounge();
   if (lv >= 10) { const cx = 60 + Math.sin(performance.now() / 4000) * 30; rect(cx, 200, 10, 6, "#f2a65a"); rect(cx + 8, 196, 5, 5, "#f2a65a"); rect(cx + 8, 194, 1, 2, "#f2a65a"); rect(cx + 12, 194, 1, 2, "#f2a65a"); rect(cx - 3, 199, 3, 2, "#f2a65a"); }
 
   return night;
+}
+function drawLounge() {
+  rect(196, 192, 120, 32, "#8fbfb2"); rect(198, 194, 116, 30, "#a7d3c6"); // 러그
+  for (const s of LOUNGE_SEATS) { // 1인 소파
+    rect(s.x - 2, 194, 16, 6, "#d9774a"); rect(s.x - 4, 198, 20, 12, "#f2a65a"); rect(s.x - 1, 200, 14, 8, "#f7c08a");
+  }
+  rect(254, 200, 24, 10, "#8a5a3b"); rect(256, 198, 20, 4, "#a0714f"); rect(259, 210, 3, 4, "#5a3a24"); rect(270, 210, 3, 4, "#5a3a24"); // 테이블
+  rect(259, 194, 5, 5, "#fff"); rect(260, 195, 3, 2, "#7a4a2a"); rect(268, 195, 6, 3, "#ffcf5a"); // 머그컵과 쿠키
+  drawPlant(300, 198);
 }
 function drawDesk(x, y, w, h, boss) {
   rect(x, y, w, h, boss ? "#8a5a3b" : "#a0714f");
@@ -685,6 +758,7 @@ function frame(t) {
     if (dist <= step) { c.x = tgt.x; c.y = tgt.y; c.path.shift(); if (!c.path.length && c.onArrive) { const f = c.onArrive; c.onArrive = null; f(); } }
     else { c.x += dx / dist * step; c.y += dy / dist * step; }
   }
+  if (lv >= 9) updateBreaks(t);
   // y 순서대로 그리기
   const order = KINDS.filter(k => chars[k].visible).sort((a, b) => chars[a].y - chars[b].y);
   for (const k of order) {
@@ -705,6 +779,7 @@ function frame(t) {
       else if (c.mode === "delivering") { text = "📄 보고드릴게 있어요!"; alert = true; }
       else if (c.mode === "writing") text = "✍️ 작성 중" + ".".repeat(1 + Math.floor(t / 400) % 3);
       else if (c.mode === "working") text = nudgeText(k);
+      else if (c.mode === "resting") text = "☕ 휴식 중";
     }
     placeBubble(k, c.x, c.y, text, alert);
   }
@@ -784,6 +859,8 @@ function statusText(k) {
     if (isWeekend(now) && !dueToday(k, now)) return ["#6f6a80", "주말 휴무 🌴"];
     return ["#6f6a80", now < arrivalOf(k, now) ? `${hm(arrivalOf(k, now))} 출근 예정` : "퇴근"];
   }
+  if (c.mode === "toCoffee" || c.mode === "coffee") return ["#c9a0ff", "☕ 커피 타는 중"];
+  if (c.mode === "toLounge" || c.mode === "resting") return ["#c9a0ff", "휴게 공간에서 쉬는 중"];
   return ["#4fd1a5", latest ? `업무 중 · 최근 ${latest.doc.period_label || latest.id}` : "업무 중"];
 }
 // 하루 사원: 하루 지난 오답이 있으면 복습 권유 · 주디 대리: 금요일에 이번 주 복습 권유
