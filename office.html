@@ -1422,7 +1422,7 @@ function openKeywords() {
 function openSettings() {
   openModal(`<div class="modal-head"><img src="${ME_AVATAR}" alt=""><div class="say"><div class="from">설정</div><div class="line">내 오피스 설정</div></div><button class="x" data-close aria-label="닫기">×</button></div>
     <div class="modal-body">
-      <label class="field">팀원들이 부를 내 이름<input id="me-name" value="${esc(save.me)}" placeholder="예: 재영"></label>
+      <label class="field">팀원들이 부를 내 이름<input id="me-name" value="${esc(save.me)}" placeholder="닉네임"></label>
       <p class="r-period" style="margin:14px 0 0">팀원 이름 (비워두면 기본 이름)</p>
       <div class="tnames">${KINDS.map(k => `<label class="field"><span class="badge" style="background:${KIND_COLOR[k]}">${KIND_NAME[k]}</span> ${esc(TEAM[k].title)}
         <input data-tname="${k}" maxlength="8" value="${esc((save.teamNames || {})[k] || "")}" placeholder="${esc(DEFAULT_NAME[k])}"></label>`).join("")}</div>
@@ -1476,7 +1476,7 @@ if (!save.me && !SIM) setTimeout(() => {
   openModal(`<div class="modal-body center levelup"><img src="${ME_AVATAR}" alt="">
     <h3>마케팅팀에 오신 걸 환영해요!</h3>
     <p>매일 아침 팀원들이 출근해서 트렌드 리포트를 들고 와요.<br>읽을수록 승진하고, 사무실이 꾸며져요.</p>
-    <label class="field" style="text-align:left">팀원들이 부를 이름<input id="first-name" placeholder="예: 재영"></label>
+    <label class="field" style="text-align:left">팀원들이 부를 이름<input id="first-name" placeholder="닉네임"></label>
     <button class="btn" id="first-go">출근하기</button></div>`, true);
   document.getElementById("first-go").onclick = () => { save.me = document.getElementById("first-name").value.trim() || "팀장"; persist(); renderHud(); closeModal(); };
 }, 400);
