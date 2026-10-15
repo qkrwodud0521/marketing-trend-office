@@ -4,6 +4,6 @@
   "timeout_minutes": 40,
   "notify": true,
   "open_on_complete": false,
-  "publish": false,
-  "site_url": ""
+  "publish": true,
+  "site_url": "https://qkrwodud0521.github.io/marketing-trend-office/office.html"
 }
