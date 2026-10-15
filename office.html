@@ -1,0 +1,1485 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>마케팅팀 오피스</title>
+<meta name="theme-color" content="#1d1b2b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="마케팅 오피스">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏢</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/galmuri@latest/dist/galmuri.css">
+<style>
+:root {
+  --bg: #1d1b2b;
+  --panel: #2a2740;
+  --panel-2: #353150;
+  --ink: #f4f1ff;
+  --muted: #a9a3c9;
+  --line: #48436b;
+  --accent: #ff7a59;
+  --gold: #ffcf5a;
+  --good: #4fd1a5;
+  --daily: #ff8a5b;
+  --weekly: #5b8cff;
+  --monthly: #2bb37e;
+  --quarterly: #9b6bff;
+  --paper: #fffaf0;
+  --paper-ink: #24212f;
+  --paper-muted: #6f6a80;
+  --paper-line: #e8e1d1;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", sans-serif;
+  line-height: 1.6;
+  word-break: keep-all;
+  min-height: 100vh;
+}
+.pixel { font-family: "Galmuri11", "Pretendard Variable", monospace; }
+button { font: inherit; cursor: pointer; }
+.app { max-width: 1120px; margin: 0 auto; padding: 16px 16px 48px; }
+
+/* HUD */
+.hud { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 12px; }
+.hud h1 { font-size: 18px; margin: 0; letter-spacing: -0.01em; }
+.hud .clock { color: var(--muted); font-size: 14px; }
+.hud .spacer { flex: 1; }
+.me { display: flex; align-items: center; gap: 10px; background: var(--panel); border: 2px solid var(--line); border-radius: 10px; padding: 6px 12px; }
+.me .lv { font-weight: 800; color: var(--gold); font-size: 13px; }
+.me .title { font-weight: 700; font-size: 14px; }
+.xpbar { width: 110px; height: 8px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+.xpbar i { display: block; height: 100%; background: linear-gradient(90deg, var(--gold), var(--accent)); width: 0; transition: width .6s; }
+.xptext { font-size: 11px; color: var(--muted); }
+.streak { font-weight: 700; font-size: 14px; }
+button.me { color: var(--ink); font: inherit; text-align: left; }
+button.me:hover { border-color: var(--accent); }
+.lvlist { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; }
+.lvlist li { display: flex; gap: 12px; align-items: center; background: #fff; border: 2px solid var(--paper-line); border-radius: 10px; padding: 8px 12px; }
+.lvlist li.cur { border-color: var(--gold); box-shadow: 0 0 0 2px #ffe9a8; }
+.lvlist li.locked { opacity: .6; }
+.lvlist .n { font-weight: 800; width: 44px; flex: none; font-size: 13px; color: var(--paper-muted); }
+.lvlist .t { flex: 1; min-width: 0; }
+.lvlist .t b { font-size: 14.5px; }
+.lvlist .t span { display: block; font-size: 13px; color: var(--paper-muted); }
+.lvlist .s { flex: none; font-size: 12.5px; font-weight: 700; text-align: right; }
+.wlist { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 8px; }
+.wlist li { background: #fff; border: 2px solid var(--paper-line); border-radius: 10px; padding: 10px 14px; }
+.wlist .src { font-size: 12px; color: var(--paper-muted); font-weight: 600; }
+.wlist .q { font-weight: 700; margin: 2px 0 4px; white-space: pre-line; }
+.wlist details { font-size: 13.5px; }
+.wlist summary { cursor: pointer; color: var(--paper-muted); font-weight: 700; font-size: 12.5px; }
+.bgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 190px), 1fr)); gap: 8px; margin-top: 12px; }
+.bgrid div { background: #fff; border: 2px solid var(--paper-line); border-radius: 10px; padding: 10px 12px; }
+.bgrid div.got { border-color: var(--gold); }
+.bgrid div.no { opacity: .55; }
+.bgrid .i { font-size: 24px; line-height: 1; }
+.bgrid b { display: block; margin-top: 4px; font-size: 14px; }
+.bgrid span { display: block; font-size: 12.5px; color: var(--paper-muted); }
+.inotes { list-style: none; margin: 6px 0 0; padding: 0 0 0 10px; border-left: 2px solid #b8e6cd; font-size: 13px; }
+.inotes li { margin: 0 0 6px; white-space: pre-line; }
+.inotes time { display: block; font-size: 11px; font-weight: 700; color: #1e8a5f; }
+.grow { margin-top: 6px; background: #e9f9f1; color: #1e8a5f; border: 2px solid #b8e6cd; border-radius: 8px; padding: 3px 10px; font-size: 12.5px; font-weight: 700; }
+.ititle { font-size: 18px; margin: 8px 0 4px; }
+.ibox { background: #fff; border: 2px solid var(--paper-line); border-radius: 10px; padding: 10px 12px; margin-top: 10px; font-size: 14px; white-space: pre-line; }
+.ibox b { display: block; font-size: 11.5px; color: var(--paper-muted); margin-bottom: 2px; }
+.iprompt { background: #fff8e1; border-radius: 8px; padding: 8px 10px; font-size: 13px; margin: 10px 0 0; }
+.field textarea { display: block; width: 100%; margin-top: 4px; border: 2px solid var(--paper-line); border-radius: 8px; padding: 8px 10px; font: inherit; font-weight: 400; resize: vertical; }
+.tnames { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 180px), 1fr)); gap: 0 12px; }
+.tnames .field { margin: 6px 0; }
+.howto { background: #fff; border: 2px dashed var(--paper-line); border-radius: 10px; padding: 10px 14px 10px 30px; margin: 12px 0 0; font-size: 13.5px; }
+.hud-btn { background: var(--panel); color: var(--ink); border: 2px solid var(--line); border-radius: 10px; padding: 6px 12px; font-size: 14px; font-weight: 600; }
+.hud-btn:hover { border-color: var(--accent); }
+
+/* Layout */
+.main { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+@media (max-width: 880px) { .main { grid-template-columns: 1fr; } }
+.stage { position: relative; background: #000; border: 3px solid var(--line); border-radius: 12px; overflow: hidden; }
+canvas#office { display: block; width: 100%; height: auto; image-rendering: pixelated; image-rendering: crisp-edges; }
+.bubble { position: absolute; transform: translateY(-100%); background: #fff; color: #24212f; border: 2px solid #24212f; border-radius: 8px; padding: 2px 8px; font-size: 12px; font-weight: 700; white-space: nowrap; max-width: 46%; overflow: hidden; text-overflow: ellipsis; pointer-events: none; box-shadow: 0 2px 0 rgba(0,0,0,.25); }
+.bubble::after { content: ""; position: absolute; left: var(--tail, 50%); bottom: -6px; margin-left: -4px; border: 4px solid transparent; border-top-color: #24212f; }
+.bubble.alert { background: #ffcf5a; animation: hop 1s infinite; }
+@keyframes hop { 50% { transform: translateY(calc(-100% - 3px)); } }
+@media (max-width: 600px) { .bubble { font-size: 10.5px; padding: 1px 6px; } }
+.stage-tip { position: absolute; right: 10px; bottom: 8px; font-size: 11px; color: #fff; background: rgba(0,0,0,.45); padding: 2px 8px; border-radius: 6px; pointer-events: none; }
+
+.side { display: flex; flex-direction: column; gap: 12px; }
+.panel { background: var(--panel); border: 2px solid var(--line); border-radius: 12px; padding: 12px; }
+.panel h2 { font-size: 13px; color: var(--muted); margin: 0 0 8px; font-weight: 700; }
+.member { display: flex; gap: 10px; align-items: center; width: 100%; text-align: left; background: var(--panel-2); color: var(--ink); border: 2px solid transparent; border-radius: 10px; padding: 8px; margin-bottom: 6px; }
+.member:hover { border-color: var(--line); }
+.member.alert { border-color: var(--gold); animation: pulse 1.4s infinite; }
+@keyframes pulse { 50% { box-shadow: 0 0 0 3px rgba(255, 207, 90, .25); } }
+.member img { width: 36px; height: 48px; image-rendering: pixelated; flex: none; }
+.member .who { font-weight: 700; font-size: 14px; }
+.member .role { font-size: 11px; color: var(--muted); }
+.member .st { font-size: 12px; margin-top: 2px; }
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; vertical-align: 1px; }
+.log { list-style: none; margin: 0; padding: 0; font-size: 12.5px; max-height: 220px; overflow: auto; }
+.log li { display: flex; gap: 8px; padding: 3px 0; border-bottom: 1px dashed var(--line); }
+.log time { color: var(--muted); flex: none; font-variant-numeric: tabular-nums; }
+.empty { color: var(--muted); font-size: 13px; }
+
+/* Modal */
+.modal-bg { position: fixed; inset: 0; background: rgba(10, 8, 20, .7); display: none; align-items: center; justify-content: center; padding: 24px 12px; z-index: 10; }
+.modal-bg.open { display: flex; }
+.modal { background: var(--paper); color: var(--paper-ink); border-radius: 14px; width: min(860px, 100%); max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); overflow: auto; box-shadow: 0 8px 0 rgba(0,0,0,.35); border: 3px solid #1b1726; }
+.modal.small { width: min(460px, 100%); }
+.modal-head { display: flex; gap: 12px; align-items: center; padding: 16px 20px; border-bottom: 2px solid var(--paper-line); position: sticky; top: 0; background: var(--paper); border-radius: 14px 14px 0 0; z-index: 1; }
+.modal-head img { width: 48px; height: 64px; image-rendering: pixelated; }
+.modal-head .say { flex: 1; }
+.modal-head .from { font-size: 12px; color: var(--paper-muted); font-weight: 600; }
+.modal-head .line { font-weight: 700; font-size: 15px; }
+.x { background: none; border: none; font-size: 26px; line-height: 1; color: var(--paper-muted); padding: 4px 8px; }
+.modal-body { padding: 16px 20px 24px; }
+.badge { display: inline-block; font-size: 11px; font-weight: 800; color: #fff; padding: 2px 8px; border-radius: 999px; }
+.r-period { color: var(--paper-muted); font-size: 13px; font-weight: 600; margin: 6px 0 0; }
+.r-headline { font-size: clamp(20px, 3.2vw, 28px); line-height: 1.35; margin: 4px 0 14px; letter-spacing: -0.02em; }
+.r-summary { background: #fff; border: 2px solid var(--paper-line); border-radius: 10px; padding: 12px 16px 12px 34px; margin: 0 0 10px; }
+.r-summary li { margin: 4px 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+.chips span { background: #ffe9e1; color: #d4512f; font-weight: 700; font-size: 12.5px; padding: 2px 10px; border-radius: 999px; }
+.r-sec { margin-top: 26px; }
+.r-sec > h3 { font-size: 18px; margin: 0 0 10px; }
+.r-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 10px; }
+.r-card { background: #fff; border: 2px solid var(--paper-line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; }
+.r-card.scrapped { border-color: var(--gold); }
+.r-meta { display: flex; gap: 6px; align-items: center; font-size: 12px; }
+.r-meta .rank { background: var(--paper-ink); color: #fff; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; }
+.r-meta .tag { color: #d4512f; font-weight: 800; }
+.r-meta .brand { color: var(--paper-muted); font-weight: 600; }
+.r-meta .scrap { margin-left: auto; background: none; border: 2px solid var(--paper-line); border-radius: 8px; padding: 1px 8px; font-size: 12px; font-weight: 700; color: var(--paper-muted); }
+.r-card.scrapped .scrap { background: var(--gold); border-color: var(--gold); color: var(--paper-ink); }
+.r-card h4 { font-size: 16px; line-height: 1.4; margin: 8px 0 4px; }
+.r-card p { margin: 0; font-size: 14px; }
+.r-card ul.pts { margin: 6px 0 0; padding-left: 18px; font-size: 14px; }
+.note { border-radius: 8px; padding: 8px 10px; margin-top: 8px; font-size: 13.5px; }
+.note b { display: block; font-size: 11.5px; }
+.note.why { background: #eef2ff; } .note.why b { color: #3b5bdb; }
+.note.act { background: #e9f9f1; } .note.act b { color: #1e8a5f; }
+.srcs { list-style: none; padding: 8px 0 0; margin: auto 0 0; border-top: 1px dashed var(--paper-line); font-size: 12px; }
+.r-card .srcs { margin-top: 10px; }
+.srcs li { overflow-wrap: anywhere; }
+.srcs a { color: var(--paper-muted); }
+.memo { margin-top: 8px; display: none; }
+.r-card.scrapped .memo { display: block; }
+.memo label { display: block; font-size: 11.5px; font-weight: 700; color: var(--paper-muted); margin-top: 6px; }
+.memo label textarea { display: block; margin-top: 3px; font-weight: 400; color: var(--paper-ink); }
+.memo textarea { width: 100%; min-height: 52px; border: 2px solid var(--paper-line); border-radius: 8px; padding: 6px 8px; font: inherit; font-size: 13px; resize: vertical; background: #fffdf6; }
+.r-foot { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 28px; padding-top: 16px; border-top: 2px solid var(--paper-line); }
+.btn { border: 3px solid #1b1726; background: var(--accent); color: #fff; font-weight: 800; border-radius: 10px; padding: 10px 18px; box-shadow: 0 3px 0 #1b1726; }
+.btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #1b1726; }
+.btn.ghost { background: #fff; color: var(--paper-ink); }
+.btn[disabled] { background: #cfd8d3; color: #4c5a53; cursor: default; }
+.link { color: var(--paper-muted); font-size: 13px; }
+
+/* quiz */
+.qprog { font-size: 12px; color: var(--paper-muted); font-weight: 700; }
+.qtext { font-size: 18px; font-weight: 800; line-height: 1.45; margin: 6px 0 14px; white-space: pre-line; }
+.qopt { display: block; width: 100%; text-align: left; background: #fff; border: 2px solid var(--paper-line); border-radius: 10px; padding: 10px 14px; margin-bottom: 8px; font-size: 15px; color: var(--paper-ink); }
+.qopt:hover:not([disabled]) { border-color: var(--paper-ink); }
+.qopt[disabled] { cursor: default; }
+.qopt.right { background: #e3f8ee; border-color: #1e8a5f; font-weight: 700; }
+.qopt.wrong { background: #ffe8e3; border-color: #d4512f; }
+.qexp { background: #fff; border: 2px dashed var(--paper-line); border-radius: 10px; padding: 10px 14px; margin: 6px 0 14px; font-size: 14px; }
+.qscore { font-size: 40px; font-weight: 900; margin: 4px 0; }
+
+/* archive & scrapbook */
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.tabs button { border: 2px solid var(--paper-line); background: #fff; border-radius: 999px; padding: 4px 12px; font-size: 13px; font-weight: 700; color: var(--paper-muted); }
+.tabs button.on { background: var(--paper-ink); color: #fff; border-color: var(--paper-ink); }
+.arch { list-style: none; padding: 0; margin: 0; }
+.arch li button { display: flex; width: 100%; gap: 10px; align-items: center; text-align: left; background: #fff; border: 2px solid var(--paper-line); border-radius: 10px; padding: 10px 12px; margin-bottom: 6px; color: var(--paper-ink); }
+.arch li button:hover { border-color: var(--paper-ink); }
+.arch .ck { width: 22px; flex: none; text-align: center; }
+.arch .t { display: block; font-size: 12px; color: var(--paper-muted); font-weight: 600; }
+.arch .h { display: block; font-weight: 700; font-size: 14.5px; }
+.search { width: 100%; border: 2px solid var(--paper-line); border-radius: 10px; padding: 8px 12px; font: inherit; margin-bottom: 10px; }
+.toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.field { display: block; margin: 10px 0; font-size: 14px; font-weight: 600; }
+.field input { display: block; width: 100%; margin-top: 4px; border: 2px solid var(--paper-line); border-radius: 8px; padding: 8px 10px; font: inherit; }
+.center { text-align: center; }
+.levelup img { width: 72px; height: 96px; image-rendering: pixelated; }
+.levelup h3 { font-size: 22px; margin: 8px 0 4px; }
+.toast { visibility: hidden; position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(120px); background: #1b1726; color: #fff; border: 2px solid var(--gold); padding: 8px 16px; border-radius: 10px; font-weight: 700; transition: transform .3s; z-index: 20; }
+.toast.show { visibility: visible; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="hud">
+    <h1 class="pixel">🏢 마케팅팀 오피스</h1>
+    <span class="clock pixel" id="clock"></span>
+    <span class="spacer"></span>
+    <button class="me" id="btn-level" title="직급표 보기">
+      <span class="lv pixel" id="lv">Lv.1</span>
+      <span class="title" id="rank">인턴</span>
+      <span><span class="xpbar"><i id="xpfill"></i></span><span class="xptext" id="xptext"></span></span>
+    </button>
+    <span class="streak" id="streak" title="리포트를 읽은 연속 일수"></span>
+    <button class="hud-btn" id="btn-archive">📥 받은 리포트</button>
+    <button class="hud-btn" id="btn-scrap">📌 스크랩북</button>
+    <button class="hud-btn" id="btn-wrong">📝 오답노트</button>
+    <button class="hud-btn" id="btn-badges">🏅 업적</button>
+    <button class="hud-btn" id="btn-settings" aria-label="설정">⚙️</button>
+  </header>
+
+  <div class="main">
+    <div class="stage">
+      <canvas id="office" width="320" height="224"></canvas>
+      <div id="bubbles"></div>
+      <span class="stage-tip" id="tip">팀원이나 책상을 클릭해보세요</span>
+    </div>
+    <aside class="side">
+      <section class="panel">
+        <h2>팀원</h2>
+        <div id="roster"></div>
+      </section>
+      <section class="panel">
+        <h2>오늘의 오피스 로그</h2>
+        <ul class="log" id="log"></ul>
+      </section>
+    </aside>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-bg"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="assets/reports-data.js"></script>
+<script src="assets/run-status.js"></script>
+<script>
+"use strict";
+/* ───────────────────────── 설정 ───────────────────────── */
+const KINDS = ["daily", "weekly", "monthly", "quarterly"];
+const KIND_NAME = { daily: "데일리", weekly: "위클리", monthly: "먼슬리", quarterly: "분기" };
+const KIND_COLOR = { daily: "#ff8a5b", weekly: "#5b8cff", monthly: "#2bb37e", quarterly: "#9b6bff" };
+const XP_READ = { daily: 10, weekly: 25, monthly: 40, quarterly: 60 };
+const OFF_HOUR = 18;
+
+const TEAM = {
+  daily: {
+    name: "하루", title: "사원", job: "데일리 트렌드 담당", time: [9, 0], when: "매일 09:00",
+    look: { hair: "#c2566b", long: true, shirt: "#ff8a5b", shirtDark: "#e06a3d", accent: "#ffd166", pants: "#3d405b" },
+    deliver: "{me}님! 오늘 아침 트렌드 따끈하게 가져왔어요 ☕",
+    weekendDeliver: "주말이라 밈만 가볍게 추려왔어요 😎",
+    weekendLook: { hair: "#c2566b", long: true, shirt: "#ffd166", shirtDark: "#e8b84a", accent: "#ff8a5b", pants: "#5b7bd5" },
+    writing: "지금 오늘의 밈 캐는 중이에요… 조금만요!",
+    thanks: "다 읽으셨군요! 내일도 9시에 올게요 🙌",
+    idle: ["오늘 성수에 팝업 또 생겼대요!", "이 밈 아직 모르시면 큰일나요 ㅎㅎ", "숏폼 포맷은 일주일이면 바뀌어요.", "어제 본 광고 레퍼런스 저장해두셨어요?"],
+  },
+  weekly: {
+    name: "주디", title: "대리", job: "위클리 이슈 담당", time: [9, 10], when: "매주 월 09:10",
+    look: { hair: "#2b2b2b", long: false, shirt: "#5b8cff", shirtDark: "#3d6be0", accent: "#ffffff", pants: "#2d3142" },
+    deliver: "{me}님, 지난주 제일 뜨거웠던 것만 추렸어요.",
+    writing: "지난주 데일리 다시 훑어보는 중이에요.",
+    thanks: "다음 주 월요일에 또 정리해올게요.",
+    idle: ["월요일 아침엔 위클리죠.", "한 주만 지나도 순위가 확 바뀌어요.", "이번 주는 어떤 게 터질까요?"],
+  },
+  monthly: {
+    name: "달래", title: "과장", job: "먼슬리 결산 담당", time: [9, 20], when: "매월 1일 09:20",
+    look: { hair: "#6b4226", long: true, shirt: "#2bb37e", shirtDark: "#1f8f63", accent: "#f4f1de", pants: "#33415c" },
+    deliver: "이번 달 결산 보고 드립니다, {me}님.",
+    writing: "한 달 치 흐름 정리하는 중이에요.",
+    thanks: "좋은 캠페인은 꼭 스크랩해두세요!",
+    idle: ["단발성 이슈보다 한 달 내내 이어진 흐름이 중요해요.", "월간 결산은 면접 준비에도 딱이에요.", "다음 달 시즌 이슈도 미리 봐둘게요."],
+  },
+  quarterly: {
+    name: "쿼터", title: "차장", job: "분기 리포트 리서처", time: [9, 30], when: "분기 첫날 09:30",
+    look: { hair: "#1f1f1f", long: false, glasses: true, shirt: "#9b6bff", shirtDark: "#7a4be0", accent: "#ffd6a5", pants: "#22223b" },
+    deliver: "분기 리포트들, 원문까지 확인하고 정리했습니다.",
+    writing: "기관 리포트 원문 읽는 중입니다.",
+    thanks: "공통 테마는 다음 분기 기획에 바로 쓰실 수 있어요.",
+    idle: ["리포트는 요약보다 원문의 표 하나가 더 중요할 때가 있어요.", "대행사 리포트, 매체사 리포트를 같이 보세요.", "분기마다 업종별 숫자를 비교해보면 재밌어요."],
+  },
+};
+const isWeekend = d => d.getDay() === 0 || d.getDay() === 6;
+const lookOf = k => (isWeekend(NOW()) && TEAM[k].weekendLook) || TEAM[k].look;
+const ME_LOOK = { hair: "#4a3728", long: false, shirt: "#f2f2f2", shirtDark: "#cfcfcf", accent: "#ff5a36", pants: "#3a3a3a" };
+
+const LEVELS = [
+  { xp: 0, title: "인턴", unlock: "기본 사무실" },
+  { xp: 30, title: "사원", unlock: "화분" },
+  { xp: 80, title: "주임", unlock: "커피머신" },
+  { xp: 150, title: "대리", unlock: "화이트보드 (오늘의 키워드)", perk: "화이트보드를 누르면 오늘의 키워드를 볼 수 있어요" },
+  { xp: 250, title: "과장", unlock: "책장", perk: "책장을 누르면 스크랩북이 열려요" },
+  { xp: 380, title: "차장", unlock: "소파와 러그" },
+  { xp: 540, title: "부장", unlock: "네온사인" },
+  { xp: 740, title: "팀장", unlock: "트로피" },
+  { xp: 1000, title: "본부장", unlock: "오락기" },
+  { xp: 1300, title: "CMO", unlock: "황금빛 야경 창문과 고양이" },
+];
+
+/* ───────────────────────── 저장 ───────────────────────── */
+const SAVE_KEY = "mkt-office-v1";
+const defaultSave = () => ({ me: "", teamNames: {}, xp: 0, read: {}, readDays: [], scraps: {}, memoXp: {}, arrived: {}, quiz: {},
+  wrong: {}, wrongCleared: 0, weekly: {}, badges: {} });
+let save = defaultSave();
+try {
+  const raw = localStorage.getItem(SAVE_KEY);
+  if (raw) save = Object.assign(defaultSave(), JSON.parse(raw));
+} catch (e) { /* 저장소를 못 쓰면 이번 세션만 기억 */ }
+function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
+
+/* 팀원 이름은 설정에서 바꿀 수 있다. 비워두면 기본 이름 */
+const DEFAULT_NAME = Object.fromEntries(KINDS.map(k => [k, TEAM[k].name]));
+function applyTeamNames() {
+  KINDS.forEach(k => TEAM[k].name = (save.teamNames || {})[k] || DEFAULT_NAME[k]);
+}
+applyTeamNames();
+const who = k => `${TEAM[k].name} ${TEAM[k].title}`;
+
+/* ───────────────────────── 날짜 ───────────────────────── */
+// ?time=09:00 (와 ?date=2026-10-10)을 붙이면 그 시각부터 흘러가는 것처럼 미리 볼 수 있다
+const QS = new URLSearchParams(location.search);
+const SIM_T = (QS.get("time") || "").match(/^(\d{1,2}):(\d{2})$/);
+const SIM_D = (QS.get("date") || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+const SIM = SIM_T || SIM_D;
+const OFFSET = SIM ? (() => {
+  const t = new Date();
+  if (SIM_D) t.setFullYear(+SIM_D[1], +SIM_D[2] - 1, +SIM_D[3]);
+  if (SIM_T) t.setHours(+SIM_T[1], +SIM_T[2], 0, 0);
+  return t - Date.now();
+})() : 0;
+const NOW = () => new Date(Date.now() + OFFSET);
+const pad = n => String(n).padStart(2, "0");
+const ymd = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const hm = d => `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+function isoWeek(d) {
+  const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  const day = t.getUTCDay() || 7;
+  t.setUTCDate(t.getUTCDate() + 4 - day);
+  const y = t.getUTCFullYear();
+  const w = Math.ceil(((t - Date.UTC(y, 0, 1)) / 864e5 + 1) / 7);
+  return `${y}-W${pad(w)}`;
+}
+/** scripts/run.py의 period()와 같은 규칙으로 오늘 나와야 할 리포트 id */
+function expectedId(kind, now) {
+  const d = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if (kind === "daily") return ymd(d);
+  if (kind === "weekly") {
+    const start = new Date(d); start.setDate(d.getDate() - ((d.getDay() + 6) % 7) - 7);
+    return isoWeek(start);
+  }
+  if (kind === "monthly") {
+    const p = new Date(d.getFullYear(), d.getMonth() - 1, 1);
+    return `${p.getFullYear()}-${pad(p.getMonth() + 1)}`;
+  }
+  const qStart = new Date(d.getFullYear(), Math.floor(d.getMonth() / 3) * 3, 1);
+  const prev = new Date(qStart); prev.setDate(0);
+  return `${prev.getFullYear()}-Q${Math.floor(prev.getMonth() / 3) + 1}`;
+}
+function dueToday(kind, now) {
+  if (kind === "daily") return true;
+  if (kind === "weekly") return now.getDay() === 1;
+  if (kind === "monthly") return now.getDate() === 1;
+  return now.getDate() === 1 && now.getMonth() % 3 === 0;
+}
+const arrivalOf = (kind, now) => new Date(now.getFullYear(), now.getMonth(), now.getDate(), ...TEAM[kind].time);
+
+/* ───────────────────────── 리포트 데이터 ───────────────────────── */
+let DATA = window.REPORT_DATA || { version: "", reports: {} };
+const reportsOf = kind => DATA.reports[kind] || [];
+const latestOf = kind => { const r = reportsOf(kind); return r[r.length - 1] || null; };
+const findReport = (kind, id) => reportsOf(kind).find(r => r.id === id);
+const readKey = (kind, id) => `${kind}/${id}`;
+const isRead = (kind, id) => !!save.read[readKey(kind, id)];
+
+function reloadStatus() {
+  const s = document.createElement("script");
+  s.src = "assets/run-status.js?t=" + Date.now();
+  s.onload = () => { s.remove(); renderRoster(); };
+  s.onerror = () => s.remove();
+  document.body.appendChild(s);
+}
+
+function reloadData() {
+  reloadStatus();
+  const s = document.createElement("script");
+  s.src = "assets/reports-data.js?t=" + Date.now();
+  s.onload = () => {
+    s.remove();
+    if (window.REPORT_DATA && window.REPORT_DATA.version !== DATA.version) {
+      DATA = window.REPORT_DATA;
+      refreshStates(false);
+      toast("새 리포트가 도착했어요!");
+    }
+  };
+  s.onerror = () => s.remove();
+  document.body.appendChild(s);
+}
+
+/* ───────────────────────── 픽셀 스프라이트 ───────────────────────── */
+// 12x16. H 머리, L 긴머리, S 피부, E 눈, R 볼, M 입, G 안경, C 상의, D 상의 그림자, A 포인트, P 하의, B 신발
+const BODY = {
+  down: [
+    "....HHHH....", "..HHHHHHHH..", ".HHHHHHHHHH.", ".HHHHHHHHHH.", ".HSSSSSSSSH.",
+    "LHSESSSSESHL", "LHSRSSSSRSHL", "L..SSMMSS..L", "L.CCCAACCC.L", ".CCCCAACCCC.",
+    ".SCCCCCCCCS.", ".SDCCCCCCDS.", "..PPPPPPPP..",
+  ],
+  up: [
+    "....HHHH....", "..HHHHHHHH..", ".HHHHHHHHHH.", ".HHHHHHHHHH.", ".HHHHHHHHHH.",
+    "LHHHHHHHHHHL", "LHHHHHHHHHHL", "L..SSSSSS..L", "L.CCCCCCCC.L", ".CCCCCCCCCC.",
+    ".SCCCCCCCCS.", ".SDCCCCCCDS.", "..PPPPPPPP..",
+  ],
+  side: [
+    "....HHHH....", "..HHHHHHHH..", ".HHHHHHHHHH.", ".HHHHHHHHHH.", ".HHHHSSSSSS.",
+    "LHHHSSSSESS.", "LHHHSSSSRSS.", "L...SSSSSM..", "L..CCCCCC...", "...CCSCCC...",
+    "...CCSCCC...", "...CDCCDC...", "...PPPPPP...",
+  ],
+};
+const LEGS = {
+  stand: ["..PPP..PPP..", "..PPP..PPP..", "..BBB..BBB.."],
+  a: ["..PPP..PPP..", "..BBB..PPP..", ".......BBB.."],
+  b: ["..PPP..PPP..", "..PPP..BBB..", "..BBB......."],
+  sideStand: ["....PPPP....", "....PPPP....", "....BBBBB..."],
+  sideA: ["...PP..PP...", "..PP....PP..", ".BBB....BBB."],
+};
+const BASE = { S: "#ffd9b8", E: "#2b2233", R: "#ff9fae", M: "#c4575c", B: "#2b2233", G: "#2b2233" };
+const spriteCache = new Map();
+function sprite(look, dir, step) {
+  const key = JSON.stringify(look) + dir + step;
+  if (spriteCache.has(key)) return spriteCache.get(key);
+  const rows = (dir === "left" || dir === "right") ? BODY.side.slice() : BODY[dir].slice();
+  if (look.glasses && dir === "down") rows[5] = "LHGEGSSGEGHL";
+  if (look.glasses && (dir === "left" || dir === "right")) rows[5] = "LHHHSSSGEGS.";
+  const side = dir === "left" || dir === "right";
+  const legs = side ? (step === 1 ? LEGS.sideA : LEGS.sideStand) : (step === 1 ? LEGS.a : step === 2 ? LEGS.b : LEGS.stand);
+  const all = rows.concat(legs);
+  const pal = Object.assign({}, BASE, { H: look.hair, L: look.long ? look.hair : null, C: look.shirt, D: look.shirtDark, A: look.accent, P: look.pants });
+  const c = document.createElement("canvas"); c.width = 12; c.height = 16;
+  const g = c.getContext("2d");
+  all.forEach((row, y) => [...row].forEach((ch, x) => {
+    const col = pal[ch];
+    if (ch === "." || !col) return;
+    g.fillStyle = col; g.fillRect(dir === "left" ? 11 - x : x, y, 1, 1);
+  }));
+  spriteCache.set(key, c);
+  return c;
+}
+function avatarURL(look, scale = 4) {
+  const c = document.createElement("canvas"); c.width = 12 * scale; c.height = 16 * scale;
+  const g = c.getContext("2d"); g.imageSmoothingEnabled = false;
+  g.drawImage(sprite(look, "down", 0), 0, 0, c.width, c.height);
+  return c.toDataURL();
+}
+
+/* ───────────────────────── 사무실 배치 ───────────────────────── */
+const W = 320, H = 224;
+const cvs = document.getElementById("office");
+const ctx = cvs.getContext("2d");
+ctx.imageSmoothingEnabled = false;
+
+const DESKS = { daily: { x: 32, y: 118 }, weekly: { x: 88, y: 118 }, monthly: { x: 200, y: 118 }, quarterly: { x: 256, y: 118 } };
+const PLAYER = { x: 154, y: 50 };
+const PLAYER_DESK = { x: 128, y: 62, w: 64, h: 20 };
+const AISLE_Y = 176, CENTER_X = 154, DOOR = { x: 22, y: 232 };
+const seatOf = k => ({ x: DESKS[k].x + 10, y: 130 });
+const deliverSpot = k => ({ x: CENTER_X + { daily: -30, weekly: -10, monthly: 10, quarterly: 30 }[k], y: 90 });
+
+const chars = {};
+KINDS.forEach(k => {
+  chars[k] = { delay: 0, kind: k, x: DOOR.x, y: DOOR.y, dir: "up", path: [], visible: false, mode: "away", bubble: null, bubbleUntil: 0, onArrive: null, speed: 42 };
+});
+
+function pathDoorToSeat(k) { const s = seatOf(k); return [{ x: DOOR.x, y: AISLE_Y }, { x: s.x, y: AISLE_Y }, s]; }
+function pathSeatToDeliver(k) { const s = seatOf(k), d = deliverSpot(k); return [{ x: s.x, y: AISLE_Y }, { x: CENTER_X, y: AISLE_Y }, { x: CENTER_X, y: 100 }, d]; }
+function pathDeliverToSeat(k) { const s = seatOf(k); return [{ x: CENTER_X, y: 100 }, { x: CENTER_X, y: AISLE_Y }, { x: s.x, y: AISLE_Y }, s]; }
+function pathSeatToDoor(k) { const s = seatOf(k); return [{ x: s.x, y: AISLE_Y }, { x: DOOR.x, y: AISLE_Y }, { x: DOOR.x, y: DOOR.y }]; }
+
+function say(k, text, ms = 4000) { chars[k].bubble = text; chars[k].bubbleUntil = performance.now() + ms; }
+
+/* ───────────────────────── 상태 결정 ───────────────────────── */
+// 상태: away(출근 전/퇴근) · writing(작성 중) · delivering(보고 대기) · working(자리에서 일하는 중)
+function targetMode(k, now) {
+  if (isWeekend(now) && !dueToday(k, now)) return "away";  // 주말엔 담당 리포트가 있는 날만 출근
+  const latest = latestOf(k);
+  const unread = latest && !isRead(k, latest.id);
+  const arrived = now >= arrivalOf(k, now);
+  if (!arrived) return "away";
+  if (dueToday(k, now) && !findReport(k, expectedId(k, now))) return "writing";
+  if (unread) return "delivering";
+  if (now.getHours() >= OFF_HOUR) return "away";
+  return "working";
+}
+
+function refreshStates(firstLoad) {
+  const now = NOW();
+  let arrivals = 0;
+  const today = ymd(now);
+  save.arrived[today] = save.arrived[today] || {};
+  for (const k of KINDS) {
+    const c = chars[k];
+    const want = targetMode(k, now);
+    if (want === c.mode && c.visible) continue;
+    if (want === "away") {
+      if (c.visible && !firstLoad) { c.mode = "leaving"; c.path = pathSeatToDoor(k); c.onArrive = () => { c.visible = false; c.mode = "away"; }; }
+      else { c.visible = false; c.mode = "away"; }
+      continue;
+    }
+    const seen = save.arrived[today][k];
+    if (!c.visible) {
+      if (!seen) {
+        // 문으로 걸어 들어오는 출근 연출
+        if (!SIM) { save.arrived[today][k] = true; persist(); }  // 미리보기는 기록하지 않음
+        Object.assign(c, { visible: true, x: DOOR.x, y: DOOR.y, dir: "up", path: pathDoorToSeat(k), delay: arrivals++ * 1.8 });
+        c.mode = "arriving";
+        c.onArrive = () => { c.dir = "up"; setMode(k, targetMode(k, NOW())); };
+        setTimeout(() => say(k, "출근했습니다!", 2500), (arrivals - 1) * 1800);
+        addLog(hm(arrivalOf(k, now)), `${TEAM[k].name} ${TEAM[k].title} 출근`);
+      } else {
+        const s = want === "delivering" ? deliverSpot(k) : seatOf(k);
+        Object.assign(c, { visible: true, x: s.x, y: s.y, dir: "up", path: [] });
+        c.mode = want;
+      }
+      continue;
+    }
+    if (["arriving", "leaving", "returning", "toDeliver"].includes(c.mode)) continue;
+    setMode(k, want);
+  }
+  persist();
+  renderRoster(); renderLog(); renderHud();
+}
+
+function setMode(k, want) {
+  const c = chars[k];
+  if (want === "delivering" && c.mode !== "delivering") {
+    c.mode = "toDeliver";
+    c.path = pathSeatToDeliver(k);
+    c.onArrive = () => {
+      c.mode = "delivering"; c.dir = "up";
+      const w = targetMode(k, NOW());
+      if (w !== "delivering") return setMode(k, w);
+      say(k, "보고드릴게 있어요!", 3000); renderRoster();
+    };
+  } else if (want === "working" && c.mode === "delivering") {
+    c.mode = "returning";
+    c.path = pathDeliverToSeat(k);
+    c.onArrive = () => { c.mode = "working"; c.dir = "up"; renderRoster(); };
+  } else if (want !== "delivering") {
+    c.mode = want;
+  }
+  renderRoster();
+}
+
+/* ───────────────────────── 그리기 ───────────────────────── */
+function level() {
+  let i = 0;
+  LEVELS.forEach((l, idx) => { if (save.xp >= l.xp) i = idx; });
+  return i + 1;
+}
+function rect(x, y, w, h, c) { ctx.fillStyle = c; ctx.fillRect(x, y, w, h); }
+
+function drawRoom(now, lv) {
+  const night = now.getHours() >= 19 || now.getHours() < 7;
+  // 바닥
+  for (let ty = 3; ty < 14; ty++) for (let tx = 0; tx < 20; tx++) {
+    rect(tx * 16, ty * 16, 16, 16, (tx + ty) % 2 ? "#c9a679" : "#c09d70");
+    rect(tx * 16, ty * 16 + 15, 16, 1, "#b08d62");
+  }
+  // 벽
+  rect(0, 0, W, 48, "#e9e2f5"); rect(0, 40, W, 8, "#cfc4e3"); rect(0, 47, W, 1, "#9f92bd");
+  // 창문
+  const sky = night ? (lv >= 10 ? "#2b1d4f" : "#1d2547") : "#9fd6ff";
+  for (const wx of [16, 256]) {
+    rect(wx, 6, 48, 30, "#7a6e96"); rect(wx + 2, 8, 44, 26, sky);
+    if (night) for (let i = 0; i < 9; i++) rect(wx + 4 + (i * 13) % 40, 20 + (i * 7) % 12, 2, 3, lv >= 10 ? "#ffcf5a" : "#f7e48b");
+    else { rect(wx + 6, 12, 10, 3, "#fff"); rect(wx + 26, 18, 14, 3, "#fff"); }
+    rect(wx + 23, 8, 2, 26, "#7a6e96");
+  }
+  // 시계 (실제 시각)
+  rect(152, 8, 16, 16, "#5a4f78"); rect(153, 9, 14, 14, "#fffaf0");
+  const hA = ((now.getHours() % 12) + now.getMinutes() / 60) / 12 * Math.PI * 2, mA = now.getMinutes() / 60 * Math.PI * 2;
+  ctx.strokeStyle = "#2b2233"; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(160, 16); ctx.lineTo(160 + Math.sin(hA) * 3.5, 16 - Math.cos(hA) * 3.5); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(160, 16); ctx.lineTo(160 + Math.sin(mA) * 5.5, 16 - Math.cos(mA) * 5.5); ctx.stroke();
+  // 업적 게시판 — 받은 배지가 걸린다
+  rect(233, 5, 22, 33, "#6d4c3d"); rect(234, 6, 20, 31, "#c8955c");
+  BADGES.forEach((b, i) => {
+    const x = 235 + (i % 4) * 5, y = 8 + Math.floor(i / 4) * 7;
+    if (save.badges[b.id]) { rect(x + 1, y, 2, 2, "#5b8cff"); rect(x, y + 2, 4, 3, b.color); }
+    else rect(x + 1, y + 3, 2, 1, "#a77c4e");
+  });
+  // 문
+  rect(8, 210, 30, 14, "#6d4c3d"); rect(10, 212, 26, 12, "#8a6450"); rect(12, 218, 22, 6, "#a3405a");
+
+  // 내 책상과 나
+  drawChair(PLAYER.x - 2, 48, "#3b3355");
+  ctx.drawImage(sprite(ME_LOOK, "down", 0), PLAYER.x, PLAYER.y);
+  drawDesk(PLAYER_DESK.x, PLAYER_DESK.y, PLAYER_DESK.w, PLAYER_DESK.h, true);
+  rect(PLAYER_DESK.x + 4, PLAYER_DESK.y + 4, 12, 9, "#2b2233"); rect(PLAYER_DESK.x + 5, PLAYER_DESK.y + 5, 10, 6, "#5bd1ff");
+  rect(PLAYER_DESK.x + 26, PLAYER_DESK.y + 16, 12, 4, "#ffcf5a"); // 명패
+  const pending = KINDS.filter(k => { const l = latestOf(k); return l && !isRead(k, l.id); }).length;
+  for (let i = 0; i < Math.min(pending, 4); i++) rect(PLAYER_DESK.x + 46, PLAYER_DESK.y + 10 - i * 2, 12, 2, i % 2 ? "#fff" : "#f0ead8");
+
+  // 팀 책상
+  for (const k of KINDS) {
+    const d = DESKS[k];
+    drawDesk(d.x, d.y, 32, 16, false);
+    rect(d.x + 10, d.y + 1, 12, 8, "#2b2233");
+    const c = chars[k];
+    const on = c.visible && (c.mode === "working" || c.mode === "writing");
+    rect(d.x + 11, d.y + 2, 10, 5, on ? (c.mode === "writing" && Math.floor(performance.now() / 300) % 2 ? "#ffe08a" : "#9be7c4") : "#444060");
+    rect(d.x + 2, d.y + 10, 6, 3, KIND_COLOR[k]); // 파일
+    drawChair(d.x + 8, 134, "#4b4370");
+  }
+
+  // 레벨 소품
+  if (lv >= 2) { drawPlant(300, 52); drawPlant(100, 192); }
+  if (lv >= 3) { rect(296, 150, 18, 22, "#5a5a6a"); rect(298, 152, 14, 8, "#2b2233"); rect(301, 164, 8, 6, "#fff"); rect(302, 165, 6, 3, "#7a4a2a"); }
+  if (lv >= 4) { rect(80, 8, 56, 30, "#7a6e96"); rect(82, 10, 52, 26, "#ffffff"); rect(86, 14, 30, 2, "#ff7a59"); rect(86, 20, 40, 2, "#5b8cff"); rect(86, 26, 22, 2, "#2bb37e"); }
+  if (lv >= 5) { rect(2, 60, 14, 44, "#7a5236"); for (let i = 0; i < 4; i++) { rect(3, 63 + i * 10, 12, 1, "#5a3a24"); for (let b = 0; b < 4; b++) rect(4 + b * 3, 56 + 7 + i * 10 - 6, 2, 6, ["#ff8a5b", "#5b8cff", "#2bb37e", "#ffcf5a"][(b + i) % 4]); } }
+  if (lv >= 6) { rect(222, 52, 62, 30, "#d07a8f"); rect(226, 56, 54, 22, "#e797a8"); rect(224, 82, 58, 2, "#8c4a5b"); rect(214, 88, 76, 22, "rgba(255,207,90,.35)"); }
+  if (lv >= 7) { ctx.font = "bold 9px monospace"; ctx.fillStyle = night ? "#ff7ad9" : "#d94fb3"; ctx.fillText("TREND", 196, 28); if (night) { ctx.fillStyle = "rgba(255,122,217,.25)"; ctx.fillRect(192, 18, 40, 14); } }
+  if (lv >= 8) { rect(4, 52, 10, 6, "#7a5236"); rect(6, 44, 6, 8, "#ffcf5a"); rect(5, 43, 8, 2, "#ffcf5a"); }
+  if (lv >= 9) { rect(296, 92, 20, 32, "#3d2b6b"); rect(298, 96, 16, 12, "#2b2233"); rect(300, 98, 12, 8, Math.floor(performance.now() / 400) % 2 ? "#ff7ad9" : "#5bd1ff"); rect(300, 112, 4, 4, "#ff5a36"); rect(306, 112, 4, 4, "#ffcf5a"); }
+  if (lv >= 10) { const cx = 60 + Math.sin(performance.now() / 4000) * 30; rect(cx, 200, 10, 6, "#f2a65a"); rect(cx + 8, 196, 5, 5, "#f2a65a"); rect(cx + 8, 194, 1, 2, "#f2a65a"); rect(cx + 12, 194, 1, 2, "#f2a65a"); rect(cx - 3, 199, 3, 2, "#f2a65a"); }
+
+  return night;
+}
+function drawDesk(x, y, w, h, boss) {
+  rect(x, y, w, h, boss ? "#8a5a3b" : "#a0714f");
+  rect(x, y + h - 3, w, 3, boss ? "#6d452c" : "#7f573a");
+  rect(x + 1, y + h, 3, 4, "#5a3a24"); rect(x + w - 4, y + h, 3, 4, "#5a3a24");
+}
+function drawChair(x, y, c) { rect(x, y, 16, 12, c); rect(x + 2, y + 2, 12, 8, "#6a5f94"); }
+function drawPlant(x, y) { rect(x + 3, y + 12, 10, 8, "#b5653f"); rect(x + 2, y + 2, 12, 10, "#3f9b5f"); rect(x + 5, y, 6, 4, "#56b874"); rect(x + 4, y + 5, 3, 3, "#2f7a49"); }
+
+const bubbleEls = {};
+function placeBubble(k, x, y, text, alert) {
+  let el = bubbleEls[k];
+  if (!el) { el = bubbleEls[k] = document.createElement("div"); el.className = "bubble"; document.getElementById("bubbles").appendChild(el); }
+  if (!text) { el.style.display = "none"; return; }
+  el.style.display = "block";
+  el.classList.toggle("alert", !!alert);
+  if (el.textContent !== text) el.textContent = text;
+  // 무대 밖으로 나가지 않게 px로 계산하고, 꼬리는 캐릭터 머리 위를 가리킨다
+  const sw = cvs.clientWidth, sh = cvs.clientHeight, bw = el.offsetWidth;
+  const cx = (x + 6) / W * sw;
+  const left = Math.max(4, Math.min(sw - bw - 4, cx - bw / 2));
+  el.style.left = left + "px";
+  el.style.top = ((y - 2) / H * sh) + "px";
+  el.style.setProperty("--tail", (cx - left) + "px");
+}
+
+let last = performance.now();
+function frame(t) {
+  const dt = Math.max(0, Math.min(0.25, (t - last) / 1000)); last = t;
+  const now = NOW();
+  const lv = level();
+  ctx.clearRect(0, 0, W, H);
+  const night = drawRoom(now, lv);
+
+  // 이동
+  for (const k of KINDS) {
+    const c = chars[k];
+    if (!c.visible || !c.path.length) continue;
+    if (c.delay > 0) { c.delay -= dt; continue; }
+    const tgt = c.path[0];
+    const dx = tgt.x - c.x, dy = tgt.y - c.y, dist = Math.hypot(dx, dy), step = c.speed * dt;
+    if (Math.abs(dx) > Math.abs(dy)) c.dir = dx > 0 ? "right" : "left"; else c.dir = dy > 0 ? "down" : "up";
+    if (dist <= step) { c.x = tgt.x; c.y = tgt.y; c.path.shift(); if (!c.path.length && c.onArrive) { const f = c.onArrive; c.onArrive = null; f(); } }
+    else { c.x += dx / dist * step; c.y += dy / dist * step; }
+  }
+  // y 순서대로 그리기
+  const order = KINDS.filter(k => chars[k].visible).sort((a, b) => chars[a].y - chars[b].y);
+  for (const k of order) {
+    const c = chars[k];
+    const walking = c.path.length > 0 && !(c.delay > 0);
+    const step = walking ? 1 + Math.floor(t / 160) % 2 : 0;
+    const sitting = !walking && (c.mode === "working" || c.mode === "writing");
+    const bob = sitting && c.mode === "writing" && Math.floor(t / 250) % 2 ? 1 : 0;
+    ctx.drawImage(sprite(lookOf(k), c.dir, step), Math.round(c.x), Math.round(c.y) + bob);
+    if (sitting) rect(DESKS[k].x + 8, 144, 16, 2, "#4b4370"); // 의자 등받이
+  }
+  // 말풍선
+  for (const k of KINDS) {
+    const c = chars[k];
+    let text = null, alert = false;
+    if (c.visible && c.y < H) {
+      if (c.bubble && t < c.bubbleUntil) text = c.bubble;
+      else if (c.mode === "delivering") { text = "📄 보고드릴게 있어요!"; alert = true; }
+      else if (c.mode === "writing") text = "✍️ 작성 중" + ".".repeat(1 + Math.floor(t / 400) % 3);
+      else if (c.mode === "working") text = nudgeText(k);
+    }
+    placeBubble(k, c.x, c.y, text, alert);
+  }
+  if (night) { ctx.fillStyle = "rgba(20, 16, 60, .28)"; ctx.fillRect(0, 0, W, H); }
+}
+function loop(t) { frame(t); requestAnimationFrame(loop); }
+// requestAnimationFrame이 멈추는 환경(숨겨진 탭 등)에서도 걸음이 이어지도록
+setInterval(() => { const t = performance.now(); if (t - last > 300) frame(t); }, 200);
+
+/* ───────────────────────── 클릭 ───────────────────────── */
+function canvasPoint(ev) {
+  const r = cvs.getBoundingClientRect();
+  return { x: (ev.clientX - r.left) / r.width * W, y: (ev.clientY - r.top) / r.height * H };
+}
+function hitTest(p) {
+  for (const k of KINDS) {
+    const c = chars[k];
+    if (c.visible && p.x >= c.x - 2 && p.x <= c.x + 14 && p.y >= c.y - 14 && p.y <= c.y + 16) return { type: "char", k };
+  }
+  if (p.x >= PLAYER_DESK.x && p.x <= PLAYER_DESK.x + PLAYER_DESK.w && p.y >= 44 && p.y <= PLAYER_DESK.y + PLAYER_DESK.h) return { type: "desk" };
+  if (p.x >= 233 && p.x <= 255 && p.y >= 5 && p.y <= 38) return { type: "badges" };
+  if (level() >= 4 && p.x >= 80 && p.x <= 136 && p.y >= 8 && p.y <= 38) return { type: "board" };
+  if (level() >= 5 && p.x <= 16 && p.y >= 56 && p.y <= 104) return { type: "shelf" };
+  for (const k of KINDS) { const d = DESKS[k]; if (p.x >= d.x && p.x <= d.x + 32 && p.y >= d.y && p.y <= d.y + 20) return { type: "char", k }; }
+  return null;
+}
+cvs.addEventListener("mousemove", ev => { cvs.style.cursor = hitTest(canvasPoint(ev)) ? "pointer" : "default"; });
+cvs.addEventListener("click", ev => {
+  const hit = hitTest(canvasPoint(ev));
+  if (!hit) return;
+  if (hit.type === "char") talkTo(hit.k);
+  if (hit.type === "desk") openArchive();
+  if (hit.type === "board") openKeywords();
+  if (hit.type === "shelf") openScrapbook();
+  if (hit.type === "badges") openBadges();
+});
+
+function talkTo(k) {
+  const c = chars[k], m = TEAM[k];
+  const latest = latestOf(k);
+  if (latest && !isRead(k, latest.id)) return openReport(k, latest.id);
+  if (!c.visible) {
+    if (latest) return openReport(k, latest.id);
+    return toast(`${m.name} ${m.title}은(는) ${m.when}에 출근해요.`);
+  }
+  if (c.mode === "writing") return say(k, m.writing);
+  if (k === "daily" && NUDGE.daily) return openReview();
+  if (k === "daily" && NUDGE.idea) return openIdeaRevisit(dueIdeas()[0][0]);
+  if (k === "weekly" && NUDGE.weekly) return openWeeklyQuiz(isoWeek(NOW()));
+  const line = m.idle[Math.floor(Math.random() * m.idle.length)];
+  say(k, line, 4500);
+  if (latest) toast(`${m.name}: "${line}" — 지난 리포트는 📥 받은 리포트에서 볼 수 있어요.`);
+}
+
+/* ───────────────────────── 사이드 패널 ───────────────────────── */
+const AVATAR = {};
+KINDS.forEach(k => AVATAR[k] = avatarURL(lookOf(k)));
+const ME_AVATAR = avatarURL(ME_LOOK);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+const meName = () => save.me || "팀장";
+
+function statusText(k) {
+  const c = chars[k], m = TEAM[k], now = NOW();
+  const latest = latestOf(k);
+  if (c.mode === "delivering" || c.mode === "toDeliver") return ["#ffcf5a", `${KIND_NAME[k]} 리포트 보고 대기`];
+  if (c.mode === "writing") {
+    // scripts/run.py가 assets/run-status.js에 남기는 실제 작성 상태
+    const run = (window.RUN_STATUS || {})[k];
+    if (run && run.id === expectedId(k, now)) {
+      if (run.state === "failed") return ["#ff7a59", "작성 실패 (logs 확인)"];
+      if (run.state === "running") return ["#5bd1ff", "리포트 작성 중"];
+    }
+    return ["#5bd1ff", "작성 준비 중 · 맥이 깨어 있으면 곧 시작해요"];
+  }
+  if (c.mode === "arriving") return ["#4fd1a5", "출근하는 중"];
+  if (c.mode === "away" || c.mode === "leaving") {
+    if (isWeekend(now) && !dueToday(k, now)) return ["#6f6a80", "주말 휴무 🌴"];
+    return ["#6f6a80", now < arrivalOf(k, now) ? `${hm(arrivalOf(k, now))} 출근 예정` : "퇴근"];
+  }
+  return ["#4fd1a5", latest ? `업무 중 · 최근 ${latest.doc.period_label || latest.id}` : "업무 중"];
+}
+// 하루 사원: 하루 지난 오답이 있으면 복습 권유 · 주디 대리: 금요일에 이번 주 복습 권유
+let NUDGE = { daily: false, weekly: false };
+function nudgeText(k) {
+  if (k === "daily") return NUDGE.daily ? "📝 어제 틀린 문제 복습해요!" : NUDGE.idea ? "💡 지난 아이디어 다시 볼까요?" : null;
+  if (k === "weekly" && NUDGE.weekly) return "🗓 이번 주 복습할까요?";
+  return null;
+}
+function updateNudges() {
+  const now = NOW(), w = isoWeek(now), rs = (dailyWeeks().find(x => x[0] === w) || [])[1] || [];
+  NUDGE = { daily: dueWrong().length > 0, idea: dueIdeas().length > 0, weekly: now.getDay() === 5 && !save.weekly[w] && weekPool(rs).length >= 3 };
+}
+function renderRoster() {
+  updateNudges();
+  const el = document.getElementById("roster");
+  el.innerHTML = KINDS.map(k => {
+    const m = TEAM[k], [col, st] = statusText(k);
+    const alert = chars[k].mode === "delivering";
+    return `<button class="member${alert ? " alert" : ""}" data-k="${k}">
+      <img src="${AVATAR[k]}" alt="">
+      <span><span class="who">${m.name} ${m.title}</span> <span class="badge" style="background:${KIND_COLOR[k]}">${KIND_NAME[k]}</span>
+      <span class="role" style="display:block">${m.job} · ${m.when}</span>
+      <span class="st" style="display:block"><span class="dot" style="background:${col}"></span>${esc(st)}</span></span></button>`;
+  }).join("");
+  el.querySelectorAll(".member").forEach(b => b.onclick = () => talkTo(b.dataset.k));
+}
+
+let extraLog = [];
+function addLog(time, text) { if (!extraLog.some(l => l.text === text)) extraLog.push({ time, text }); }
+function renderLog() {
+  const now = NOW(), today = ymd(now);
+  const rows = [...extraLog];
+  for (const k of KINDS) {
+    const m = TEAM[k];
+    if (now >= arrivalOf(k, now) && !(isWeekend(now) && !dueToday(k, now))) rows.push({ time: hm(arrivalOf(k, now)), text: `${m.name} ${m.title} 출근` });
+    for (const r of reportsOf(k)) {
+      if (r.generatedAt && r.generatedAt.startsWith(today)) rows.push({ time: r.generatedAt.slice(11, 16), text: `${m.name}: ${KIND_NAME[k]} 리포트 완성 (${r.doc.period_label || r.id})` });
+      const rd = save.read[readKey(k, r.id)];
+      if (rd && rd.startsWith(today)) rows.push({ time: rd.slice(11, 16), text: `${meName()}님이 ${KIND_NAME[k]} 리포트를 읽음` });
+      const qz = save.quiz[readKey(k, r.id)];
+      if (qz && qz.at.startsWith(today)) rows.push({ time: qz.at.slice(11, 16), text: `${KIND_NAME[k]} 퀴즈 ${qz.score}/${qz.total}` });
+    }
+  }
+  for (const [w, q] of Object.entries(save.weekly)) if (q.at.startsWith(today)) rows.push({ time: q.at.slice(11, 16), text: `주간 복습 ${q.score}/${q.total} (${w})` });
+  const uniq = [...new Map(rows.map(r => [r.text, r])).values()].sort((a, b) => b.time.localeCompare(a.time));
+  document.getElementById("log").innerHTML = uniq.length
+    ? uniq.map(r => `<li><time>${esc(r.time)}</time><span>${esc(r.text)}</span></li>`).join("")
+    : `<li class="empty">아직 조용한 아침이에요. 9시에 ${esc(who("daily"))}이(가) 출근해요.</li>`;
+}
+
+function streakDays() {
+  const days = new Set(save.readDays);
+  const d = NOW();
+  if (!days.has(ymd(d))) d.setDate(d.getDate() - 1);
+  let n = 0;
+  while (days.has(ymd(d))) { n++; d.setDate(d.getDate() - 1); }
+  return n;
+}
+function renderHud() {
+  const lv = level(), cur = LEVELS[lv - 1], next = LEVELS[lv];
+  document.getElementById("lv").textContent = `Lv.${lv}`;
+  document.getElementById("rank").textContent = save.me ? `${save.me} · ${cur.title}` : cur.title;
+  const pct = next ? (save.xp - cur.xp) / (next.xp - cur.xp) * 100 : 100;
+  document.getElementById("xpfill").style.width = pct + "%";
+  document.getElementById("xptext").textContent = next ? ` ${save.xp}/${next.xp} XP` : ` ${save.xp} XP · 최고 직급`;
+  const s = streakDays();
+  document.getElementById("streak").textContent = s ? `🔥 ${s}일 연속` : "🔥 0일";
+  const nw = Object.keys(save.wrong).length;
+  document.getElementById("btn-wrong").textContent = nw ? `📝 오답노트 ${nw}` : "📝 오답노트";
+}
+setInterval(() => {
+  const now = NOW();
+  document.getElementById("clock").textContent = `${now.getMonth() + 1}월 ${now.getDate()}일 (${"일월화수목금토"[now.getDay()]}) ${hm(now)}`;
+}, 1000);
+
+/* ───────────────────────── 경험치 ───────────────────────── */
+function gainXp(n, why) {
+  const before = level();
+  save.xp += n; persist();
+  toast(`+${n} XP · ${why}`);
+  checkBadges();
+  const after = level();
+  renderHud();
+  if (after > before) {
+    if (bg.classList.contains("open")) pendingLevelUp = after;
+    else setTimeout(() => showLevelUp(after), 700);
+  }
+}
+function showLevelUp(lv) {
+  const l = LEVELS[lv - 1];
+  openModal(`<div class="modal-body center levelup">
+    <img src="${ME_AVATAR}" alt="">
+    <p class="r-period">승진을 축하해요!</p>
+    <h3>${esc(meName())}님, ${esc(l.title)}(으)로 승진 🎉</h3>
+    <p>사무실에 <b>${esc(l.unlock)}</b>이(가) 생겼어요.</p>
+    <button class="btn" data-close>좋아요</button></div>`, true);
+}
+
+/* ───────────────────────── 모달 ───────────────────────── */
+const bg = document.getElementById("modal-bg"), modal = document.getElementById("modal");
+function openModal(html, small = false) {
+  modal.className = "modal" + (small ? " small" : "");
+  modal.innerHTML = html;
+  bg.classList.add("open");
+  modal.querySelectorAll("[data-close]").forEach(b => b.onclick = closeModal);
+  modal.scrollTop = 0; bg.scrollTop = 0;
+}
+let pendingLevelUp = 0;
+function closeModal() {
+  bg.classList.remove("open"); modal.innerHTML = "";
+  if (pendingLevelUp) { const lv = pendingLevelUp; pendingLevelUp = 0; setTimeout(() => showLevelUp(lv), 300); }
+}
+bg.addEventListener("click", e => { if (e.target === bg) closeModal(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+
+let toastTimer;
+function toast(msg) {
+  const el = document.getElementById("toast");
+  el.textContent = msg; el.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+}
+
+/* ───────────────────────── 리포트 보기 ───────────────────────── */
+const scrapKey = (k, id, si, ii) => `${k}/${id}/${si}/${ii}`;
+function openReport(k, id) {
+  const r = findReport(k, id); if (!r) return;
+  const m = TEAM[k], doc = r.doc, read = isRead(k, id);
+  const weekend = doc.edition === "weekend";
+  const line = (read ? "다시 보시는군요! 필요한 건 스크랩해두세요." : (weekend && m.weekendDeliver) || m.deliver).replace("{me}", esc(meName()));
+  const qz = save.quiz[readKey(k, id)];
+  const secs = (doc.sections || []).map((s, si) => `
+    <section class="r-sec"><h3>${esc(s.title)}</h3>${s.description ? `<p class="link">${esc(s.description)}</p>` : ""}
+    <div class="r-cards">${(s.items || []).map((it, ii) => {
+      const key = scrapKey(k, id, si, ii), sc = save.scraps[key];
+      return `<article class="r-card${sc ? " scrapped" : ""}" data-key="${key}" data-si="${si}" data-ii="${ii}">
+        <div class="r-meta">${it.rank ? `<span class="rank">${esc(it.rank)}</span>` : ""}${it.tag ? `<span class="tag">${esc(it.tag)}</span>` : ""}${it.brand ? `<span class="brand">${esc(it.brand)}</span>` : ""}
+          <button class="scrap">${sc ? "★ 스크랩됨" : "☆ 스크랩"}</button></div>
+        <h4>${esc(it.title)}</h4><p>${esc(it.body)}</p>
+        ${it.points && it.points.length ? `<ul class="pts">${it.points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}
+        ${it.why ? `<div class="note why"><b>왜 주목할까</b>${esc(it.why)}</div>` : ""}
+        ${it.action ? `<div class="note act"><b>팔로업</b>${esc(it.action)}</div>` : ""}
+        ${memoFields(sc)}
+        <ul class="srcs">${(it.sources || []).filter(x => /^https?:/.test(x.url || "")).map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name || x.url)}</a>${x.date ? ` · ${esc(x.date)}` : ""}</li>`).join("")}</ul>
+      </article>`;
+    }).join("")}</div></section>`).join("");
+
+  openModal(`
+    <div class="modal-head"><img src="${AVATAR[k]}" alt="">
+      <div class="say"><div class="from">${m.name} ${m.title} · ${KIND_NAME[k]} 보고</div><div class="line">${line}</div></div>
+      <button class="x" data-close aria-label="닫기">×</button></div>
+    <div class="modal-body">
+      <span class="badge" style="background:${KIND_COLOR[k]}">${KIND_NAME[k]}${weekend ? " · 주말판" : ""}</span>
+      <p class="r-period">${esc(doc.period_label || id)}</p>
+      <h2 class="r-headline">${esc(doc.headline)}</h2>
+      ${doc.summary && doc.summary.length ? `<ol class="r-summary">${doc.summary.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
+      ${doc.keywords && doc.keywords.length ? `<div class="chips">${doc.keywords.map(x => `<span>#${esc(x)}</span>`).join("")}</div>` : ""}
+      ${secs}
+      ${doc.follow_up && doc.follow_up.length ? `<section class="r-sec"><h3>다음에 지켜볼 것</h3><ul>${doc.follow_up.map(f => `<li>${esc(f)}</li>`).join("")}</ul></section>` : ""}
+      <div class="r-foot">
+        <button class="btn" id="mark-read" ${read ? "disabled" : ""}>${read ? "✓ 읽음 완료" : `✅ 다 읽었어요 (+${XP_READ[k]} XP)`}</button>
+        ${read ? `<button class="btn ghost" id="take-quiz">${qz ? `🧠 퀴즈 ${qz.score}/${qz.total} · 다시 풀기` : "🧠 퀴즈 풀기"}</button>` : ""}
+        <a class="link" href="${esc(r.html)}" target="_blank">원본 리포트 페이지로 보기 ↗</a>
+      </div>
+    </div>`);
+
+  modal.querySelectorAll(".r-card").forEach(card => {
+    const key = card.dataset.key;
+    const item = doc.sections[+card.dataset.si].items[+card.dataset.ii];
+    card.querySelector(".scrap").onclick = () => toggleScrap(card, key, k, r, item);
+    bindMemo(card, key, { label: "보고서로 돌아가기", fn: () => openReport(k, id) });
+  });
+  const mr = document.getElementById("mark-read");
+  if (!read) mr.onclick = () => markRead(k, id, mr);
+  const tq = document.getElementById("take-quiz");
+  if (tq) tq.onclick = () => openQuiz(k, id);
+}
+
+/* 스크랩 메모는 '아이디어' 한 칸. 예전 기록의 memo는 아이디어로 본다 */
+const ideaOf = sc => sc.idea ?? sc.memo ?? "";
+const hasMemo = sc => !!(ideaOf(sc).trim() || (sc.notes || []).length);
+const notesHtml = sc => sc && sc.notes && sc.notes.length
+  ? `<ol class="inotes">${sc.notes.map(n => `<li><time>🌱 ${esc(n.at)}</time>${esc(n.text)}</li>`).join("")}</ol>` : "";
+function memoFields(sc) {
+  return `<div class="memo">
+    <label>💡 내 아이디어<textarea data-memo="idea" placeholder="써먹을 아이디어, 우리 브랜드라면 어떻게 할지…">${esc(sc ? ideaOf(sc) : "")}</textarea></label>
+    ${notesHtml(sc)}
+    ${sc && ideaOf(sc).trim() ? `<button class="grow" data-grow>🌱 생각 덧붙이기</button>` : ""}
+  </div>`;
+}
+function bindMemo(card, key, back) {
+  const g = card.querySelector("[data-grow]");
+  if (g) g.onclick = () => openIdeaRevisit(key, back);
+  card.querySelectorAll("[data-memo]").forEach(ta => ta.onchange = () => {
+    const sc = save.scraps[key]; if (!sc) return;
+    const f = ta.dataset.memo;
+    sc[f] = ta.value;
+    if (f === "idea") { delete sc.memo; sc.ideaAt = ymd(NOW()); }
+    persist();
+    if (ta.value.trim() && !save.memoXp[key]) { save.memoXp[key] = true; gainXp(2, "아이디어 메모"); }
+  });
+}
+
+function toggleScrap(card, key, k, r, item) {
+  const btn = card.querySelector(".scrap");
+  if (save.scraps[key]) {
+    if (hasMemo(save.scraps[key]) && !confirm("메모도 함께 지워져요. 스크랩을 취소할까요?")) return;
+    delete save.scraps[key]; card.classList.remove("scrapped"); btn.textContent = "☆ 스크랩";
+    persist(); return;
+  }
+  save.scraps[key] = {
+    kind: k, reportId: r.id, reportLabel: r.doc.period_label || r.id, savedAt: NOW().toISOString(), idea: "",
+    item: { title: item.title, tag: item.tag, brand: item.brand, body: item.body, why: item.why, action: item.action, sources: item.sources || [] },
+  };
+  card.classList.add("scrapped"); btn.textContent = "★ 스크랩됨";
+  persist();
+  card.querySelector(".memo textarea").focus();
+  if (!save.memoXp["s:" + key]) { save.memoXp["s:" + key] = true; gainXp(1, "스크랩"); }
+}
+
+function markRead(k, id, btn) {
+  const now = NOW();
+  save.read[readKey(k, id)] = `${ymd(now)}T${hm(now)}`;
+  if (k === "daily" && !save.readDays.includes(ymd(now))) save.readDays.push(ymd(now));
+  persist();
+  btn.disabled = true; btn.textContent = "✓ 읽음 완료";
+  let xp = XP_READ[k];
+  const s = streakDays();
+  if (k === "daily" && s >= 3) xp += 5;
+  gainXp(xp, k === "daily" && s >= 3 ? `읽음 완료 + 🔥${s}일 연속 보너스` : "읽음 완료");
+  say(k, TEAM[k].thanks, 4000);
+  setTimeout(() => openQuiz(k, id), 700);
+  const latest = latestOf(k);
+  if (latest && latest.id === id && chars[k].mode === "delivering") setMode(k, targetMode(k, NOW()));
+  renderRoster(); renderLog();
+}
+
+/* ───────────────────────── 퀴즈 ───────────────────────── */
+function seeded(str) {
+  let h = 1779033703 ^ str.length;
+  for (let i = 0; i < str.length; i++) { h = Math.imul(h ^ str.charCodeAt(i), 3432918353); h = h << 13 | h >>> 19; }
+  return () => { h = Math.imul(h ^ h >>> 16, 2246822507); h = Math.imul(h ^ h >>> 13, 3266489909); return ((h ^= h >>> 16) >>> 0) / 4294967296; };
+}
+function shuffle(arr, rnd) { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+
+/** 리포트에 퀴즈가 없으면(초기 리포트) '왜 주목할까' 설명으로 항목을 맞히는 문제를 만든다 */
+function quizOf(k, r) {
+  const qs = (r.doc.quiz || []).filter(q => q.q && Array.isArray(q.options) && q.options.length >= 2 && Number.isInteger(q.answer));
+  if (qs.length) return qs;
+  const rnd = seeded(k + r.id);
+  const items = (r.doc.sections || []).flatMap(s => s.items || []).filter(it => it.title && it.why);
+  if (items.length < 4) return [];
+  return shuffle(items, rnd).slice(0, 3).map(it => {
+    const options = shuffle([it.title, ...shuffle(items.filter(x => x !== it), rnd).slice(0, 3).map(x => x.title)], rnd);
+    return { q: `다음 설명은 어떤 항목에 대한 이야기일까요?\n“${it.why}”`, options, answer: options.indexOf(it.title), explain: `'${it.title}' 항목의 '왜 주목할까' 내용이에요.` };
+  });
+}
+
+/** 문제마다 출처(어느 리포트의 몇 번째 문제인지)를 붙인다 — 오답노트에 쓴다 */
+function quizWithSrc(k, r) {
+  return quizOf(k, r).map((q, qi) => ({ ...q, src: { k, id: r.id, qi, label: `${KIND_NAME[k]} · ${r.doc.period_label || r.id}` } }));
+}
+
+/** 퀴즈 진행 화면. onFinish는 { line, sub, back, xp, why }를 돌려준다 */
+function runQuiz({ k, label, intro, note, showSrc, qs, onAnswer, onFinish }) {
+  const m = TEAM[k];
+  let i = 0, score = 0;
+  const head = line => `<div class="modal-head"><img src="${AVATAR[k]}" alt=""><div class="say"><div class="from">${m.name} ${m.title} · ${label}</div><div class="line">${line}</div></div><button class="x" data-close aria-label="닫기">×</button></div>`;
+  const show = () => {
+    const q = qs[i];
+    openModal(`${head(i === 0 ? intro : "다음 문제예요!")}
+      <div class="modal-body"><div class="qprog">${i + 1} / ${qs.length}${note ? ` · ${note}` : ""}</div>
+      ${showSrc && q.src ? `<p class="r-period" style="margin:2px 0 0">${esc(q.src.label)}</p>` : ""}
+      <div class="qtext">${esc(q.q)}</div>
+      ${q.options.map((o, oi) => `<button class="qopt" data-oi="${oi}">${"①②③④⑤"[oi] || oi + 1} ${esc(o)}</button>`).join("")}
+      <div id="qafter"></div></div>`, true);
+    modal.querySelectorAll(".qopt").forEach(b => b.onclick = () => {
+      const pick = +b.dataset.oi, ok = pick === q.answer;
+      if (ok) score++;
+      if (onAnswer) onAnswer(q, ok);
+      modal.querySelectorAll(".qopt").forEach(x => { x.disabled = true; if (+x.dataset.oi === q.answer) x.classList.add("right"); });
+      if (!ok) b.classList.add("wrong");
+      const last = i === qs.length - 1;
+      document.getElementById("qafter").innerHTML = `<div class="qexp"><b>${ok ? "⭕ 정답!" : "❌ 아쉬워요"}</b> ${esc(q.explain || "")}${ok ? "" : `<br><span class="link">📝 오답노트에 담아둘게요.</span>`}</div>
+        <button class="btn" id="qnext">${last ? "결과 보기" : "다음 문제 →"}</button>`;
+      document.getElementById("qnext").onclick = () => { if (last) finish(); else { i++; show(); } };
+    });
+  };
+  const finish = () => {
+    const res = onFinish(score, qs.length);
+    persist();
+    openModal(`${head(res.line)}<div class="modal-body center">
+      <div class="qscore">${score} / ${qs.length}</div>
+      <p>${res.sub}</p>
+      <div class="toolbar" style="justify-content:center">${res.back ? `<button class="btn ghost" id="q-back">${res.back.label}</button>` : ""}<button class="btn" data-close>닫기</button></div></div>`, true);
+    if (res.back) document.getElementById("q-back").onclick = res.back.fn;
+    if (res.xp) gainXp(res.xp, res.why);
+    checkBadges(); renderHud(); renderRoster(); renderLog();
+  };
+  show();
+}
+const nowStamp = () => `${ymd(NOW())}T${hm(NOW())}`;
+
+function openQuiz(k, id) {
+  const r = findReport(k, id); if (!r) return;
+  const qs = quizWithSrc(k, r); if (!qs.length) return;
+  const key = readKey(k, id), first = !save.quiz[key];
+  runQuiz({
+    k, label: "확인 퀴즈", intro: `잠깐! 방금 읽은 내용으로 ${qs.length}문제만 낼게요 🧠`,
+    note: first ? "정답마다 +5 XP" : "다시 풀기 (경험치 없음)", qs, onAnswer: noteAnswer,
+    onFinish(score, total) {
+      const perfect = score === total;
+      let xp = 0;
+      if (first) { xp = score * 5 + (perfect ? 5 : 0); save.quiz[key] = { score, total, at: nowStamp() }; }
+      else if (score > save.quiz[key].score) save.quiz[key] = { score, total, at: nowStamp() };
+      return {
+        line: perfect ? "완벽해요! 오늘 트렌드는 확실히 챙기셨네요 👏" : score ? "좋아요! 틀린 문제는 📝 오답노트에 모아뒀어요." : "괜찮아요, 틀린 문제는 📝 오답노트에서 다시 풀 수 있어요!",
+        sub: first ? (xp ? `<b>+${xp} XP</b>${perfect ? " (만점 보너스 포함)" : ""}` : "이번엔 경험치가 없어요") : "다시 풀기는 경험치가 없어요",
+        back: { label: "보고서 다시 보기", fn: () => openReport(k, id) }, xp, why: `퀴즈 ${score}/${total}`,
+      };
+    },
+  });
+}
+
+/* ───────────────────────── 오답노트 ───────────────────────── */
+// 틀린 문제는 save.wrong에 모이고, 다시 맞히면 빠진다. 하루가 지나면 하루 사원이 복습하자고 한다.
+const wrongKey = src => `${src.k}/${src.id}#${src.qi}`;
+const wrongList = () => Object.entries(save.wrong).sort((a, b) => a[1].at.localeCompare(b[1].at));
+const dueWrong = () => wrongList().filter(([, w]) => w.at < ymd(NOW()));
+/** 답을 기록한다. 오답노트에 있던 문제를 맞혔으면 true */
+function noteAnswer(q, ok) {
+  if (!q.src) return false;
+  const key = wrongKey(q.src);
+  if (ok) {
+    if (!save.wrong[key]) return false;
+    delete save.wrong[key]; save.wrongCleared++;
+    return true;
+  }
+  save.wrong[key] = { q: { q: q.q, options: q.options, answer: q.answer, explain: q.explain || "", src: q.src }, at: ymd(NOW()), misses: (save.wrong[key]?.misses || 0) + 1 };
+  return false;
+}
+function openWrongNote() {
+  const list = wrongList(), n = Math.min(5, list.length);
+  openModal(`<div class="modal-head"><img src="${AVATAR.daily}" alt=""><div class="say"><div class="from">${esc(who("daily"))} · 📝 오답노트</div>
+    <div class="line">${list.length ? `틀린 문제 ${list.length}개를 모아뒀어요. 맞히면 노트에서 빠지고 +3 XP예요!` : "오답노트가 비어 있어요. 깔끔해요! ✨"}</div></div>
+    <button class="x" data-close aria-label="닫기">×</button></div>
+    <div class="modal-body">
+      ${list.length ? `<div class="toolbar"><button class="btn" id="review-go">📝 복습 퀴즈 풀기 (${n}문제)</button></div>` : ""}
+      <p class="r-period">지금까지 다시 맞혀서 해결한 문제: ${save.wrongCleared}개</p>
+      <ul class="wlist">${list.map(([, w]) => `<li><div class="src">${esc(w.q.src.label)} · ${esc(w.at)}${w.misses > 1 ? ` · ${w.misses}번 틀림` : ""}</div>
+        <div class="q">${esc(w.q.q)}</div>
+        <details><summary>정답 보기</summary><b>${esc(w.q.options[w.q.answer])}</b> — ${esc(w.q.explain)}</details></li>`).join("")}</ul>
+    </div>`);
+  const go = document.getElementById("review-go");
+  if (go) go.onclick = openReview;
+}
+function openReview() {
+  const qs = wrongList().slice(0, 5).map(([, w]) => w.q);
+  if (!qs.length) return toast("복습할 문제가 없어요");
+  let cleared = 0;
+  runQuiz({
+    k: "daily", label: "오답 복습", intro: `지난번에 틀린 문제 ${qs.length}개, 다시 풀어볼까요? 📝`,
+    note: "맞히면 +3 XP", showSrc: true, qs,
+    onAnswer(q, ok) { if (noteAnswer(q, ok)) cleared++; },
+    onFinish(score, total) {
+      const left = Object.keys(save.wrong).length;
+      return {
+        line: score === total ? "전부 맞혔어요! 이제 확실히 기억하시겠죠? 💪" : "틀린 문제는 노트에 남겨둘게요. 내일 또 풀어봐요!",
+        sub: `${cleared ? `<b>+${cleared * 3} XP</b> · ` : ""}오답노트에 남은 문제 ${left}개`,
+        back: left ? { label: "오답노트 보기", fn: openWrongNote } : null, xp: cleared * 3, why: `오답 ${cleared}문제 해결`,
+      };
+    },
+  });
+}
+
+/* ───────────────────────── 주간 복습 ───────────────────────── */
+// 한 주의 데일리 퀴즈에서 최대 10문제. 처음 풀 때만 정답마다 +3 XP, 만점이면 +10.
+function dailyWeeks() {
+  const map = new Map();
+  for (const r of reportsOf("daily")) {
+    const [y, mo, d] = r.id.split("-").map(Number);
+    const w = isoWeek(new Date(y, mo - 1, d));
+    if (!map.has(w)) map.set(w, []);
+    map.get(w).push(r);
+  }
+  return [...map.entries()].sort((a, b) => b[0].localeCompare(a[0]));
+}
+function weekTitle(w) {
+  const [y, n] = w.split("-W").map(Number);
+  const jan4 = new Date(y, 0, 4), mon = new Date(jan4);
+  mon.setDate(jan4.getDate() - ((jan4.getDay() + 6) % 7) + (n - 1) * 7);
+  const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+  return `${y}년 ${n}주차 (${mon.getMonth() + 1}/${mon.getDate()} ~ ${sun.getMonth() + 1}/${sun.getDate()})`;
+}
+const weekPool = rs => rs.flatMap(r => quizWithSrc("daily", r));
+function openWeeklyQuiz(w) {
+  const rs = (dailyWeeks().find(x => x[0] === w) || [])[1] || [];
+  const pool = weekPool(rs);
+  if (pool.length < 3) return toast("이 주는 문제가 부족해요");
+  const qs = shuffle(pool, Math.random).slice(0, 10);
+  const first = !save.weekly[w];
+  runQuiz({
+    k: "weekly", label: "주간 복습", intro: `${weekTitle(w)} 데일리에서 ${qs.length}문제 골라왔어요. 한 주 복습해볼까요? 🗓`,
+    note: first ? "정답마다 +3 XP" : "다시 풀기 (경험치 없음)", showSrc: true, qs, onAnswer: noteAnswer,
+    onFinish(score, total) {
+      const perfect = score === total;
+      let xp = 0;
+      if (first) { xp = score * 3 + (perfect ? 10 : 0); save.weekly[w] = { score, total, at: nowStamp() }; }
+      else if (score > save.weekly[w].score) save.weekly[w] = { score, total, at: nowStamp() };
+      return {
+        line: perfect ? "한 주를 완벽하게 정리하셨네요! 👏" : "좋아요! 틀린 문제는 📝 오답노트에 모아뒀어요.",
+        sub: first ? (xp ? `<b>+${xp} XP</b>${perfect ? " (만점 보너스 포함)" : ""}` : "이번엔 경험치가 없어요") : "다시 풀기는 경험치가 없어요",
+        back: { label: "주간 복습 목록", fn: () => { archTab = "review"; openArchive(); } }, xp, why: `주간 복습 ${score}/${total}`,
+      };
+    },
+  });
+}
+
+/* ───────────────────────── 아이디어 다시 보기 ───────────────────────── */
+// 아이디어를 쓰거나 마지막으로 다시 본 지 일주일이 지나면 하루 사원이 다시 가져온다.
+const REVISIT_DAYS = 7;
+const GROW_PROMPTS = [
+  "그 뒤로 이 트렌드는 어떻게 됐을까요? 원문 이후 소식을 찾아보세요.",
+  "이 아이디어를 실제로 해본다면, 첫 번째로 할 일은 뭘까요?",
+  "다른 업종(식품·뷰티·금융·앱 서비스)에 적용하면 어떻게 달라질까요?",
+  "예산이 100만 원뿐이라면 어떻게 줄여서 해볼 수 있을까요?",
+  "이 아이디어의 약점이나 리스크는 뭘까요? 어떻게 보완할까요?",
+  "성공했는지 어떻게 알 수 있을까요? 볼 지표를 하나 정해보세요.",
+];
+const lastTouch = sc => [sc.ideaAt || sc.savedAt.slice(0, 10), sc.revisitedAt || "", ...(sc.notes || []).map(n => n.at)].sort().pop();
+function dueIdeas() {
+  const cut = NOW(); cut.setDate(cut.getDate() - REVISIT_DAYS);
+  return Object.entries(save.scraps)
+    .filter(([, sc]) => ideaOf(sc).trim() && lastTouch(sc) <= ymd(cut))
+    .sort((a, b) => lastTouch(a[1]).localeCompare(lastTouch(b[1])));
+}
+/** back이 없으면 하루 사원이 가져온 것 — 다 보면 다음 아이디어로 넘어간다 */
+function openIdeaRevisit(key, back) {
+  const sc = save.scraps[key]; if (!sc) return;
+  const today = ymd(NOW());
+  const days = Math.round((new Date(today + "T00:00") - new Date(lastTouch(sc) + "T00:00")) / 864e5);
+  const prompt = GROW_PROMPTS[(key.length + (sc.notes || []).length) % GROW_PROMPTS.length];
+  const xpKey = `g:${key}:${today}`;
+  openModal(`<div class="modal-head"><img src="${AVATAR.daily}" alt=""><div class="say"><div class="from">${esc(who("daily"))} · 💡 아이디어 다시 보기</div>
+    <div class="line">${days >= REVISIT_DAYS ? `${days}일 전에 남기신 아이디어예요. 지금 다시 보니 어떠세요?` : "이 아이디어에 생각을 더 붙여볼까요?"}</div></div>
+    <button class="x" data-close aria-label="닫기">×</button></div>
+    <div class="modal-body">
+      <span class="badge" style="background:${KIND_COLOR[sc.kind]}">${KIND_NAME[sc.kind]}</span> <span class="r-period">${esc(sc.reportLabel)}</span>
+      <h3 class="ititle">${esc(sc.item.title)}</h3>
+      ${sc.item.why ? `<div class="note why"><b>왜 주목할까</b>${esc(sc.item.why)}</div>` : ""}
+      <div class="ibox"><b>💡 처음 아이디어 · ${esc(sc.ideaAt || sc.savedAt.slice(0, 10))}</b>${esc(ideaOf(sc))}</div>
+      ${notesHtml(sc)}
+      <p class="iprompt">🤔 ${esc(prompt)}</p>
+      <label class="field">🌱 덧붙이기<textarea id="grow-text" rows="3" placeholder="새로 든 생각, 비슷한 사례, 더 구체적인 실행 방법…"></textarea></label>
+      <div class="toolbar">
+        <button class="btn" id="grow-save">덧붙이기${save.memoXp[xpKey] ? "" : " (+3 XP)"}</button>
+        <button class="btn ghost" id="grow-skip">지금은 그대로 둘게요</button>
+        ${back ? `<button class="btn ghost" id="grow-back">${esc(back.label)}</button>` : ""}
+      </div>
+      <ul class="srcs">${(sc.item.sources || []).filter(x => /^https?:/.test(x.url || "")).map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name || x.url)}</a>${x.date ? ` · ${esc(x.date)}` : ""}</li>`).join("")}</ul>
+    </div>`);
+  const done = msg => {
+    sc.revisitedAt = today; persist();
+    renderRoster(); checkBadges();
+    if (msg) toast(msg);
+    if (back) return back.fn();
+    const next = dueIdeas()[0];
+    if (next) setTimeout(() => openIdeaRevisit(next[0]), 300); else closeModal();
+  };
+  document.getElementById("grow-save").onclick = () => {
+    const text = document.getElementById("grow-text").value.trim();
+    if (!text) return toast("덧붙일 생각을 적어주세요");
+    (sc.notes = sc.notes || []).push({ at: today, text });
+    const firstXp = !save.memoXp[xpKey];
+    if (firstXp) { save.memoXp[xpKey] = true; gainXp(3, "아이디어 발전 🌱"); }
+    done(firstXp ? null : "생각을 덧붙였어요 🌱");
+  };
+  document.getElementById("grow-skip").onclick = () => done("일주일 뒤에 다시 가져올게요");
+  if (back) document.getElementById("grow-back").onclick = back.fn;
+}
+
+/* ───────────────────────── 업적 배지 ───────────────────────── */
+function longestStreak() {
+  const days = [...new Set(save.readDays)].sort();
+  let best = 0, run = 0, prev = null;
+  for (const d of days) {
+    const t = new Date(d + "T00:00");
+    run = prev && Math.round((t - prev) / 864e5) === 1 ? run + 1 : 1;
+    best = Math.max(best, run); prev = t;
+  }
+  return best;
+}
+const perfectCount = () => Object.values(save.quiz).filter(q => q.score === q.total).length;
+const scrapList = () => Object.values(save.scraps);
+const BADGES = [
+  { id: "first", icon: "📄", name: "첫 보고", desc: "리포트 처음 다 읽기", color: "#9be7c4", goal: 1, count: () => Object.keys(save.read).length },
+  { id: "streak3", icon: "🔥", name: "작심삼일 돌파", desc: "3일 연속 데일리 읽기", color: "#ffb37a", goal: 3, count: longestStreak },
+  { id: "streak7", icon: "🔥", name: "일주일 개근", desc: "7일 연속 데일리 읽기", color: "#ff7a59", goal: 7, count: longestStreak },
+  { id: "streak30", icon: "👑", name: "한 달 개근", desc: "30일 연속 데일리 읽기", color: "#ffcf5a", goal: 30, count: longestStreak },
+  { id: "allkinds", icon: "🗂️", name: "올라운더", desc: "데일리·위클리·먼슬리·분기 모두 읽기", color: "#b99cff", goal: 4, count: () => KINDS.filter(k => Object.keys(save.read).some(x => x.startsWith(k + "/"))).length },
+  { id: "weekend", icon: "🌴", name: "주말 출근", desc: "주말판 리포트 읽기", color: "#5bd1ff", goal: 1, count: () => reportsOf("daily").filter(r => r.doc.edition === "weekend" && isRead("daily", r.id)).length },
+  { id: "perfect3", icon: "💯", name: "만점 3회", desc: "확인 퀴즈 만점 3번", color: "#ff8fb1", goal: 3, count: perfectCount },
+  { id: "perfect10", icon: "🧠", name: "퀴즈 마스터", desc: "확인 퀴즈 만점 10번", color: "#e0559a", goal: 10, count: perfectCount },
+  { id: "scrap10", icon: "📌", name: "스크랩 10개", desc: "기사 10개 스크랩", color: "#ffd77a", goal: 10, count: () => scrapList().length },
+  { id: "scrap30", icon: "📚", name: "트렌드 수집가", desc: "기사 30개 스크랩", color: "#d9a441", goal: 30, count: () => scrapList().length },
+  { id: "idea10", icon: "💡", name: "아이디어 뱅크", desc: "아이디어 메모 10개", color: "#fff07a", goal: 10, count: () => scrapList().filter(x => ideaOf(x).trim()).length },
+  { id: "grow5", icon: "🌱", name: "생각 키우기", desc: "아이디어에 생각 5번 덧붙이기", color: "#7ad1a6", goal: 5, count: () => scrapList().reduce((n, x) => n + (x.notes || []).length, 0) },
+  { id: "wrong10", icon: "📝", name: "오답 정복", desc: "오답노트 문제 10개 해결", color: "#8fb3ff", goal: 10, count: () => save.wrongCleared },
+  { id: "weekly4", icon: "🗓", name: "복습왕", desc: "주간 복습 4주 풀기", color: "#5b8cff", goal: 4, count: () => Object.keys(save.weekly).length },
+];
+function checkBadges() {
+  const fresh = BADGES.filter(b => !save.badges[b.id] && b.count() >= b.goal);
+  if (!fresh.length) return;
+  fresh.forEach(b => save.badges[b.id] = ymd(NOW()));
+  persist();
+  // 경험치 토스트와 겹치지 않게 차례로 띄운다
+  fresh.forEach((b, i) => setTimeout(() => toast(`🏅 업적 달성: ${b.icon} ${b.name}`), 2800 * (i + 1)));
+}
+function openBadges() {
+  const got = BADGES.filter(b => save.badges[b.id]).length;
+  openModal(`<div class="modal-head"><img src="${ME_AVATAR}" alt=""><div class="say"><div class="from">업적 게시판</div>
+    <div class="line">🏅 ${got} / ${BADGES.length}개 달성 — 받은 배지는 사무실 벽 게시판에 걸려요</div></div>
+    <button class="x" data-close aria-label="닫기">×</button></div>
+    <div class="modal-body"><div class="bgrid">${BADGES.map(b => {
+      const on = save.badges[b.id];
+      return `<div class="${on ? "got" : "no"}"><span class="i">${on ? b.icon : "🔒"}</span><b>${esc(b.name)}</b><span>${esc(b.desc)}</span>
+        <span>${on ? `✓ ${esc(on)} 달성` : `${Math.min(b.count(), b.goal)} / ${b.goal}`}</span></div>`;
+    }).join("")}</div></div>`);
+}
+
+/* ───────────────────────── 보관함 · 스크랩북 · 키워드 · 설정 ───────────────────────── */
+let archTab = "daily";
+function openArchive() {
+  const tabs = KINDS.map(k => {
+    const unread = reportsOf(k).filter(r => !isRead(k, r.id)).length;
+    return `<button data-tab="${k}" class="${archTab === k ? "on" : ""}">${KIND_NAME[k]}${unread ? ` · 안 읽음 ${unread}` : ""}</button>`;
+  }).join("") + `<button data-tab="review" class="${archTab === "review" ? "on" : ""}">🗓 주간 복습</button>`;
+  let body;
+  if (archTab === "review") {
+    const weeks = dailyWeeks();
+    body = `<p class="r-period" style="margin:0 0 8px">한 주 동안 나온 데일리 퀴즈에서 최대 10문제. 처음 풀 때 정답마다 +3 XP, 만점이면 +10.</p>
+      <ul class="arch">${weeks.length ? weeks.map(([w, rs]) => {
+        const done = save.weekly[w], n = weekPool(rs).length;
+        return `<li><button data-week="${w}" ${n < 3 ? "disabled" : ""}><span class="ck">${done ? "✅" : "🗓"}</span>
+          <span><span class="t">데일리 ${rs.length}개 · ${Math.min(n, 10)}문제${done ? ` · 최고 ${done.score}/${done.total}` : ""}</span><span class="h">${esc(weekTitle(w))}</span></span></button></li>`;
+      }).join("") : `<li class="empty">데일리 리포트가 쌓이면 주차별로 복습할 수 있어요.</li>`}</ul>`;
+  } else {
+    const list = reportsOf(archTab).slice().reverse();
+    body = `<ul class="arch">${list.length ? list.map(r => `<li><button data-id="${esc(r.id)}"><span class="ck">${isRead(archTab, r.id) ? "✅" : "📄"}</span>
+      <span><span class="t">${esc(r.doc.period_label || r.id)}${r.doc.edition === "weekend" ? " · 주말판" : ""}${save.quiz[readKey(archTab, r.id)] ? ` · 🧠 ${save.quiz[readKey(archTab, r.id)].score}/${save.quiz[readKey(archTab, r.id)].total}` : ""}</span><span class="h">${esc(r.doc.headline)}</span></span></button></li>`).join("")
+      : `<li class="empty">${TEAM[archTab].name} ${TEAM[archTab].title}의 첫 리포트는 ${TEAM[archTab].when}에 도착해요.</li>`}</ul>`;
+  }
+  openModal(`
+    <div class="modal-head"><img src="${ME_AVATAR}" alt=""><div class="say"><div class="from">내 책상</div><div class="line">받은 리포트</div></div><button class="x" data-close aria-label="닫기">×</button></div>
+    <div class="modal-body"><div class="tabs">${tabs}</div>${body}</div>`);
+  modal.querySelectorAll("[data-tab]").forEach(b => b.onclick = () => { archTab = b.dataset.tab; openArchive(); });
+  modal.querySelectorAll("[data-id]").forEach(b => b.onclick = () => openReport(archTab, b.dataset.id));
+  modal.querySelectorAll("[data-week]").forEach(b => b.onclick = () => openWeeklyQuiz(b.dataset.week));
+}
+
+let scrapFilter = "", scrapQuery = "";
+function openScrapbook() {
+  const all = Object.entries(save.scraps).sort((a, b) => b[1].savedAt.localeCompare(a[1].savedAt));
+  const tags = [...new Set(all.map(([, s]) => s.item.tag).filter(Boolean))];
+  const q = scrapQuery.toLowerCase();
+  const shown = all.filter(([, s]) => (!scrapFilter || s.item.tag === scrapFilter)
+    && (!q || [s.item.title, s.item.body, s.item.brand, ideaOf(s), ...(s.notes || []).map(n => n.text)].join(" ").toLowerCase().includes(q)));
+  openModal(`
+    <div class="modal-head"><img src="${ME_AVATAR}" alt=""><div class="say"><div class="from">책장</div><div class="line">📌 내 스크랩북 (${all.length})</div></div><button class="x" data-close aria-label="닫기">×</button></div>
+    <div class="modal-body">
+      <input class="search" id="sq" placeholder="제목, 브랜드, 아이디어로 검색" value="${esc(scrapQuery)}">
+      <div class="tabs"><button data-f="" class="${scrapFilter ? "" : "on"}">전체</button>${tags.map(t => `<button data-f="${esc(t)}" class="${scrapFilter === t ? "on" : ""}">${esc(t)}</button>`).join("")}</div>
+      <div class="toolbar"><button class="btn ghost" id="copy-md">마크다운으로 복사</button>${dueIdeas().length ? `<button class="btn" id="revisit-go">💡 다시 볼 아이디어 ${dueIdeas().length}개</button>` : ""}</div>
+      <div class="r-cards">${shown.length ? shown.map(([key, s]) => `
+        <article class="r-card scrapped" data-key="${esc(key)}">
+          <div class="r-meta"><span class="badge" style="background:${KIND_COLOR[s.kind]}">${KIND_NAME[s.kind]}</span>${s.item.tag ? `<span class="tag">${esc(s.item.tag)}</span>` : ""}${s.item.brand ? `<span class="brand">${esc(s.item.brand)}</span>` : ""}
+            <button class="scrap">★ 해제</button></div>
+          <h4>${esc(s.item.title)}</h4><p class="link">${esc(s.reportLabel)}</p><p>${esc(s.item.body)}</p>
+          ${s.item.action ? `<div class="note act"><b>팔로업</b>${esc(s.item.action)}</div>` : ""}
+          ${memoFields(s)}
+          <ul class="srcs">${s.item.sources.filter(x => /^https?:/.test(x.url || "")).map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name || x.url)}</a></li>`).join("")}</ul>
+        </article>`).join("") : `<p class="empty">리포트 카드의 ☆ 스크랩을 누르면 여기에 모여요. 포트폴리오나 면접 준비할 때 꺼내 보세요.</p>`}</div>
+    </div>`);
+  const sq = document.getElementById("sq");
+  sq.oninput = () => { scrapQuery = sq.value; clearTimeout(sq._t); sq._t = setTimeout(() => { openScrapbook(); const n = document.getElementById("sq"); n.focus(); n.setSelectionRange(n.value.length, n.value.length); }, 300); };
+  modal.querySelectorAll("[data-f]").forEach(b => b.onclick = () => { scrapFilter = b.dataset.f; openScrapbook(); });
+  modal.querySelectorAll(".r-card").forEach(card => {
+    const key = card.dataset.key;
+    card.querySelector(".scrap").onclick = () => {
+      if (hasMemo(save.scraps[key]) && !confirm("메모도 함께 지워져요. 스크랩을 해제할까요?")) return;
+      delete save.scraps[key]; persist(); openScrapbook();
+    };
+    bindMemo(card, key, { label: "스크랩북으로", fn: openScrapbook });
+  });
+  const rv = document.getElementById("revisit-go");
+  if (rv) rv.onclick = () => openIdeaRevisit(dueIdeas()[0][0], { label: "스크랩북으로", fn: openScrapbook });
+  document.getElementById("copy-md").onclick = () => {
+    const md = shown.map(([, s]) => `## ${s.item.title}\n- ${KIND_NAME[s.kind]} · ${s.reportLabel}${s.item.brand ? ` · ${s.item.brand}` : ""}\n- ${s.item.body}\n${s.item.action ? `- 팔로업: ${s.item.action}\n` : ""}${ideaOf(s) ? `- 💡 아이디어: ${ideaOf(s)}\n` : ""}${(s.notes || []).map(n => `  - 🌱 ${n.at}: ${n.text}\n`).join("")}${s.item.sources.map(x => `- 출처: [${x.name || x.url}](${x.url})`).join("\n")}`).join("\n\n");
+    navigator.clipboard.writeText(md || "").then(() => toast("마크다운을 클립보드에 복사했어요"), () => toast("복사하지 못했어요"));
+  };
+}
+
+function openLevels() {
+  const lv = level(), next = LEVELS[lv];
+  const rows = LEVELS.map((l, i) => {
+    const n = i + 1, done = n < lv, cur = n === lv;
+    const st = cur ? "📍 지금" : done ? "✓ 달성" : `🔒 ${l.xp - save.xp} XP 남음`;
+    return `<li class="${cur ? "cur" : done ? "" : "locked"}"><span class="n pixel">Lv.${n}</span>
+      <span class="t"><b>${esc(l.title)}</b> <span>${n === 1 ? "" : "🎁 "}${esc(l.unlock)}${l.perk ? ` — ${esc(l.perk)}` : ""}</span></span>
+      <span class="s">${st}<br><span style="color:var(--paper-muted);font-weight:600">${l.xp} XP</span></span></li>`;
+  }).join("");
+  openModal(`<div class="modal-head"><img src="${ME_AVATAR}" alt=""><div class="say"><div class="from">직급표 · 전체 ${LEVELS.length}단계</div>
+    <div class="line">${esc(meName())}님은 Lv.${lv} ${esc(LEVELS[lv - 1].title)} · ${save.xp} XP${next ? ` (다음 직급까지 ${next.xp - save.xp} XP)` : " · 최고 직급 달성!"}</div></div>
+    <button class="x" data-close aria-label="닫기">×</button></div>
+    <div class="modal-body">
+      <p class="r-period">승진할 때마다 사무실에 새 물건이 생겨요.</p>
+      <ul class="lvlist">${rows}</ul>
+      <ul class="howto">
+        <li>리포트 다 읽기: 데일리 +${XP_READ.daily} · 위클리 +${XP_READ.weekly} · 먼슬리 +${XP_READ.monthly} · 분기 +${XP_READ.quarterly}</li>
+        <li>3일 이상 연속으로 데일리 읽기: +5 보너스</li>
+        <li>확인 퀴즈 처음 풀 때: 정답마다 +5, 만점이면 +5 더</li>
+        <li>오답노트 복습에서 맞히기: 문제마다 +3</li>
+        <li>주간 복습 처음 풀 때: 정답마다 +3, 만점이면 +10</li>
+        <li>스크랩 +1 · 아이디어 메모 +2 · 아이디어에 생각 덧붙이기 +3 (스크랩마다 하루 1번)</li>
+      </ul>
+    </div>`);
+}
+
+function openKeywords() {
+  const l = latestOf("daily");
+  const kw = l ? l.doc.keywords || [] : [];
+  openModal(`<div class="modal-head"><img src="${AVATAR.daily}" alt=""><div class="say"><div class="from">화이트보드</div><div class="line">오늘의 키워드</div></div><button class="x" data-close aria-label="닫기">×</button></div>
+    <div class="modal-body">${kw.length ? `<p class="r-period">${esc(l.doc.period_label)}</p><div class="chips">${kw.map(x => `<span>#${esc(x)}</span>`).join("")}</div>` : `<p class="empty">아직 키워드가 없어요.</p>`}</div>`, true);
+}
+
+function openSettings() {
+  openModal(`<div class="modal-head"><img src="${ME_AVATAR}" alt=""><div class="say"><div class="from">설정</div><div class="line">내 오피스 설정</div></div><button class="x" data-close aria-label="닫기">×</button></div>
+    <div class="modal-body">
+      <label class="field">팀원들이 부를 내 이름<input id="me-name" value="${esc(save.me)}" placeholder="예: 재영"></label>
+      <p class="r-period" style="margin:14px 0 0">팀원 이름 (비워두면 기본 이름)</p>
+      <div class="tnames">${KINDS.map(k => `<label class="field"><span class="badge" style="background:${KIND_COLOR[k]}">${KIND_NAME[k]}</span> ${esc(TEAM[k].title)}
+        <input data-tname="${k}" maxlength="8" value="${esc((save.teamNames || {})[k] || "")}" placeholder="${esc(DEFAULT_NAME[k])}"></label>`).join("")}</div>
+      <div class="toolbar"><button class="btn" id="save-name">저장</button></div>
+      <p class="link">기록(읽음, 경험치, 스크랩, 메모)은 이 브라우저에만 저장돼요. 브라우저를 바꾸거나 데이터를 지우기 전에 백업해두세요.</p>
+      <div class="toolbar">
+        <button class="btn ghost" id="export">기록 백업 받기</button>
+        <label class="btn ghost">기록 불러오기<input type="file" id="import" accept="application/json" hidden></label>
+        <button class="btn ghost" id="replay">출근 장면 다시 보기</button>
+      </div>
+    </div>`, true);
+  document.getElementById("save-name").onclick = () => {
+    save.me = document.getElementById("me-name").value.trim();
+    save.teamNames = {};
+    modal.querySelectorAll("[data-tname]").forEach(i => { const v = i.value.trim(); if (v) save.teamNames[i.dataset.tname] = v; });
+    persist(); applyTeamNames();
+    extraLog = [];  // 예전 이름으로 남은 출근 기록은 renderLog가 새 이름으로 다시 만든다
+    renderHud(); renderRoster(); renderLog(); closeModal(); toast("저장했어요");
+  };
+  document.getElementById("export").onclick = () => {
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob([JSON.stringify(save, null, 2)], { type: "application/json" }));
+    a.download = `marketing-office-backup-${ymd(NOW())}.json`; a.click();
+  };
+  document.getElementById("import").onchange = ev => {
+    const f = ev.target.files[0]; if (!f) return;
+    f.text().then(t => { save = Object.assign(defaultSave(), JSON.parse(t)); persist(); applyTeamNames(); closeModal(); refreshStates(true); toast("기록을 불러왔어요"); })
+      .catch(() => toast("파일을 읽지 못했어요"));
+  };
+  document.getElementById("replay").onclick = () => {
+    delete save.arrived[ymd(NOW())]; persist();
+    KINDS.forEach(k => Object.assign(chars[k], { visible: false, mode: "away", path: [], onArrive: null }));
+    closeModal(); refreshStates(false);
+  };
+}
+
+document.getElementById("btn-archive").onclick = openArchive;
+document.getElementById("btn-scrap").onclick = openScrapbook;
+document.getElementById("btn-settings").onclick = openSettings;
+document.getElementById("btn-level").onclick = openLevels;
+document.getElementById("btn-wrong").onclick = openWrongNote;
+document.getElementById("btn-badges").onclick = openBadges;
+
+/* ───────────────────────── 시작 ───────────────────────── */
+refreshStates(false);
+checkBadges();
+requestAnimationFrame(loop);
+setInterval(() => refreshStates(false), 15000);   // 출근·퇴근 시각 확인
+setInterval(reloadData, 120000);                  // 새 리포트 확인
+if (!save.me && !SIM) setTimeout(() => {
+  openModal(`<div class="modal-body center levelup"><img src="${ME_AVATAR}" alt="">
+    <h3>마케팅팀에 오신 걸 환영해요!</h3>
+    <p>매일 아침 팀원들이 출근해서 트렌드 리포트를 들고 와요.<br>읽을수록 승진하고, 사무실이 꾸며져요.</p>
+    <label class="field" style="text-align:left">팀원들이 부를 이름<input id="first-name" placeholder="예: 재영"></label>
+    <button class="btn" id="first-go">출근하기</button></div>`, true);
+  document.getElementById("first-go").onclick = () => { save.me = document.getElementById("first-name").value.trim() || "팀장"; persist(); renderHud(); closeModal(); };
+}, 400);
+</script>
+</body>
+</html>
