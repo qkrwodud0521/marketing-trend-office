@@ -310,7 +310,7 @@ const LEVELS = [
   { xp: 380, title: "차장", unlock: "소파와 러그" },
   { xp: 540, title: "부장", unlock: "네온사인" },
   { xp: 740, title: "팀장", unlock: "트로피" },
-  { xp: 1000, title: "본부장", unlock: "오락기" },
+  { xp: 1000, title: "본부장", unlock: "실적 대시보드" },
   { xp: 1300, title: "CMO", unlock: "황금빛 야경 창문과 고양이" },
 ];
 
@@ -636,7 +636,7 @@ function drawRoom(now, lv) {
   if (lv >= 6) { rect(222, 52, 62, 30, "#d07a8f"); rect(226, 56, 54, 22, "#e797a8"); rect(224, 82, 58, 2, "#8c4a5b"); rect(214, 88, 76, 22, "rgba(255,207,90,.35)"); }
   if (lv >= 7) { ctx.font = "bold 9px monospace"; ctx.fillStyle = night ? "#ff7ad9" : "#d94fb3"; ctx.fillText("TREND", 196, 28); if (night) { ctx.fillStyle = "rgba(255,122,217,.25)"; ctx.fillRect(192, 18, 40, 14); } }
   if (lv >= 8) { rect(4, 52, 10, 6, "#7a5236"); rect(6, 44, 6, 8, "#ffcf5a"); rect(5, 43, 8, 2, "#ffcf5a"); }
-  if (lv >= 9) { rect(296, 92, 20, 32, "#3d2b6b"); rect(298, 96, 16, 12, "#2b2233"); rect(300, 98, 12, 8, Math.floor(performance.now() / 400) % 2 ? "#ff7ad9" : "#5bd1ff"); rect(300, 112, 4, 4, "#ff5a36"); rect(306, 112, 4, 4, "#ffcf5a"); }
+  if (lv >= 9) { rect(296, 92, 20, 16, "#2b2233"); rect(297, 93, 18, 12, night ? "#1f2a44" : "#eaf2ff"); const g = Math.floor(performance.now() / 600) % 4; [[3, "#5b8cff"], [5, "#2bb37e"], [7, "#ffcf5a"], [6 + g, "#ff5a36"]].forEach(([h, c], i) => rect(299 + i * 4, 104 - h, 3, h, c)); rect(305, 108, 2, 12, "#5a5a6a"); rect(299, 120, 14, 3, "#5a5a6a"); }
   if (lv >= 10) { const cx = 60 + Math.sin(performance.now() / 4000) * 30; rect(cx, 200, 10, 6, "#f2a65a"); rect(cx + 8, 196, 5, 5, "#f2a65a"); rect(cx + 8, 194, 1, 2, "#f2a65a"); rect(cx + 12, 194, 1, 2, "#f2a65a"); rect(cx - 3, 199, 3, 2, "#f2a65a"); }
 
   return night;
