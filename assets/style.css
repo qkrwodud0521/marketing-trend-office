@@ -12,6 +12,8 @@
   --quarterly: #8a4dff;
   --why: #f3f6ff;
   --action: #effaf5;
+  --insta: #fdf0f7;
+  --insta-ink: #c13584;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -23,6 +25,8 @@
     --accent-soft: #2a1a15;
     --why: #1a2033;
     --action: #15261f;
+    --insta: #2a1724;
+    --insta-ink: #f07ab8;
   }
 }
 * { box-sizing: border-box; }
@@ -100,6 +104,14 @@ nav.top a:hover { color: var(--ink); }
 .why b { color: var(--weekly); }
 .action { background: var(--action); }
 .action b { color: var(--monthly); }
+.insta { background: var(--insta); }
+.insta b { color: var(--insta-ink); }
+.insta .steps { margin: 4px 0 0; padding-left: 20px; }
+.insta .steps li { margin: 2px 0; }
+.insta .audio { margin-top: 6px; font-size: 13.5px; }
+.ig-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.ig { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--surface); border: 1px solid var(--insta-ink); color: var(--insta-ink); font-size: 12.5px; font-weight: 600; text-decoration: none; overflow-wrap: anywhere; }
+.ig.tag { border-style: dashed; font-weight: 500; }
 .sources { list-style: none; padding: 12px 0 0; margin: auto 0 0; border-top: 1px dashed var(--line); font-size: 13px; }
 .card .sources { margin-top: 14px; }
 .sources li { margin: 2px 0; overflow-wrap: anywhere; }

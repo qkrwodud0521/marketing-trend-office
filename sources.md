@@ -18,6 +18,17 @@
 - 인터비즈 (동아일보) — 비즈니스·브랜드 사례
 - 각 브랜드 공식 뉴스룸, 인스타그램·유튜브 캠페인 공개 보도
 
+## 인스타그램 트렌드 (화·금 데일리의 인스타 섹션)
+인스타그램은 로그인 없이 거의 열리지 않으므로, 트렌드를 정리해주는 곳과 기사로 파악하고 원본 게시물은 검색으로 찾는다.
+- Later 블로그 — 주간 릴스 트렌드·트렌딩 오디오 — https://later.com/blog/instagram-reels-trends/
+- Instagram 공식 블로그 — 기능·알고리즘 발표 — https://about.instagram.com/blog
+- Instagram @creators 계정의 트렌드 발표 (이를 인용한 기사로 확인)
+- Adam Mosseri(인스타그램 대표)의 기능·추천 방식 설명 (이를 다룬 기사로 확인)
+- Social Media Today — 인스타그램 기능 업데이트 뉴스 — https://www.socialmediatoday.com
+- TechCrunch, The Verge — 신기능 보도
+- 국내: 캐릿·오픈애즈·아이보스·더피알·브랜드브리프 기사 속 인스타 사례, 브랜드 공식 계정 관련 보도
+- 원본 게시물 찾기: `site:instagram.com/reel 키워드`, `site:instagram.com/p 브랜드명` 검색
+
 ## 정기 트렌드 리포트 (분기)
 - 메조미디어 — 업종 분석·트렌드 리포트 — https://www.mezzomedia.co.kr
 - 나스미디어 — NPR(넷스루 리포트), 인터넷 이용자 조사 — https://www.nasmedia.co.kr

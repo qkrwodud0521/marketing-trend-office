@@ -161,6 +161,12 @@ canvas#office { display: block; width: 100%; height: auto; image-rendering: pixe
 .note b { display: block; font-size: 11.5px; }
 .note.why { background: #eef2ff; } .note.why b { color: #3b5bdb; }
 .note.act { background: #e9f9f1; } .note.act b { color: #1e8a5f; }
+.note.insta { background: #fdf0f7; } .note.insta b { color: #c13584; }
+.note.insta ol { margin: 4px 0 0; padding-left: 18px; }
+.note.insta .audio { margin-top: 4px; font-size: 13px; }
+.ig-links { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.ig-links a { padding: 2px 9px; border-radius: 999px; border: 2px solid #c13584; background: #fff; color: #c13584; font-size: 12px; font-weight: 700; text-decoration: none; overflow-wrap: anywhere; }
+.ig-links a.tag { border-style: dashed; font-weight: 600; }
 .srcs { list-style: none; padding: 8px 0 0; margin: auto 0 0; border-top: 1px dashed var(--paper-line); font-size: 12px; }
 .r-card .srcs { margin-top: 10px; }
 .srcs li { overflow-wrap: anywhere; }
@@ -839,6 +845,17 @@ const AVATAR = {};
 KINDS.forEach(k => AVATAR[k] = avatarURL(lookOf(k)));
 const ME_AVATAR = avatarURL(ME_LOOK);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
+// 인스타 항목(화·금 데일리)의 '구성 뜯어보기' — 원본 게시물·해시태그로 바로 가는 링크 포함
+function instaHtml(ins) {
+  if (!ins) return "";
+  const posts = (ins.posts || []).filter(x => /^https?:/.test(x.url || "")).map(x => `<a href="${esc(x.url)}" target="_blank" rel="noopener">▶ ${esc(x.name || "인스타에서 보기")}</a>`);
+  const tags = (ins.hashtags || []).map(t => String(t).replace(/^#/, "").replace(/\s/g, "")).filter(Boolean)
+    .map(t => `<a class="tag" href="https://www.instagram.com/explore/tags/${encodeURIComponent(t)}/" target="_blank" rel="noopener">#${esc(t)}</a>`);
+  return `<div class="note insta"><b>📱 구성 뜯어보기${ins.format ? ` · ${esc(ins.format)}` : ""}</b>
+    ${(ins.breakdown || []).length ? `<ol>${ins.breakdown.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
+    ${ins.audio ? `<div class="audio">🎵 ${esc(ins.audio)}</div>` : ""}
+    ${posts.length + tags.length ? `<div class="ig-links">${posts.concat(tags).join("")}</div>` : ""}</div>`;
+}
 const meName = () => save.me || "팀장";
 
 function statusText(k) {
@@ -1003,6 +1020,7 @@ function openReport(k, id) {
         ${it.points && it.points.length ? `<ul class="pts">${it.points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}
         ${it.why ? `<div class="note why"><b>왜 주목할까</b>${esc(it.why)}</div>` : ""}
         ${it.action ? `<div class="note act"><b>팔로업</b>${esc(it.action)}</div>` : ""}
+        ${instaHtml(it.insta)}
         ${memoFields(sc)}
         <ul class="srcs">${(it.sources || []).filter(x => /^https?:/.test(x.url || "")).map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name || x.url)}</a>${x.date ? ` · ${esc(x.date)}` : ""}</li>`).join("")}</ul>
       </article>`;
@@ -1073,7 +1091,7 @@ function toggleScrap(card, key, k, r, item) {
   }
   save.scraps[key] = {
     kind: k, reportId: r.id, reportLabel: r.doc.period_label || r.id, savedAt: NOW().toISOString(), idea: "",
-    item: { title: item.title, tag: item.tag, brand: item.brand, body: item.body, why: item.why, action: item.action, sources: item.sources || [] },
+    item: { title: item.title, tag: item.tag, brand: item.brand, body: item.body, why: item.why, action: item.action, insta: item.insta, sources: item.sources || [] },
   };
   card.classList.add("scrapped"); btn.textContent = "★ 스크랩됨";
   persist();
@@ -1440,6 +1458,7 @@ function openScrapbook() {
             <button class="scrap">★ 해제</button></div>
           <h4>${esc(s.item.title)}</h4><p class="link">${esc(s.reportLabel)}</p><p>${esc(s.item.body)}</p>
           ${s.item.action ? `<div class="note act"><b>팔로업</b>${esc(s.item.action)}</div>` : ""}
+          ${instaHtml(s.item.insta)}
           ${memoFields(s)}
           <ul class="srcs">${s.item.sources.filter(x => /^https?:/.test(x.url || "")).map(x => `<li><a href="${esc(x.url)}" target="_blank" rel="noopener">${esc(x.name || x.url)}</a></li>`).join("")}</ul>
         </article>`).join("") : `<p class="empty">리포트 카드의 ☆ 스크랩을 누르면 여기에 모여요. 포트폴리오나 면접 준비할 때 꺼내 보세요.</p>`}</div>
@@ -1458,7 +1477,7 @@ function openScrapbook() {
   const rv = document.getElementById("revisit-go");
   if (rv) rv.onclick = () => openIdeaRevisit(dueIdeas()[0][0], { label: "스크랩북으로", fn: openScrapbook });
   document.getElementById("copy-md").onclick = () => {
-    const md = shown.map(([, s]) => `## ${s.item.title}\n- ${KIND_NAME[s.kind]} · ${s.reportLabel}${s.item.brand ? ` · ${s.item.brand}` : ""}\n- ${s.item.body}\n${s.item.action ? `- 팔로업: ${s.item.action}\n` : ""}${ideaOf(s) ? `- 💡 아이디어: ${ideaOf(s)}\n` : ""}${(s.notes || []).map(n => `  - 🌱 ${n.at}: ${n.text}\n`).join("")}${s.item.sources.map(x => `- 출처: [${x.name || x.url}](${x.url})`).join("\n")}`).join("\n\n");
+    const md = shown.map(([, s]) => `## ${s.item.title}\n- ${KIND_NAME[s.kind]} · ${s.reportLabel}${s.item.brand ? ` · ${s.item.brand}` : ""}\n- ${s.item.body}\n${s.item.action ? `- 팔로업: ${s.item.action}\n` : ""}${ideaOf(s) ? `- 💡 아이디어: ${ideaOf(s)}\n` : ""}${(s.notes || []).map(n => `  - 🌱 ${n.at}: ${n.text}\n`).join("")}${((s.item.insta || {}).posts || []).map(x => `- 인스타: [${x.name || x.url}](${x.url})\n`).join("")}${s.item.sources.map(x => `- 출처: [${x.name || x.url}](${x.url})`).join("\n")}`).join("\n\n");
     navigator.clipboard.writeText(md || "").then(() => toast("마크다운을 클립보드에 복사했어요"), () => toast("복사하지 못했어요"));
   };
 }

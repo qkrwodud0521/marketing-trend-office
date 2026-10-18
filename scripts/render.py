@@ -3,6 +3,7 @@ import datetime as dt
 import json
 from html import escape
 from pathlib import Path
+from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parent.parent
 TYPES = ("daily", "weekly", "monthly", "quarterly")
@@ -69,6 +70,34 @@ def html_page(title, body, css_path):
 """
 
 
+def clean_tag(tag):
+    return "".join(str(tag).lstrip("#").split())
+
+
+def tag_url(tag):
+    return "https://www.instagram.com/explore/tags/" + quote(clean_tag(tag)) + "/"
+
+
+def render_insta(ins):
+    """인스타 항목의 '구성 뜯어보기' 블록."""
+    parts = ['<div class="note insta"><b>📱 구성 뜯어보기']
+    if ins.get("format"):
+        parts.append(f' · {e(ins["format"])}')
+    parts.append("</b>")
+    if ins.get("breakdown"):
+        parts.append('<ol class="steps">' + "".join(f"<li>{e(s)}</li>" for s in ins["breakdown"]) + "</ol>")
+    if ins.get("audio"):
+        parts.append(f'<p class="audio">🎵 {e(ins["audio"])}</p>')
+    links = [f'<a class="ig" href="{e(p["url"])}" target="_blank" rel="noopener">▶ {e(p.get("name") or "인스타에서 보기")}</a>'
+             for p in ins.get("posts") or [] if str(p.get("url", "")).startswith("http")]
+    links += [f'<a class="ig tag" href="{e(tag_url(t))}" target="_blank" rel="noopener">#{e(clean_tag(t))}</a>'
+              for t in ins.get("hashtags") or [] if clean_tag(t)]
+    if links:
+        parts.append('<div class="ig-links">' + "".join(links) + "</div>")
+    parts.append("</div>")
+    return "".join(parts)
+
+
 def render_item(it):
     parts = ['<article class="card">', '<div class="card-meta">']
     if it.get("rank"):
@@ -86,6 +115,8 @@ def render_item(it):
         parts.append(f'<div class="note why"><b>왜 주목할까</b><p>{e(it["why"])}</p></div>')
     if it.get("action"):
         parts.append(f'<div class="note action"><b>팔로업</b><p>{e(it["action"])}</p></div>')
+    if it.get("insta"):
+        parts.append(render_insta(it["insta"]))
     if it.get("keywords"):
         parts.append('<div class="kw small">' + "".join(f"<span>#{e(k)}</span>" for k in it["keywords"]) + "</div>")
     srcs = [s for s in it.get("sources", []) if str(s.get("url", "")).startswith("http")]

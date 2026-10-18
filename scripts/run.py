@@ -137,6 +137,35 @@ def is_weekend(kind, today):
     return kind == "daily" and today.weekday() >= 5
 
 
+INSTA_DAYS = (1, 4)  # 화·금 데일리에 인스타그램 섹션을 붙인다
+INSTA_SECTION = "인스타"  # 섹션 제목에 들어가야 하는 말
+
+
+def is_insta_day(kind, today):
+    return kind == "daily" and today.weekday() in INSTA_DAYS
+
+
+def validate_insta(path):
+    """인스타 섹션이 있는 날의 추가 검증. 문제 목록을 돌려준다."""
+    try:
+        doc = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return []  # render.validate가 이미 잡는다
+    secs = [s for s in doc.get("sections", []) if INSTA_SECTION in s.get("title", "")]
+    if not secs:
+        return ["'인스타 캐러셀·릴스 트렌드' 섹션이 없습니다"]
+    items = [it for s in secs for it in s.get("items", [])]
+    errors = [] if len(items) >= 3 else [f"인스타 섹션 항목이 {len(items)}개뿐입니다 (최소 3개)"]
+    for it in items:
+        ins = it.get("insta") or {}
+        if len(ins.get("breakdown") or []) < 2:
+            errors.append(f"'{it.get('title', '(제목 없음)')}' 항목의 insta.breakdown이 비어 있습니다")
+        for post in ins.get("posts") or []:
+            if "instagram.com/" not in str(post.get("url", "")):
+                errors.append(f"'{it.get('title', '(제목 없음)')}' 항목의 insta.posts에 instagram.com 주소가 아닌 링크가 있습니다")
+    return errors
+
+
 def build_prompt(kind, today, out_path, extra=""):
     pid, label, start, end = period(kind, today)
     name = "daily_weekend" if is_weekend(kind, today) else kind
@@ -147,6 +176,8 @@ def build_prompt(kind, today, out_path, extra=""):
         "OUTPUT": str(out_path.relative_to(ROOT)),
         "INPUTS": inputs_for(kind, start, end),
         "RECENT": recent_titles(today) if kind == "daily" else "",
+        "INSTA": (ROOT / "prompts" / "insta_section.md").read_text(encoding="utf-8")
+                 if is_insta_day(kind, today) else "",
     }.items():
         text = text.replace("{{" + key + "}}", val)
     return text + extra
@@ -246,6 +277,8 @@ def generate(kind, today, notify_fail=True):
         log(f"{kind} {pid} 생성 시도 {attempt}")
         run_agent(build_prompt(kind, today, out_path, extra))
         errors = render.validate(out_path)
+        if is_insta_day(kind, today) and out_path.exists():
+            errors += validate_insta(out_path)
         if not errors:
             break
         log("검증 실패: " + "; ".join(errors))
