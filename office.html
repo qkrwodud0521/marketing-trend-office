@@ -211,6 +211,13 @@ canvas#office { display: block; width: 100%; height: auto; image-rendering: pixe
 .center { text-align: center; }
 .levelup img { width: 72px; height: 96px; image-rendering: pixelated; }
 .levelup h3 { font-size: 22px; margin: 8px 0 4px; }
+.login-bg { z-index: 30; }
+.login-bg .modal-body { padding: 24px 22px; }
+.field .opt { color: var(--paper-muted); font-weight: 400; }
+.form-err { min-height: 18px; margin: 4px 0 10px; color: #d64545; font-size: 13px; font-weight: 600; text-align: left; }
+.login-bg .btn { width: 100%; }
+.login-note { margin: 12px 0 0; color: var(--paper-muted); font-size: 12px; line-height: 1.5; }
+.account { margin: 0 0 6px; padding: 10px 12px; border: 2px solid var(--paper-line); border-radius: 10px; font-size: 13px; line-height: 1.6; }
 .toast { visibility: hidden; position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(120px); background: #1b1726; color: #fff; border: 2px solid var(--gold); padding: 8px 16px; border-radius: 10px; font-weight: 700; transition: transform .3s; z-index: 20; }
 .toast.show { visibility: visible; transform: translateX(-50%) translateY(0); }
 </style>
@@ -255,6 +262,17 @@ canvas#office { display: block; width: 100%; height: auto; image-rendering: pixe
 
 <div class="modal-bg" id="modal-bg"><div class="modal" id="modal"></div></div>
 <div class="toast" id="toast"></div>
+<div class="modal-bg login-bg" id="login"><form class="modal small" id="login-form" novalidate><div class="modal-body center levelup">
+  <img id="login-avatar" alt="">
+  <h3>마케팅팀에 오신 걸 환영해요!</h3>
+  <p>매일 아침 팀원들이 출근해서 트렌드 리포트를 들고 와요.<br>읽을수록 승진하고, 사무실이 꾸며져요.</p>
+  <label class="field" style="text-align:left">닉네임<input id="login-nick" maxlength="12" autocomplete="nickname" placeholder="팀원들이 부를 이름"></label>
+  <label class="field" style="text-align:left">전화번호<input id="login-phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="010-1234-5678"></label>
+  <label class="field" style="text-align:left">이메일 <span class="opt">(선택)</span><input id="login-email" type="email" autocomplete="email" placeholder="name@example.com"></label>
+  <p class="form-err" id="login-err"></p>
+  <button class="btn" type="submit">출근하기</button>
+  <p class="login-note">전에 쓰던 전화번호로 들어오면 그 기록을 이어서 볼 수 있어요.<br>입력한 정보는 이 브라우저에만 저장되고 어디로도 보내지 않아요.</p>
+</div></form></div>
 
 <script src="assets/reports-data.js"></script>
 <script src="assets/run-status.js"></script>
@@ -321,15 +339,19 @@ const LEVELS = [
 ];
 
 /* ───────────────────────── 저장 ───────────────────────── */
-const SAVE_KEY = "mkt-office-v1";
+// 계정마다 기록을 따로 저장한다: mkt-office-v1:<전화번호>. 로그인한 계정은 SESSION_KEY에 둔다.
+// 로그인 기능 전의 기록(mkt-office-v1)은 이 브라우저에서 처음 로그인하는 계정이 이어받는다.
+const LEGACY_KEY = "mkt-office-v1", SESSION_KEY = "mkt-office-session";
+const saveKey = phone => `${LEGACY_KEY}:${phone}`;
 const defaultSave = () => ({ me: "", teamNames: {}, xp: 0, read: {}, readDays: [], scraps: {}, memoXp: {}, arrived: {}, quiz: {},
-  wrong: {}, wrongCleared: 0, weekly: {}, badges: {} });
-let save = defaultSave();
-try {
-  const raw = localStorage.getItem(SAVE_KEY);
-  if (raw) save = Object.assign(defaultSave(), JSON.parse(raw));
-} catch (e) { /* 저장소를 못 쓰면 이번 세션만 기억 */ }
-function persist() { try { localStorage.setItem(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
+  wrong: {}, wrongCleared: 0, weekly: {}, badges: {}, profile: { phone: "", email: "", joinedAt: "" } });
+function storeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+function storeSet(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) { /* 저장소를 못 쓰면 이번 세션만 기억 */ } }
+function parseSave(raw) { try { return Object.assign(defaultSave(), JSON.parse(raw)); } catch (e) { return null; } }
+let user = storeGet(SESSION_KEY) || "";
+let save = (user && parseSave(storeGet(saveKey(user)))) || defaultSave();
+if (user && !save.profile.phone) user = "";  // 세션은 있는데 기록이 없으면 다시 로그인
+function persist() { if (user) storeSet(saveKey(user), JSON.stringify(save)); }
 
 /* 팀원 이름은 설정에서 바꿀 수 있다. 비워두면 기본 이름 */
 const DEFAULT_NAME = Object.fromEntries(KINDS.map(k => [k, TEAM[k].name]));
@@ -389,7 +411,9 @@ const arrivalOf = (kind, now) => new Date(now.getFullYear(), now.getMonth(), now
 
 /* ───────────────────────── 리포트 데이터 ───────────────────────── */
 let DATA = window.REPORT_DATA || { version: "", reports: {} };
-const reportsOf = kind => DATA.reports[kind] || [];
+// 새로 가입한 사람은 가입한 뒤에 발행된 리포트만 받는다 (joinedAt이 비어 있으면 전부)
+const allReportsOf = kind => DATA.reports[kind] || [];
+const reportsOf = kind => allReportsOf(kind).filter(r => !save.profile.joinedAt || (r.generatedAt || "") >= save.profile.joinedAt);
 const latestOf = kind => { const r = reportsOf(kind); return r[r.length - 1] || null; };
 const findReport = (kind, id) => reportsOf(kind).find(r => r.id === id);
 const readKey = (kind, id) => `${kind}/${id}`;
@@ -565,7 +589,8 @@ function targetMode(k, now) {
   const unread = latest && !isRead(k, latest.id);
   const arrived = now >= arrivalOf(k, now);
   if (!arrived) return "away";
-  if (dueToday(k, now) && !findReport(k, expectedId(k, now))) return "writing";
+  // 가입 전에 이미 나온 리포트는 받지 않지만, 작성은 끝난 것으로 본다
+  if (dueToday(k, now) && !allReportsOf(k).some(r => r.id === expectedId(k, now))) return "writing";
   if (unread) return "delivering";
   if (now.getHours() >= OFF_HOUR) return "away";
   return "working";
@@ -1518,7 +1543,10 @@ function openKeywords() {
 function openSettings() {
   openModal(`<div class="modal-head"><img src="${ME_AVATAR}" alt=""><div class="say"><div class="from">설정</div><div class="line">내 오피스 설정</div></div><button class="x" data-close aria-label="닫기">×</button></div>
     <div class="modal-body">
+      <div class="account">📱 ${esc(phoneLabel(save.profile.phone))}${save.profile.email ? ` · ✉️ ${esc(save.profile.email)}` : ""}<br>
+        <span class="link" style="margin:0">${save.profile.joinedAt ? `${esc(save.profile.joinedAt.slice(0, 10))} 가입 · 가입한 뒤에 나온 리포트를 받아요` : "로그인 전 기록을 이어받은 계정 · 지난 리포트도 모두 볼 수 있어요"}</span></div>
       <label class="field">팀원들이 부를 내 이름<input id="me-name" value="${esc(save.me)}" placeholder="닉네임"></label>
+      <label class="field">이메일 <span class="opt">(선택)</span><input id="me-email" type="email" value="${esc(save.profile.email)}" placeholder="name@example.com"></label>
       <p class="r-period" style="margin:14px 0 0">팀원 이름 (비워두면 기본 이름)</p>
       <div class="tnames">${KINDS.map(k => `<label class="field"><span class="badge" style="background:${KIND_COLOR[k]}">${KIND_NAME[k]}</span> ${esc(TEAM[k].title)}
         <input data-tname="${k}" maxlength="8" value="${esc((save.teamNames || {})[k] || "")}" placeholder="${esc(DEFAULT_NAME[k])}"></label>`).join("")}</div>
@@ -1528,9 +1556,13 @@ function openSettings() {
         <button class="btn ghost" id="export">기록 백업 받기</button>
         <label class="btn ghost">기록 불러오기<input type="file" id="import" accept="application/json" hidden></label>
         <button class="btn ghost" id="replay">출근 장면 다시 보기</button>
+        <button class="btn ghost" id="logout">로그아웃</button>
       </div>
     </div>`, true);
   document.getElementById("save-name").onclick = () => {
+    const email = document.getElementById("me-email").value.trim();
+    if (email && !EMAIL_RE.test(email)) return toast("이메일 형식을 확인해주세요");
+    save.profile.email = email;
     save.me = document.getElementById("me-name").value.trim();
     save.teamNames = {};
     modal.querySelectorAll("[data-tname]").forEach(i => { const v = i.value.trim(); if (v) save.teamNames[i.dataset.tname] = v; });
@@ -1545,13 +1577,22 @@ function openSettings() {
   };
   document.getElementById("import").onchange = ev => {
     const f = ev.target.files[0]; if (!f) return;
-    f.text().then(t => { save = Object.assign(defaultSave(), JSON.parse(t)); persist(); applyTeamNames(); closeModal(); refreshStates(true); toast("기록을 불러왔어요"); })
+    f.text().then(t => {
+      // 계정 정보는 지금 로그인한 것을 유지하고, 가입 시점은 백업을 따른다 (로그인 기능 전 백업이면 지난 리포트도 모두)
+      const prev = save.profile, next = Object.assign(defaultSave(), JSON.parse(t));
+      next.profile = { phone: prev.phone, email: prev.email, joinedAt: (next.profile || {}).joinedAt || "" };
+      save = next; persist(); applyTeamNames(); closeModal(); refreshStates(true); toast("기록을 불러왔어요");
+    })
       .catch(() => toast("파일을 읽지 못했어요"));
   };
   document.getElementById("replay").onclick = () => {
     delete save.arrived[ymd(NOW())]; persist();
     KINDS.forEach(k => Object.assign(chars[k], { visible: false, mode: "away", path: [], onArrive: null }));
     closeModal(); refreshStates(false);
+  };
+  document.getElementById("logout").onclick = () => {
+    if (!confirm("로그아웃할까요? 기록은 이 브라우저에 남아 있어서, 같은 전화번호로 다시 들어오면 이어서 볼 수 있어요.")) return;
+    storeSet(SESSION_KEY, null); location.reload();
   };
 }
 
@@ -1562,20 +1603,58 @@ document.getElementById("btn-level").onclick = openLevels;
 document.getElementById("btn-wrong").onclick = openWrongNote;
 document.getElementById("btn-badges").onclick = openBadges;
 
+/* ───────────────────────── 로그인 ───────────────────────── */
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const phoneLabel = p => p.length === 11 ? `${p.slice(0, 3)}-${p.slice(3, 7)}-${p.slice(7)}` : p.length === 10 ? `${p.slice(0, 3)}-${p.slice(3, 6)}-${p.slice(6)}` : p;
+const stampNow = () => { const d = new Date(); return `${ymd(d)}T${hm(d)}:${pad(d.getSeconds())}`; };  // generatedAt과 같은 형식
+
+function login(nick, phone, email) {
+  const mine = parseSave(storeGet(saveKey(phone))), legacy = parseSave(storeGet(LEGACY_KEY));
+  let isNew = false;
+  if (mine) save = mine;
+  else if (legacy) { save = legacy; save.profile.joinedAt = ""; storeSet(LEGACY_KEY, null); }
+  else { save = defaultSave(); save.profile.joinedAt = stampNow(); isNew = true; }
+  save.me = nick;
+  save.profile.phone = phone;
+  if (email || !save.profile.email) save.profile.email = email;
+  user = phone; storeSet(SESSION_KEY, phone); persist();
+  return isNew;
+}
+
+function showLogin() {
+  const el = document.getElementById("login"), err = document.getElementById("login-err");
+  document.getElementById("login-avatar").src = ME_AVATAR;
+  el.classList.add("open");
+  document.getElementById("login-nick").focus();
+  document.getElementById("login-form").onsubmit = ev => {
+    ev.preventDefault();
+    const nick = document.getElementById("login-nick").value.trim();
+    const phone = document.getElementById("login-phone").value.replace(/\D/g, "");
+    const email = document.getElementById("login-email").value.trim();
+    if (!nick) return err.textContent = "닉네임을 입력해주세요.";
+    if (!/^01\d{8,9}$/.test(phone)) return err.textContent = "휴대폰 번호를 확인해주세요. (예: 010-1234-5678)";
+    if (email && !EMAIL_RE.test(email)) return err.textContent = "이메일 형식을 확인해주세요.";
+    const isNew = login(nick, phone, email);
+    el.classList.remove("open");
+    start();
+    if (isNew) setTimeout(() => openModal(`<div class="modal-body center levelup"><img src="${ME_AVATAR}" alt="">
+      <h3>${esc(nick)}님, 입사를 축하해요!</h3>
+      <p>지금부터 발행되는 리포트를 팀원들이 들고 올 거예요.<br>${esc(who("daily"))}의 첫 보고는 ${esc(TEAM.daily.when)}에 도착해요.</p>
+      <button class="btn" data-close>좋아요</button></div>`, true), 600);
+    else toast(`${nick}님, 다시 오셨군요!`);
+  };
+}
+
 /* ───────────────────────── 시작 ───────────────────────── */
-refreshStates(false);
-checkBadges();
-requestAnimationFrame(loop);
-setInterval(() => refreshStates(false), 15000);   // 출근·퇴근 시각 확인
-setInterval(reloadData, 120000);                  // 새 리포트 확인
-if (!save.me && !SIM) setTimeout(() => {
-  openModal(`<div class="modal-body center levelup"><img src="${ME_AVATAR}" alt="">
-    <h3>마케팅팀에 오신 걸 환영해요!</h3>
-    <p>매일 아침 팀원들이 출근해서 트렌드 리포트를 들고 와요.<br>읽을수록 승진하고, 사무실이 꾸며져요.</p>
-    <label class="field" style="text-align:left">팀원들이 부를 이름<input id="first-name" placeholder="닉네임"></label>
-    <button class="btn" id="first-go">출근하기</button></div>`, true);
-  document.getElementById("first-go").onclick = () => { save.me = document.getElementById("first-name").value.trim() || "팀장"; persist(); renderHud(); closeModal(); };
-}, 400);
+function start() {
+  applyTeamNames();
+  refreshStates(false);
+  checkBadges();
+  setInterval(() => refreshStates(false), 15000);   // 출근·퇴근 시각 확인
+  setInterval(reloadData, 120000);                  // 새 리포트 확인
+}
+requestAnimationFrame(loop);  // 로그인 전에도 빈 사무실은 보인다
+if (user) start(); else showLogin();
 </script>
 </body>
 </html>
