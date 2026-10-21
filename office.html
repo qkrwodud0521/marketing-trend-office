@@ -347,7 +347,7 @@ const defaultSave = () => ({ me: "", teamNames: {}, xp: 0, read: {}, readDays: [
   wrong: {}, wrongCleared: 0, weekly: {}, badges: {}, profile: { phone: "", email: "", joinedAt: "" } });
 function storeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 function storeSet(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) { /* 저장소를 못 쓰면 이번 세션만 기억 */ } }
-function parseSave(raw) { try { return Object.assign(defaultSave(), JSON.parse(raw)); } catch (e) { return null; } }
+function parseSave(raw) { try { return raw ? Object.assign(defaultSave(), JSON.parse(raw)) : null; } catch (e) { return null; } }
 let user = storeGet(SESSION_KEY) || "";
 let save = (user && parseSave(storeGet(saveKey(user)))) || defaultSave();
 if (user && !save.profile.phone) user = "";  // 세션은 있는데 기록이 없으면 다시 로그인
