@@ -77,6 +77,16 @@ button.me:hover { border-color: var(--accent); }
 .bgrid div { background: #fff; border: 2px solid var(--paper-line); border-radius: 10px; padding: 10px 12px; }
 .bgrid div.got { border-color: var(--gold); }
 .bgrid div.no { opacity: .55; }
+.board { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 6px; }
+.board li { display: flex; gap: 10px; align-items: center; color: var(--paper-ink); background: #fff; border: 2px solid var(--paper-line); border-radius: 10px; padding: 8px 12px; }
+.board li.top { border-color: var(--gold); }
+.board li.mine { box-shadow: 0 0 0 2px var(--accent); }
+.board .n { width: 36px; flex: none; text-align: center; font-weight: 800; font-size: 14px; color: var(--paper-muted); }
+.board .n.medal { font-size: 22px; }
+.board .t { flex: 1; min-width: 0; }
+.board .t b { font-size: 14.5px; overflow-wrap: anywhere; }
+.board .t span { display: block; font-size: 12.5px; color: var(--paper-muted); }
+.board .s { flex: none; font-weight: 800; font-size: 13px; text-align: right; }
 .bgrid .i { font-size: 24px; line-height: 1; }
 .bgrid b { display: block; margin-top: 4px; font-size: 14px; }
 .bgrid span { display: block; font-size: 12.5px; color: var(--paper-muted); }
@@ -129,6 +139,44 @@ canvas#office { display: block; width: 100%; height: auto; image-rendering: pixe
 .modal-bg.open { display: flex; }
 .modal { background: var(--paper); color: var(--paper-ink); border-radius: 14px; width: min(860px, 100%); max-height: calc(100vh - 48px); max-height: calc(100dvh - 48px); overflow: auto; box-shadow: 0 8px 0 rgba(0,0,0,.35); border: 3px solid #1b1726; }
 .modal.small { width: min(460px, 100%); }
+.coupon { background: #fff; border: 2px dashed var(--accent); border-radius: 12px; padding: 12px 14px; margin: 12px 0; text-align: left; }
+.coupon .c-t { font-weight: 800; font-size: 14px; }
+.coupon .c-code { display: flex; gap: 8px; align-items: center; margin: 8px 0; }
+.coupon .c-code b { flex: 1; min-width: 0; font-size: 18px; letter-spacing: .04em; background: var(--paper); border: 2px solid var(--paper-line); border-radius: 8px; padding: 6px 10px; overflow-wrap: anywhere; }
+.coupon .c-code .btn { padding: 6px 12px; }
+.coupon p { margin: 4px 0; font-size: 13px; }
+.coupon a.btn { display: inline-block; margin-top: 6px; text-decoration: none; }
+.jobs-btn { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: var(--accent); color: #fff; font-weight: 800; font-size: 15px; border: 3px solid #1b1726; border-radius: 12px; padding: 12px 14px; box-shadow: 0 3px 0 #1b1726; text-decoration: none; }
+.jobs-btn[hidden] { display: none; }
+.jobs-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #1b1726; }
+.board-view { position: fixed; inset: 0; z-index: 9; background: var(--bg); overflow-y: auto; }
+.board-view[hidden] { display: none; }
+.bv-wrap { max-width: 720px; margin: 0 auto; padding: 16px 16px 48px; }
+.bv-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.bv-head h2 { flex: 1; margin: 0; font-size: 20px; text-align: center; }
+.bv-me { background: var(--panel); border: 2px solid var(--accent); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; font-size: 14px; }
+.bv-me .r { font-size: 28px; font-weight: 800; color: var(--gold); }
+.bv-me .sub { margin-top: 4px; font-size: 13px; color: var(--muted); }
+.podium { display: grid; grid-template-columns: 1fr 1.15fr 1fr; gap: 8px; align-items: end; margin-bottom: 16px; }
+.podium div { min-width: 0; background: var(--panel); border: 2px solid var(--line); border-radius: 12px 12px 4px 4px; padding: 12px 6px; text-align: center; }
+.podium div.p1 { padding-top: 22px; border-color: var(--gold); }
+.podium div.mine { box-shadow: 0 0 0 2px var(--accent); }
+.podium div.empty-slot { visibility: hidden; }
+.podium .m { display: block; font-size: 34px; line-height: 1.2; }
+.podium .p1 .m { font-size: 44px; }
+.podium b { display: block; font-size: 14px; overflow-wrap: anywhere; }
+.podium span:not(.m) { display: block; font-size: 12px; color: var(--muted); }
+.bv-note { margin-top: 12px; font-size: 12px; color: var(--muted); }
+.coach-bg { position: fixed; inset: 0; z-index: 40; }
+.coach-spot { position: fixed; border-radius: 12px; box-shadow: 0 0 0 9999px rgba(10, 8, 20, .72); outline: 3px solid var(--gold); pointer-events: none; transition: left .3s, top .3s, width .3s, height .3s; }
+.coach-spot.none { left: 50%; top: 50%; width: 0; height: 0; outline: 0; }
+.coach-card { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); width: min(420px, calc(100% - 32px)); background: var(--paper); color: var(--paper-ink); border: 3px solid #1b1726; border-radius: 14px; box-shadow: 0 8px 0 rgba(0,0,0,.35); padding: 16px 18px; }
+.coach-card.top { top: 16px; bottom: auto; }
+.coach-card .step { font-size: 12px; color: var(--paper-muted); font-weight: 700; }
+.coach-card h3 { margin: 4px 0 6px; font-size: 17px; }
+.coach-card p { margin: 0 0 14px; font-size: 14px; line-height: 1.55; }
+.coach-card .row { display: flex; gap: 8px; justify-content: space-between; align-items: center; }
+.coach-card .skip { background: none; border: 0; padding: 0; color: var(--paper-muted); font-size: 13px; text-decoration: underline; }
 .modal-head { display: flex; gap: 12px; align-items: center; padding: 16px 20px; border-bottom: 2px solid var(--paper-line); position: sticky; top: 0; background: var(--paper); border-radius: 14px 14px 0 0; z-index: 1; }
 .modal-head img { width: 48px; height: 64px; image-rendering: pixelated; }
 .modal-head .say { flex: 1; }
@@ -175,6 +223,8 @@ canvas#office { display: block; width: 100%; height: auto; image-rendering: pixe
 .r-card.scrapped .memo { display: block; }
 .memo label { display: block; font-size: 11.5px; font-weight: 700; color: var(--paper-muted); margin-top: 6px; }
 .memo label textarea { display: block; margin-top: 3px; font-weight: 400; color: var(--paper-ink); }
+.memo .m-state { display: block; margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--paper-muted); }
+.memo .m-state.done { color: #b7791f; }
 .memo textarea { width: 100%; min-height: 52px; border: 2px solid var(--paper-line); border-radius: 8px; padding: 6px 8px; font: inherit; font-size: 13px; resize: vertical; background: #fffdf6; }
 .r-foot { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 28px; padding-top: 16px; border-top: 2px solid var(--paper-line); }
 .btn { border: 3px solid #1b1726; background: var(--accent); color: #fff; font-weight: 800; border-radius: 10px; padding: 10px 18px; box-shadow: 0 3px 0 #1b1726; }
@@ -214,9 +264,16 @@ canvas#office { display: block; width: 100%; height: auto; image-rendering: pixe
 .login-bg { z-index: 30; }
 .login-bg .modal-body { padding: 24px 22px; }
 .field .opt { color: var(--paper-muted); font-weight: 400; }
+.field-row { display: flex; gap: 10px; }
+.field-row .field { flex: 1; min-width: 0; }
 .form-err { min-height: 18px; margin: 4px 0 10px; color: #d64545; font-size: 13px; font-weight: 600; text-align: left; }
 .login-bg .btn { width: 100%; }
 .login-note { margin: 12px 0 0; color: var(--paper-muted); font-size: 12px; line-height: 1.5; }
+.agree { margin: 12px 0 0; text-align: left; font-size: 13px; }
+.agree label { display: flex; gap: 6px; align-items: center; font-weight: 700; }
+.agree details { margin: 4px 0 0 22px; color: var(--paper-muted); font-size: 12px; }
+.agree summary { cursor: pointer; }
+.agree ul { margin: 6px 0 0; padding-left: 16px; line-height: 1.6; }
 .account { margin: 0 0 6px; padding: 10px 12px; border: 2px solid var(--paper-line); border-radius: 10px; font-size: 13px; line-height: 1.6; }
 .toast { visibility: hidden; position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(120px); background: #1b1726; color: #fff; border: 2px solid var(--gold); padding: 8px 16px; border-radius: 10px; font-weight: 700; transition: transform .3s; z-index: 20; }
 .toast.show { visibility: visible; transform: translateX(-50%) translateY(0); }
@@ -238,6 +295,7 @@ canvas#office { display: block; width: 100%; height: auto; image-rendering: pixe
     <button class="hud-btn" id="btn-scrap">📌 스크랩북</button>
     <button class="hud-btn" id="btn-wrong">📝 오답노트</button>
     <button class="hud-btn" id="btn-badges">🏅 업적</button>
+    <button class="hud-btn" id="btn-board">🏆 리더보드</button>
     <button class="hud-btn" id="btn-settings" aria-label="설정">⚙️</button>
   </header>
 
@@ -248,6 +306,7 @@ canvas#office { display: block; width: 100%; height: auto; image-rendering: pixe
       <span class="stage-tip" id="tip">팀원이나 책상을 클릭해보세요</span>
     </div>
     <aside class="side">
+      <a class="jobs-btn" id="jobs-btn" target="_blank" rel="noopener" hidden>💼 오늘의 마케팅 채용 공고 보러가기 <span aria-hidden="true">→</span></a>
       <section class="panel">
         <h2>팀원</h2>
         <div id="roster"></div>
@@ -262,16 +321,33 @@ canvas#office { display: block; width: 100%; height: auto; image-rendering: pixe
 
 <div class="modal-bg" id="modal-bg"><div class="modal" id="modal"></div></div>
 <div class="toast" id="toast"></div>
+<section class="board-view" id="board-view" hidden aria-label="리더보드"><div class="bv-wrap">
+  <header class="bv-head"><button class="hud-btn" id="board-back">← 사무실로</button><h2 class="pixel">🏆 리더보드</h2><button class="hud-btn" id="board-refresh" aria-label="순위 새로 불러오기">↻</button></header>
+  <div id="board-main"></div>
+</div></section>
+<div class="coach-bg" id="coach" hidden><div class="coach-spot" id="coach-spot"></div><div class="coach-card" id="coach-card" role="dialog" aria-live="polite"></div></div>
 <div class="modal-bg login-bg" id="login"><form class="modal small" id="login-form" novalidate><div class="modal-body center levelup">
   <img id="login-avatar" alt="">
   <h3>마케팅팀에 오신 걸 환영해요!</h3>
   <p>매일 아침 팀원들이 출근해서 트렌드 리포트를 들고 와요.<br>읽을수록 승진하고, 사무실이 꾸며져요.</p>
-  <label class="field" style="text-align:left">닉네임<input id="login-nick" maxlength="12" autocomplete="nickname" placeholder="팀원들이 부를 이름"></label>
+  <div class="field-row">
+    <label class="field" style="text-align:left">닉네임<input id="login-nick" maxlength="12" autocomplete="nickname" placeholder="팀원들이 부를 이름"></label>
+    <label class="field" style="text-align:left">이름<input id="login-name" maxlength="20" autocomplete="name" placeholder="실명"></label>
+  </div>
   <label class="field" style="text-align:left">전화번호<input id="login-phone" type="tel" inputmode="numeric" autocomplete="tel" placeholder="010-1234-5678"></label>
   <label class="field" style="text-align:left">이메일 <span class="opt">(선택)</span><input id="login-email" type="email" autocomplete="email" placeholder="name@example.com"></label>
+  <div class="agree">
+    <label><input type="checkbox" id="login-agree"> 개인정보 수집·이용에 동의해요 (필수)</label>
+    <details><summary>자세히 보기</summary><ul>
+      <li>수집 항목: 이름, 닉네임, 전화번호, 이메일(입력한 경우), 경험치·직급 등 진행 기록, 읽음·스크랩·메모 등 이용 기록(다른 기기에서 이어보기용)</li>
+      <li>이용 목적: 가입자 확인과 서비스 관련 안내</li>
+      <li>보유 기간: 삭제를 요청할 때까지</li>
+      <li>동의하지 않을 수 있지만, 그러면 오피스를 이용할 수 없어요.</li>
+    </ul></details>
+  </div>
   <p class="form-err" id="login-err"></p>
   <button class="btn" type="submit">출근하기</button>
-  <p class="login-note">전에 쓰던 전화번호로 들어오면 그 기록을 이어서 볼 수 있어요.<br>입력한 정보는 이 브라우저에만 저장되고 어디로도 보내지 않아요.</p>
+  <p class="login-note">전에 쓰던 전화번호와 이름으로 들어오면 다른 기기에서도 기록을 이어서 볼 수 있어요.</p>
 </div></form></div>
 
 <script src="assets/reports-data.js"></script>
@@ -344,14 +420,28 @@ const LEVELS = [
 const LEGACY_KEY = "mkt-office-v1", SESSION_KEY = "mkt-office-session";
 const saveKey = phone => `${LEGACY_KEY}:${phone}`;
 const defaultSave = () => ({ me: "", teamNames: {}, xp: 0, read: {}, readDays: [], scraps: {}, memoXp: {}, arrived: {}, quiz: {},
-  wrong: {}, wrongCleared: 0, weekly: {}, badges: {}, profile: { phone: "", email: "", joinedAt: "" } });
+  wrong: {}, wrongCleared: 0, weekly: {}, badges: {}, coupons: {}, gone: {}, profile: { name: "", phone: "", email: "", joinedAt: "", pid: "" } });
 function storeGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
 function storeSet(k, v) { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) { /* 저장소를 못 쓰면 이번 세션만 기억 */ } }
 function parseSave(raw) { try { return raw ? Object.assign(defaultSave(), JSON.parse(raw)) : null; } catch (e) { return null; } }
 let user = storeGet(SESSION_KEY) || "";
 let save = (user && parseSave(storeGet(saveKey(user)))) || defaultSave();
 if (user && !save.profile.phone) user = "";  // 세션은 있는데 기록이 없으면 다시 로그인
-function persist() { if (user) storeSet(saveKey(user), JSON.stringify(save)); }
+if (user && !save.profile.agreedAt) user = "";  // 개인정보 동의 전에 로그인한 계정은 동의받으러 한 번 더
+if (user && !save.profile.name) user = "";  // 이름 칸이 생기기 전에 가입한 계정은 이름을 받으러 한 번 더
+// 가입자 명단(구글 시트)으로 보낼 주소. 만드는 법은 scripts/signup_sheet.gs 맨 위. 비워두면 보내지 않는다.
+const SIGNUP_URL = "https://script.google.com/macros/s/AKfycbxAW0-foll2KK-ftKucJI6BooCooLN7NAItK8nb2MyRnp_kUmy-YTiMRjLjIprcUXbtrg/exec";
+let board = null, boardAt = 0;  // 리더보드 캐시 (아래 리더보드 부분)
+let promoLinks = null;  // 시트 "연결 링크" 탭의 링크 (리더보드와 함께 받아온다)
+let syncTimer, lastBackup = "";  // 시트에 마지막으로 보낸 기록 (아래 로그인 부분)
+function persist() {
+  if (!user) return;
+  storeSet(saveKey(user), JSON.stringify(save));
+  // 기록이 바뀌면 잠깐 모았다가 시트에도 백업한다. 다른 기기에서 같은 번호·이름으로 들어오면 이걸 불러온다.
+  if (SIGNUP_URL && backupData() !== lastBackup) {
+    clearTimeout(syncTimer); syncTimer = setTimeout(() => syncProfile(save.profile.syncEvent || "progress"), 5000);
+  }
+}
 
 /* 팀원 이름은 설정에서 바꿀 수 있다. 비워두면 기본 이름 */
 const DEFAULT_NAME = Object.fromEntries(KINDS.map(k => [k, TEAM[k].name]));
@@ -965,7 +1055,8 @@ function streakDays() {
 function renderHud() {
   const lv = level(), cur = LEVELS[lv - 1], next = LEVELS[lv];
   document.getElementById("lv").textContent = `Lv.${lv}`;
-  document.getElementById("rank").textContent = save.me ? `${save.me} · ${cur.title}` : cur.title;
+  const icon = rankIcon(myRow());
+  document.getElementById("rank").textContent = (icon ? icon + " " : "") + (save.me ? `${save.me} · ${cur.title}` : cur.title);
   const pct = next ? (save.xp - cur.xp) / (next.xp - cur.xp) * 100 : 100;
   document.getElementById("xpfill").style.width = pct + "%";
   document.getElementById("xptext").textContent = next ? ` ${save.xp}/${next.xp} XP` : ` ${save.xp} XP · 최고 직급`;
@@ -993,14 +1084,114 @@ function gainXp(n, why) {
   }
 }
 function showLevelUp(lv) {
-  const l = LEVELS[lv - 1];
+  const l = LEVELS[lv - 1], gift = COUPON_LEVELS.includes(lv);
   openModal(`<div class="modal-body center levelup">
     <img src="${ME_AVATAR}" alt="">
     <p class="r-period">승진을 축하해요!</p>
     <h3>${esc(meName())}님, ${esc(l.title)}(으)로 승진 🎉</h3>
     <p>사무실에 <b>${esc(l.unlock)}</b>이(가) 생겼어요.</p>
+    ${gift ? `<div class="coupon" id="lv-coupon"><div class="c-t">🎁 승진 기념 렛츠커리어 특별 할인 쿠폰</div><p>쿠폰을 꺼내고 있어요…</p></div>` : ""}
     <button class="btn" data-close>좋아요</button></div>`, true);
+  if (!gift) return;
+  // 시트가 새 레벨을 알아야 쿠폰을 내주므로, 진행 상황을 먼저 보내고 받아온다
+  syncProfile(save.profile.syncEvent || "progress").then(() => fetchCoupon(lv)).catch(() => null).then(() => {
+    const el = document.getElementById("lv-coupon");
+    if (el) { el.outerHTML = couponHtml(lv); bindCopy(modal); }
+  });
 }
+
+/* ───────────────────────── 승진 쿠폰 ───────────────────────── */
+// 대리·차장·CMO가 되면 렛츠커리어 할인 쿠폰. 코드는 관리자가 시트의 "쿠폰" 탭에 넣은 지금 값을 받아온다.
+const COUPON_LEVELS = [4, 6, 10];
+function fetchCoupon(lv) {
+  if (!SIGNUP_URL || !user) return Promise.resolve(null);
+  const p = save.profile;
+  return fetch(`${SIGNUP_URL}?${new URLSearchParams({ action: "coupon", phone: p.phone, name: p.name, lv })}`, { signal: AbortSignal.timeout(8000) })
+    .then(r => r.json()).then(r => {
+      if (!r.coupon) return null;
+      save.coupons[lv] = Object.assign(r.coupon, { at: ymd(NOW()) }); persist();
+      return r.coupon;
+    });
+}
+function couponHtml(lv) {
+  const c = (save.coupons || {})[lv], title = LEVELS[lv - 1].title;
+  if (!c) return `<div class="coupon"><div class="c-t">🎁 ${esc(title)} 승진 쿠폰</div><p>쿠폰을 준비하고 있어요. 📈 직급표에서 다시 확인할 수 있어요.</p></div>`;
+  return `<div class="coupon"><div class="c-t">🎁 ${esc(title)} 승진 기념 렛츠커리어 특별 할인 쿠폰</div>
+    <div class="c-code"><b>${esc(c.code)}</b><button class="btn ghost" data-copy="${esc(c.code)}">복사</button></div>
+    ${c.desc ? `<p>${esc(c.desc)}</p>` : ""}${c.until ? `<p class="link" style="margin:0">사용 기한: ${esc(c.until)}</p>` : ""}
+    ${c.link ? `<a class="btn" href="${esc(c.link)}" target="_blank" rel="noopener">쿠폰 쓰러 가기</a>` : ""}</div>`;
+}
+function bindCopy(root) {
+  root.querySelectorAll("[data-copy]").forEach(b => b.onclick = () =>
+    navigator.clipboard.writeText(b.dataset.copy).then(() => toast("쿠폰 코드를 복사했어요"), () => toast("복사하지 못했어요")));
+}
+/* ───────────────────────── 렛츠커리어 연결 안내 ───────────────────────── */
+// 스크랩·아이디어 메모가 일정 개수 모이면 보고서를 닫을 때 한 번씩 렛츠커리어 자료·챌린지를 권하고, 그 뒤로는 스크랩북 위에 남는다.
+// 링크는 관리자가 시트의 "연결 링크" 탭에서 UTM까지 넣어 바꾼다 (links의 key = 탭의 "구분", 비우면 그 버튼은 꺼짐).
+// 시트를 못 불러오면 여기 url을 쓴다. 어느 자리에서 눌렀는지는 utm_content로 덧붙인다 (링크에 이미 있으면 그대로).
+const scrapCount = () => scrapList().length;
+const completeCount = () => scrapList().filter(isComplete).length;
+// 지금 정해 둔 지원 브랜드를 두고 쓴 아이디어
+const brandIdeaCount = () => save.target ? scrapList().filter(x => x.brandFor === save.target && ideaOf(x).trim()).length : 0;
+const PROMOS = [
+  { key: "sns_guide", count: scrapCount, at: 5, unit: "스크랩", icon: "📌",
+    head: "이제 내 계정에서 직접 해 볼 차례예요",
+    body: () => "모아 둔 사례를 실제 콘텐츠에 반영해서 내 SNS 계정을 키워 보세요.<br>마케터 취준생에게 개인 계정 운영 경험은 서류와 면접에서 큰 도움이 돼요.",
+    card: "📘 렛츠커리어 무료 자료집", what: "<b>SNS 계정 키우기 가이드북</b> — 계정 운영의 A to Z를 담았어요.",
+    links: [{ key: "sns_guide", url: "https://l.letscareer.co.kr/OXx5b", btn: "무료 가이드북 확인하기" }],
+    banner: "📘 모은 사례, 내 계정에 써 볼까요?" },
+  { key: "interview_guide", count: scrapCount, at: 10, unit: "스크랩", icon: "🎤",
+    head: "모아 둔 트렌드, 이제 면접에서 꺼내 쓸 차례예요",
+    body: n => `벌써 마케팅 트렌드를 ${n}개나 스크랩했어요!<br>모아만 두지 말고, 내가 고른 트렌드를 면접 답변으로 연결해 보세요.`,
+    card: "🎤 렛츠커리어 면접 준비 7일 끝장 챌린지", what: "나만의 컨셉을 잡고, 면접 준비를 7일 안에 끝내 보세요.",
+    links: [{ key: "interview_guide", url: "", btn: "7일 만에 면접 준비 끝내러 가기" }],
+    banner: "🎤 모은 트렌드, 면접 답변으로 연결해 볼까요?" },
+  { key: "portfolio_challenge", count: completeCount, at: 5, unit: "완성 아이디어", icon: "🗂️",
+    head: "트렌드를 아카이빙한 경험, 그 자체가 역량이에요",
+    body: n => `벌써 ⭐ 완성 아이디어를 ${n}개나 쌓았어요.<br>매일 트렌드를 찾아보고 '왜 먹혔는지, 나라면 어떻게 할지'까지 정리해 온 경험은 마케터에게 꼭 필요한 <b>트렌드 서치 역량</b>이에요. 지금까지 정리한 아이디어로 이 역량을 포트폴리오에서 바로 보여줄 수 있어요.`,
+    card: "🚀 혼자 만들기 막막하다면?", what: "렛츠커리어와 함께 2주 안에 마스터 포트폴리오를 만들어요.",
+    links: [{ key: "portfolio_challenge", url: "", btn: "포트폴리오 2주 완성 챌린지 보기" }, { key: "portfolio_template", url: "", btn: "무료 포트폴리오 템플릿 먼저 받기" }],
+    banner: "🗂️ 정리한 아이디어로 트렌드 서치 역량을 보여주세요" },
+  { key: "coverletter_challenge", count: brandIdeaCount, at: 3, unit: "지원 브랜드 아이디어", icon: "✍️",
+    head: () => `${withIrago(save.target)} 어떻게 할지, 벌써 답이 모였어요`,
+    body: n => `${esc(save.target)}에 적용할 아이디어를 ${n}개 정리했어요.<br>자기소개서의 지원동기와 입사 후 포부는 '이 회사를 얼마나 알고, 들어가서 무엇을 해 보고 싶은가'를 묻는 문항이에요. 지원할 브랜드를 두고 쓴 아이디어는 그 질문에 대한 가장 구체적인 답이 돼요.`,
+    card: "✍️ 아이디어를 문장으로 옮기기 어렵다면?", what: "렛츠커리어와 함께 2주 안에 자기소개서를 완성해요.",
+    links: [{ key: "coverletter_challenge", url: "", btn: "자기소개서 2주 완성 챌린지 보기" }],
+    banner: "✍️ 지원 브랜드 아이디어, 자소서로 옮겨 볼까요?" },
+];
+const linkUrl = l => promoLinks ? promoLinks[l.key] || "" : l.url;
+function linkHref(l, where) {
+  const u = linkUrl(l);
+  return /[?&]utm_content=/.test(u) ? u : `${u}${u.includes("?") ? "&" : "?"}utm_content=${where}`;
+}
+const promoOn = p => p.links.some(linkUrl);
+const promoBtns = (p, where) => p.links.filter(linkUrl).map((l, i) =>
+  `<a class="btn${i ? " ghost" : ""}" href="${esc(linkHref(l, where))}" target="_blank" rel="noopener">${l.btn}</a>`).join(" ");
+const promoDue = () => PROMOS.find(p => promoOn(p) && p.count() >= p.at && !(save.promoShown || {})[p.key]);
+function showPromo(p) {
+  if (bg.classList.contains("open")) { pendingPromo = p; return; }  // 다른 창이 열려 있으면 닫힌 뒤에
+  (save.promoShown = save.promoShown || {})[p.key] = ymd(NOW()); persist();
+  const n = p.count();
+  openModal(`<div class="modal-body center levelup">
+    <div style="font-size:52px;line-height:1">${p.icon}</div>
+    <p class="r-period">${p.unit} ${n}개 달성!</p>
+    <h3>${typeof p.head === "function" ? esc(p.head()) : p.head}</h3>
+    <p style="text-align:left">${p.body(n)}</p>
+    <div class="coupon"><div class="c-t">${p.card}</div>
+      <p>${p.what}</p>
+      ${promoBtns(p, "milestone")}</div>
+    <button class="btn ghost" data-close>나중에 볼게요</button></div>`, true);
+}
+// 스크랩북 위에는 지금까지 열린 안내 중 가장 뒤의 것 하나만
+function promoBanner() {
+  const p = PROMOS.filter(x => promoOn(x) && x.count() >= x.at).pop();
+  return p ? `<div class="coupon" style="margin-top:0"><div class="c-t">${p.banner}</div><p>${p.what}</p>${promoBtns(p, "scrapbook")}</div>` : "";
+}
+
+const myCoupons = () => {
+  const got = COUPON_LEVELS.filter(l => level() >= l);
+  return got.length ? got.map(couponHtml).join("") : `<p class="link">대리·차장·CMO로 승진하면 렛츠커리어 특별 할인 쿠폰을 드려요.</p>`;
+};
 
 /* ───────────────────────── 모달 ───────────────────────── */
 const bg = document.getElementById("modal-bg"), modal = document.getElementById("modal");
@@ -1011,13 +1202,22 @@ function openModal(html, small = false) {
   modal.querySelectorAll("[data-close]").forEach(b => b.onclick = closeModal);
   modal.scrollTop = 0; bg.scrollTop = 0;
 }
-let pendingLevelUp = 0;
+let pendingLevelUp = 0, pendingPromo = null;
 function closeModal() {
   bg.classList.remove("open"); modal.innerHTML = "";
   if (pendingLevelUp) { const lv = pendingLevelUp; pendingLevelUp = 0; setTimeout(() => showLevelUp(lv), 300); }
+  else {  // 승진 창이 먼저, 닫히면 그다음. 조건을 채운 안내가 둘이면 하나씩 차례로
+    const p = pendingPromo || (user && promoDue());
+    pendingPromo = null;
+    if (p) setTimeout(() => showPromo(p), 300);
+  }
 }
 bg.addEventListener("click", e => { if (e.target === bg) closeModal(); });
-document.addEventListener("keydown", e => { if (e.key === "Escape") closeModal(); });
+document.addEventListener("keydown", e => {
+  if (e.key !== "Escape") return;
+  if (bg.classList.contains("open")) closeModal();
+  else if (!document.getElementById("board-view").hidden) closeBoardView();
+});
 
 let toastTimer;
 function toast(msg) {
@@ -1083,13 +1283,26 @@ function openReport(k, id) {
 }
 
 /* 스크랩 메모는 '아이디어' 한 칸. 예전 기록의 memo는 아이디어로 본다 */
+// 아이디어 메모는 세 칸: 관찰(obs) → 인사이트(insight) → 적용(idea). 예전의 자유 메모는 idea(적용) 칸에 그대로 남는다.
 const ideaOf = sc => sc.idea ?? sc.memo ?? "";
-const hasMemo = sc => !!(ideaOf(sc).trim() || (sc.notes || []).length);
+const isComplete = sc => !!(sc && (sc.obs || "").trim() && (sc.insight || "").trim() && ideaOf(sc).trim());
+const hasMemo = sc => !!(ideaOf(sc).trim() || (sc.obs || "").trim() || (sc.insight || "").trim() || (sc.notes || []).length);
+// "올리브영이라면", "29CM(이)라면": 받침에 맞춰 조사를 붙인다
+function withIrago(w) {
+  const c = w.charCodeAt(w.length - 1);
+  if (c < 0xac00 || c > 0xd7a3) return `${w}(이)라면`;
+  return (c - 0xac00) % 28 ? `${w}이라면` : `${w}라면`;
+}
+const memoState = sc => isComplete(sc) ? `<span class="m-state done">⭐ 완성 아이디어</span>` : `<span class="m-state">세 칸을 모두 채우면 ⭐ 완성 아이디어 (+5 XP)</span>`;
 const notesHtml = sc => sc && sc.notes && sc.notes.length
   ? `<ol class="inotes">${sc.notes.map(n => `<li><time>🌱 ${esc(n.at)}</time>${esc(n.text)}</li>`).join("")}</ol>` : "";
 function memoFields(sc) {
+  const brand = (sc && sc.brandFor) || save.target || "";
   return `<div class="memo">
-    <label>💡 내 아이디어<textarea data-memo="idea" placeholder="써먹을 아이디어, 우리 브랜드라면 어떻게 할지…">${esc(sc ? ideaOf(sc) : "")}</textarea></label>
+    <label>👀 무엇이 눈에 띄었나<textarea data-memo="obs" placeholder="카피, 형식, 타이밍, 채널… 눈에 들어온 점">${esc(sc ? sc.obs || "" : "")}</textarea></label>
+    <label>🔍 왜 먹혔다고 보나<textarea data-memo="insight" placeholder="타깃의 어떤 마음·상황을 건드렸는지">${esc(sc ? sc.insight || "" : "")}</textarea></label>
+    <label>🚀 ${esc(brand ? withIrago(brand) : "나라면")} 어떻게 할까<textarea data-memo="idea" placeholder="${brand ? `${esc(brand)}에 적용한다면 무엇을, 어디에, 어떻게` : "써먹을 아이디어 (⚙️ 설정에서 지원 브랜드를 정하면 질문이 바뀌어요)"}">${esc(sc ? ideaOf(sc) : "")}</textarea></label>
+    ${sc ? memoState(sc) : ""}
     ${notesHtml(sc)}
     ${sc && ideaOf(sc).trim() ? `<button class="grow" data-grow>🌱 생각 덧붙이기</button>` : ""}
   </div>`;
@@ -1101,9 +1314,14 @@ function bindMemo(card, key, back) {
     const sc = save.scraps[key]; if (!sc) return;
     const f = ta.dataset.memo;
     sc[f] = ta.value;
-    if (f === "idea") { delete sc.memo; sc.ideaAt = ymd(NOW()); }
+    if (f === "idea") { delete sc.memo; sc.ideaAt = ymd(NOW()); if (save.target && !sc.brandFor) sc.brandFor = save.target; }
     persist();
     if (ta.value.trim() && !save.memoXp[key]) { save.memoXp[key] = true; gainXp(2, "아이디어 메모"); }
+    if (isComplete(sc) && !save.memoXp["c:" + key]) { save.memoXp["c:" + key] = true; gainXp(5, "⭐ 완성 아이디어"); }
+    const st = card.querySelector(".m-state");
+    if (st) st.outerHTML = memoState(sc);
+    const due = promoDue();
+    if (due) pendingPromo = due;  // 창을 닫으면 안내
   });
 }
 
@@ -1111,7 +1329,7 @@ function toggleScrap(card, key, k, r, item) {
   const btn = card.querySelector(".scrap");
   if (save.scraps[key]) {
     if (hasMemo(save.scraps[key]) && !confirm("메모도 함께 지워져요. 스크랩을 취소할까요?")) return;
-    delete save.scraps[key]; card.classList.remove("scrapped"); btn.textContent = "☆ 스크랩";
+    delete save.scraps[key]; markGone("s:" + key); card.classList.remove("scrapped"); btn.textContent = "☆ 스크랩";
     persist(); return;
   }
   save.scraps[key] = {
@@ -1122,6 +1340,8 @@ function toggleScrap(card, key, k, r, item) {
   persist();
   card.querySelector(".memo textarea").focus();
   if (!save.memoXp["s:" + key]) { save.memoXp["s:" + key] = true; gainXp(1, "스크랩"); }
+  const due = promoDue();
+  if (due) pendingPromo = due;  // 보고서를 닫으면 안내
 }
 
 function markRead(k, id, btn) {
@@ -1239,7 +1459,7 @@ function noteAnswer(q, ok) {
   const key = wrongKey(q.src);
   if (ok) {
     if (!save.wrong[key]) return false;
-    delete save.wrong[key]; save.wrongCleared++;
+    delete save.wrong[key]; markGone("w:" + key); save.wrongCleared++;
     return true;
   }
   save.wrong[key] = { q: { q: q.q, options: q.options, answer: q.answer, explain: q.explain || "", src: q.src }, at: ymd(NOW()), misses: (save.wrong[key]?.misses || 0) + 1 };
@@ -1470,10 +1690,11 @@ function openScrapbook() {
   const tags = [...new Set(all.map(([, s]) => s.item.tag).filter(Boolean))];
   const q = scrapQuery.toLowerCase();
   const shown = all.filter(([, s]) => (!scrapFilter || s.item.tag === scrapFilter)
-    && (!q || [s.item.title, s.item.body, s.item.brand, ideaOf(s), ...(s.notes || []).map(n => n.text)].join(" ").toLowerCase().includes(q)));
+    && (!q || [s.item.title, s.item.body, s.item.brand, s.obs, s.insight, ideaOf(s), ...(s.notes || []).map(n => n.text)].join(" ").toLowerCase().includes(q)));
   openModal(`
     <div class="modal-head"><img src="${ME_AVATAR}" alt=""><div class="say"><div class="from">책장</div><div class="line">📌 내 스크랩북 (${all.length})</div></div><button class="x" data-close aria-label="닫기">×</button></div>
     <div class="modal-body">
+      ${promoBanner()}
       <input class="search" id="sq" placeholder="제목, 브랜드, 아이디어로 검색" value="${esc(scrapQuery)}">
       <div class="tabs"><button data-f="" class="${scrapFilter ? "" : "on"}">전체</button>${tags.map(t => `<button data-f="${esc(t)}" class="${scrapFilter === t ? "on" : ""}">${esc(t)}</button>`).join("")}</div>
       <div class="toolbar"><button class="btn ghost" id="copy-md">마크다운으로 복사</button>${dueIdeas().length ? `<button class="btn" id="revisit-go">💡 다시 볼 아이디어 ${dueIdeas().length}개</button>` : ""}</div>
@@ -1495,14 +1716,14 @@ function openScrapbook() {
     const key = card.dataset.key;
     card.querySelector(".scrap").onclick = () => {
       if (hasMemo(save.scraps[key]) && !confirm("메모도 함께 지워져요. 스크랩을 해제할까요?")) return;
-      delete save.scraps[key]; persist(); openScrapbook();
+      delete save.scraps[key]; markGone("s:" + key); persist(); openScrapbook();
     };
     bindMemo(card, key, { label: "스크랩북으로", fn: openScrapbook });
   });
   const rv = document.getElementById("revisit-go");
   if (rv) rv.onclick = () => openIdeaRevisit(dueIdeas()[0][0], { label: "스크랩북으로", fn: openScrapbook });
   document.getElementById("copy-md").onclick = () => {
-    const md = shown.map(([, s]) => `## ${s.item.title}\n- ${KIND_NAME[s.kind]} · ${s.reportLabel}${s.item.brand ? ` · ${s.item.brand}` : ""}\n- ${s.item.body}\n${s.item.action ? `- 팔로업: ${s.item.action}\n` : ""}${ideaOf(s) ? `- 💡 아이디어: ${ideaOf(s)}\n` : ""}${(s.notes || []).map(n => `  - 🌱 ${n.at}: ${n.text}\n`).join("")}${((s.item.insta || {}).posts || []).map(x => `- 인스타: [${x.name || x.url}](${x.url})\n`).join("")}${s.item.sources.map(x => `- 출처: [${x.name || x.url}](${x.url})`).join("\n")}`).join("\n\n");
+    const md = shown.map(([, s]) => `## ${s.item.title}\n- ${KIND_NAME[s.kind]} · ${s.reportLabel}${s.item.brand ? ` · ${s.item.brand}` : ""}\n- ${s.item.body}\n${s.item.action ? `- 팔로업: ${s.item.action}\n` : ""}${s.obs ? `- 👀 관찰: ${s.obs}\n` : ""}${s.insight ? `- 🔍 인사이트: ${s.insight}\n` : ""}${ideaOf(s) ? `- 🚀 ${s.brandFor ? withIrago(s.brandFor) : "나라면"}: ${ideaOf(s)}\n` : ""}${(s.notes || []).map(n => `  - 🌱 ${n.at}: ${n.text}\n`).join("")}${((s.item.insta || {}).posts || []).map(x => `- 인스타: [${x.name || x.url}](${x.url})\n`).join("")}${s.item.sources.map(x => `- 출처: [${x.name || x.url}](${x.url})`).join("\n")}`).join("\n\n");
     navigator.clipboard.writeText(md || "").then(() => toast("마크다운을 클립보드에 복사했어요"), () => toast("복사하지 못했어요"));
   };
 }
@@ -1513,14 +1734,16 @@ function openLevels() {
     const n = i + 1, done = n < lv, cur = n === lv;
     const st = cur ? "📍 지금" : done ? "✓ 달성" : `🔒 ${l.xp - save.xp} XP 남음`;
     return `<li class="${cur ? "cur" : done ? "" : "locked"}"><span class="n pixel">Lv.${n}</span>
-      <span class="t"><b>${esc(l.title)}</b> <span>${n === 1 ? "" : "🎁 "}${esc(l.unlock)}${l.perk ? ` — ${esc(l.perk)}` : ""}</span></span>
+      <span class="t"><b>${esc(l.title)}</b>${COUPON_LEVELS.includes(n) ? " 🎟" : ""} <span>${n === 1 ? "" : "🎁 "}${esc(l.unlock)}${l.perk ? ` — ${esc(l.perk)}` : ""}${COUPON_LEVELS.includes(n) ? " · 렛츠커리어 할인 쿠폰" : ""}</span></span>
       <span class="s">${st}<br><span style="color:var(--paper-muted);font-weight:600">${l.xp} XP</span></span></li>`;
   }).join("");
   openModal(`<div class="modal-head"><img src="${ME_AVATAR}" alt=""><div class="say"><div class="from">직급표 · 전체 ${LEVELS.length}단계</div>
     <div class="line">${esc(meName())}님은 Lv.${lv} ${esc(LEVELS[lv - 1].title)} · ${save.xp} XP${next ? ` (다음 직급까지 ${next.xp - save.xp} XP)` : " · 최고 직급 달성!"}</div></div>
     <button class="x" data-close aria-label="닫기">×</button></div>
     <div class="modal-body">
-      <p class="r-period">승진할 때마다 사무실에 새 물건이 생겨요.</p>
+      <p class="r-period">🎟 내 할인 쿠폰</p>
+      <div id="my-coupons">${myCoupons()}</div>
+      <p class="r-period">승진할 때마다 사무실에 새 물건이 생기고, 🎟 표시된 직급에선 할인 쿠폰도 받아요.</p>
       <ul class="lvlist">${rows}</ul>
       <ul class="howto">
         <li>리포트 다 읽기: 데일리 +${XP_READ.daily} · 위클리 +${XP_READ.weekly} · 먼슬리 +${XP_READ.monthly} · 분기 +${XP_READ.quarterly}</li>
@@ -1531,6 +1754,13 @@ function openLevels() {
         <li>스크랩 +1 · 아이디어 메모 +2 · 아이디어에 생각 덧붙이기 +3 (스크랩마다 하루 1번)</li>
       </ul>
     </div>`);
+  bindCopy(modal);
+  // 관리자가 코드를 바꿨을 수 있으니 받은 쿠폰은 열 때마다 지금 코드로 다시 받아온다
+  const got = COUPON_LEVELS.filter(l => lv >= l);
+  if (got.length) Promise.all(got.map(l => fetchCoupon(l).catch(() => null))).then(() => {
+    const el = document.getElementById("my-coupons");
+    if (el) { el.innerHTML = myCoupons(); bindCopy(el); }
+  });
 }
 
 function openKeywords() {
@@ -1543,10 +1773,14 @@ function openKeywords() {
 function openSettings() {
   openModal(`<div class="modal-head"><img src="${ME_AVATAR}" alt=""><div class="say"><div class="from">설정</div><div class="line">내 오피스 설정</div></div><button class="x" data-close aria-label="닫기">×</button></div>
     <div class="modal-body">
-      <div class="account">📱 ${esc(phoneLabel(save.profile.phone))}${save.profile.email ? ` · ✉️ ${esc(save.profile.email)}` : ""}<br>
+      <div class="account">👤 ${esc(save.profile.name || "")} · 📱 ${esc(phoneLabel(save.profile.phone))}${save.profile.email ? ` · ✉️ ${esc(save.profile.email)}` : ""}<br>
         <span class="link" style="margin:0">${save.profile.joinedAt ? `${esc(save.profile.joinedAt.slice(0, 10))} 가입 · 가입한 뒤에 나온 리포트를 받아요` : "로그인 전 기록을 이어받은 계정 · 지난 리포트도 모두 볼 수 있어요"}</span></div>
-      <label class="field">팀원들이 부를 내 이름<input id="me-name" value="${esc(save.me)}" placeholder="닉네임"></label>
+      <div class="field-row">
+        <label class="field">팀원들이 부를 내 이름<input id="me-name" value="${esc(save.me)}" placeholder="닉네임"></label>
+        <label class="field">이름<input id="me-realname" maxlength="20" value="${esc(save.profile.name || "")}" placeholder="실명"></label>
+      </div>
       <label class="field">이메일 <span class="opt">(선택)</span><input id="me-email" type="email" value="${esc(save.profile.email)}" placeholder="name@example.com"></label>
+      <label class="field">🎯 지원하고 싶은 브랜드 <span class="opt">(선택 · 아이디어 메모 질문이 "○○이라면 어떻게 할까"로 바뀌어요)</span><input id="me-target" maxlength="20" value="${esc(save.target || "")}" placeholder="예: 올리브영"></label>
       <p class="r-period" style="margin:14px 0 0">팀원 이름 (비워두면 기본 이름)</p>
       <div class="tnames">${KINDS.map(k => `<label class="field"><span class="badge" style="background:${KIND_COLOR[k]}">${KIND_NAME[k]}</span> ${esc(TEAM[k].title)}
         <input data-tname="${k}" maxlength="8" value="${esc((save.teamNames || {})[k] || "")}" placeholder="${esc(DEFAULT_NAME[k])}"></label>`).join("")}</div>
@@ -1556,14 +1790,22 @@ function openSettings() {
         <button class="btn ghost" id="export">기록 백업 받기</button>
         <label class="btn ghost">기록 불러오기<input type="file" id="import" accept="application/json" hidden></label>
         <button class="btn ghost" id="replay">출근 장면 다시 보기</button>
+        <button class="btn ghost" id="tour-again">사용법 다시 보기</button>
         <button class="btn ghost" id="logout">로그아웃</button>
       </div>
     </div>`, true);
   document.getElementById("save-name").onclick = () => {
     const email = document.getElementById("me-email").value.trim();
+    const name = document.getElementById("me-realname").value.trim();
     if (email && !EMAIL_RE.test(email)) return toast("이메일 형식을 확인해주세요");
+    if (!name) return toast("이름을 입력해주세요");
+    const changed = email !== save.profile.email || name !== save.profile.name || document.getElementById("me-name").value.trim() !== save.me;
+    const prevName = save.profile.name;  // 시트는 예전 이름으로 본인인지 확인한다
     save.profile.email = email;
+    save.profile.name = name;
     save.me = document.getElementById("me-name").value.trim();
+    save.target = document.getElementById("me-target").value.trim();
+    if (changed) { board = null; syncProfile("update", { prevName }); }
     save.teamNames = {};
     modal.querySelectorAll("[data-tname]").forEach(i => { const v = i.value.trim(); if (v) save.teamNames[i.dataset.tname] = v; });
     persist(); applyTeamNames();
@@ -1580,11 +1822,12 @@ function openSettings() {
     f.text().then(t => {
       // 계정 정보는 지금 로그인한 것을 유지하고, 가입 시점은 백업을 따른다 (로그인 기능 전 백업이면 지난 리포트도 모두)
       const prev = save.profile, next = Object.assign(defaultSave(), JSON.parse(t));
-      next.profile = { phone: prev.phone, email: prev.email, joinedAt: (next.profile || {}).joinedAt || "" };
+      next.profile = Object.assign({}, prev, { joinedAt: (next.profile || {}).joinedAt || "" });
       save = next; persist(); applyTeamNames(); closeModal(); refreshStates(true); toast("기록을 불러왔어요");
     })
       .catch(() => toast("파일을 읽지 못했어요"));
   };
+  document.getElementById("tour-again").onclick = startTour;
   document.getElementById("replay").onclick = () => {
     delete save.arrived[ymd(NOW())]; persist();
     KINDS.forEach(k => Object.assign(chars[k], { visible: false, mode: "away", path: [], onArrive: null }));
@@ -1602,21 +1845,78 @@ document.getElementById("btn-settings").onclick = openSettings;
 document.getElementById("btn-level").onclick = openLevels;
 document.getElementById("btn-wrong").onclick = openWrongNote;
 document.getElementById("btn-badges").onclick = openBadges;
+document.getElementById("btn-board").onclick = openBoard;
 
 /* ───────────────────────── 로그인 ───────────────────────── */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneLabel = p => p.length === 11 ? `${p.slice(0, 3)}-${p.slice(3, 7)}-${p.slice(7)}` : p.length === 10 ? `${p.slice(0, 3)}-${p.slice(3, 6)}-${p.slice(6)}` : p;
 const stampNow = () => { const d = new Date(); return `${ymd(d)}T${hm(d)}:${pad(d.getSeconds())}`; };  // generatedAt과 같은 형식
 
-function login(nick, phone, email) {
+// 로그인·기록 변경·페이지 열기 때 명단과 기록 백업을 함께 보낸다. 실패하면 다음에 페이지를 열 때 다시.
+function syncProfile(event, extra) {
+  if (!SIGNUP_URL || !user) return Promise.resolve();
+  clearTimeout(syncTimer);
+  const p = save.profile, data = backupData();
+  // Apps Script는 CORS 응답을 주지 않으므로 no-cors + text/plain으로 보내고 결과는 읽지 않는다
+  return fetch(SIGNUP_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" },
+    body: JSON.stringify(Object.assign({ event, nick: save.me, name: p.name, phone: p.phone, email: p.email, legacy: !p.joinedAt, agreedAt: p.agreedAt,
+      pid: p.pid, save: data }, myStats(), extra)) })
+    .then(() => { lastBackup = data; p.syncedAt = stampNow(); p.syncEvent = ""; persist(); }, () => {});
+}
+// 백업에는 연락처를 빼고 기록만 담는다 (연락처는 명단에 따로 있다)
+function backupData() {
+  const { profile, tourPending, ...rest } = save;  // 안내를 볼지는 기기마다 따로
+  return JSON.stringify(Object.assign(rest, { profile: { pid: profile.pid, joinedAt: profile.joinedAt } }));
+}
+function markGone(key) { (save.gone = save.gone || {})[key] = NOW().toISOString(); }
+// 시트에 백업된 기록. { found, match, locked, save } — found: 이 번호로 가입한 적 있음, match: 이름이 맞음
+function fetchBackup(phone, name) {
+  if (!SIGNUP_URL) return Promise.resolve(null);
+  return fetch(`${SIGNUP_URL}?${new URLSearchParams({ action: "restore", phone, name })}`, { signal: AbortSignal.timeout(8000) }).then(r => r.json());
+}
+// 두 기기의 기록을 합친다. 읽음·스크랩·퀴즈·업적은 합치고, XP는 큰 쪽, 같은 항목이 겹치면 이 기기(a) 것을 쓴다.
+// 한쪽에서 지운 스크랩·오답은 gone에 남겨서 다른 기기 기록이 되살리지 않게 한다.
+function mergeSave(a, b) {
+  const m = Object.assign(defaultSave(), b, a), gone = Object.assign({}, b.gone, a.gone);
+  const union = k => Object.assign({}, b[k], a[k]);
+  ["read", "memoXp", "arrived", "quiz", "weekly", "badges", "wrong", "coupons", "promoShown"].forEach(k => m[k] = union(k));
+  m.scraps = union("scraps");
+  Object.keys(b.scraps || {}).forEach(k => {  // 양쪽에 다 있으면 메모를 더 많이 덧붙인 쪽
+    const x = (a.scraps || {})[k], y = b.scraps[k];
+    if (x && (y.notes || []).length > (x.notes || []).length) m.scraps[k] = y;
+  });
+  Object.keys(m.scraps).forEach(k => { if (gone["s:" + k] && gone["s:" + k] > (m.scraps[k].savedAt || "")) delete m.scraps[k]; });
+  Object.keys(m.wrong).forEach(k => { if (gone["w:" + k] && gone["w:" + k].slice(0, 10) >= (m.wrong[k].at || "")) delete m.wrong[k]; });
+  m.gone = gone;
+  m.xp = Math.max(a.xp || 0, b.xp || 0);
+  m.wrongCleared = Math.max(a.wrongCleared || 0, b.wrongCleared || 0);
+  m.tourSeen = Math.max(a.tourSeen || 0, b.tourSeen || 0);
+  m.readDays = [...new Set([...(b.readDays || []), ...(a.readDays || [])])].sort();
+  m.teamNames = Object.keys(a.teamNames || {}).length ? a.teamNames : b.teamNames || {};
+  m.me = a.me || b.me || "";
+  const bp = b.profile || {}, ap = a.profile || {};
+  // 가입 시점은 이른 쪽 ("" = 로그인 기능 전부터 쓰던 계정이라 지난 리포트도 모두)
+  const joined = [ap.joinedAt, bp.joinedAt].some(j => j === "") ? "" : [ap.joinedAt, bp.joinedAt].filter(Boolean).sort()[0] || "";
+  m.profile = Object.assign({}, ap, { pid: bp.pid || ap.pid || "", joinedAt: joined });
+  return m;
+}
+const myStats = () => ({ xp: save.xp, lv: level(), streak: streakDays(), badges: Object.keys(save.badges).length });
+const newPid = () => Array.from(crypto.getRandomValues(new Uint8Array(8)), b => b.toString(16).padStart(2, "0")).join("");
+
+function login(nick, name, phone, email, backup) {
   const mine = parseSave(storeGet(saveKey(phone))), legacy = parseSave(storeGet(LEGACY_KEY));
   let isNew = false;
   if (mine) save = mine;
   else if (legacy) { save = legacy; save.profile.joinedAt = ""; storeSet(LEGACY_KEY, null); }
   else { save = defaultSave(); save.profile.joinedAt = stampNow(); isNew = true; }
+  if (backup) { save = mergeSave(save, backup); isNew = false; }  // 다른 기기에서 쓰던 기록
+  if (isNew) save.tourPending = true;  // 처음 가입하면 사용법 안내 (중간에 닫아도 다음에 이어서)
   save.me = nick;
+  save.profile.name = name;
   save.profile.phone = phone;
   if (email || !save.profile.email) save.profile.email = email;
+  save.profile.agreedAt = stampNow();  // 수집 항목이 바뀌었을 수 있으니 방금 체크한 동의 시각으로
+  save.profile.syncedAt = ""; save.profile.syncEvent = "login";  // 로그인마다 명단에 알린다 (start에서 보냄)
   user = phone; storeSet(SESSION_KEY, phone); persist();
   return isNew;
 }
@@ -1625,31 +1925,208 @@ function showLogin() {
   const el = document.getElementById("login"), err = document.getElementById("login-err");
   document.getElementById("login-avatar").src = ME_AVATAR;
   el.classList.add("open");
+  if (save.profile.phone) {  // 동의받으러 다시 띄운 경우엔 쓰던 정보를 채워둔다
+    document.getElementById("login-nick").value = save.me;
+    document.getElementById("login-name").value = save.profile.name || "";
+    document.getElementById("login-phone").value = phoneLabel(save.profile.phone);
+    document.getElementById("login-email").value = save.profile.email;
+  }
   document.getElementById("login-nick").focus();
-  document.getElementById("login-form").onsubmit = ev => {
+  document.getElementById("login-form").onsubmit = async ev => {
     ev.preventDefault();
     const nick = document.getElementById("login-nick").value.trim();
+    const name = document.getElementById("login-name").value.trim();
     const phone = document.getElementById("login-phone").value.replace(/\D/g, "");
     const email = document.getElementById("login-email").value.trim();
     if (!nick) return err.textContent = "닉네임을 입력해주세요.";
+    if (!name) return err.textContent = "이름을 입력해주세요.";
     if (!/^01\d{8,9}$/.test(phone)) return err.textContent = "휴대폰 번호를 확인해주세요. (예: 010-1234-5678)";
     if (email && !EMAIL_RE.test(email)) return err.textContent = "이메일 형식을 확인해주세요.";
-    const isNew = login(nick, phone, email);
+    if (!document.getElementById("login-agree").checked) return err.textContent = "개인정보 수집·이용에 동의해야 들어올 수 있어요.";
+    const btn = ev.target.querySelector("button[type=submit]");
+    btn.disabled = true; err.textContent = "";
+    let backup = null;
+    try {
+      const r = await fetchBackup(phone, name);
+      if (r && r.locked) { btn.disabled = false; return err.textContent = "이름이 여러 번 맞지 않아 잠시 막혔어요. 1시간 뒤에 다시 해주세요."; }
+      if (r && r.found && !r.match) { btn.disabled = false; return err.textContent = "이 번호로 가입한 기록이 있어요. 가입할 때 쓴 이름을 입력해주세요."; }
+      backup = r && r.save;
+    } catch (e) { /* 연결이 안 되면 이 기기 기록으로만 들어간다 */ }
+    btn.disabled = false;
+    const isNew = login(nick, name, phone, email, backup);
     el.classList.remove("open");
     start();
-    if (isNew) setTimeout(() => openModal(`<div class="modal-body center levelup"><img src="${ME_AVATAR}" alt="">
-      <h3>${esc(nick)}님, 입사를 축하해요!</h3>
-      <p>지금부터 발행되는 리포트를 팀원들이 들고 올 거예요.<br>${esc(who("daily"))}의 첫 보고는 ${esc(TEAM.daily.when)}에 도착해요.</p>
-      <button class="btn" data-close>좋아요</button></div>`, true), 600);
-    else toast(`${nick}님, 다시 오셨군요!`);
+    if (!isNew) toast(backup ? `${nick}님, 다른 기기 기록을 이어왔어요!` : `${nick}님, 다시 오셨군요!`);
   };
 }
+
+/* ───────────────────────── 리더보드 ───────────────────────── */
+// 시트 웹 앱(doGet)이 모든 참여자의 닉네임·직급·XP만 돌려준다. 이름·전화번호는 오지 않는다.
+// renderHud가 위에서 부르므로 function으로 둔다
+function rankIcon(r) { return !r || !r.xp ? "" : r.rank <= 3 ? ["🥇", "🥈", "🥉"][r.rank - 1] : r.rank <= 10 ? "⭐" : ""; }
+function myRow() { return board && board.rows.find(r => r.pid === save.profile.pid); }
+function loadBoard(force) {
+  if (!SIGNUP_URL) return Promise.resolve(null);
+  if (board && !force && Date.now() - boardAt < 60000) return Promise.resolve(board);
+  return fetch(SIGNUP_URL).then(r => r.json()).then(d => {
+    if (!d.ok) throw new Error(d.error);
+    const rows = d.rows || [];
+    const me = rows.find(r => r.pid === save.profile.pid);
+    if (me) Object.assign(me, myStats(), { nick: save.me });  // 시트에 아직 안 간 내 경험치까지 반영
+    rows.sort((a, b) => b.xp - a.xp);
+    rows.forEach((r, i) => r.rank = i && rows[i - 1].xp === r.xp ? rows[i - 1].rank : i + 1);  // 동점은 같은 순위
+    board = { rows }; boardAt = Date.now();
+    if (d.links) { promoLinks = d.links; renderJobs(); }
+    renderHud();
+    return board;
+  });
+}
+// 리더보드는 팝업이 아니라 전용 화면. 주소 끝이 #leaderboard가 되어 휴대폰 뒤로 가기로 사무실에 돌아온다.
+const boardView = document.getElementById("board-view");
+let boardPushed = false;  // 사무실에서 열었는지 (그럼 닫을 때 뒤로 가기)
+function openBoard() {
+  if (location.hash === "#leaderboard") return showBoardView();
+  boardPushed = true; location.hash = "leaderboard";  // hashchange가 화면을 연다
+}
+function closeBoardView() {
+  if (boardPushed) { boardPushed = false; history.back(); return; }
+  history.replaceState(null, "", location.pathname + location.search);
+  boardView.hidden = true;
+}
+window.addEventListener("hashchange", () => {
+  if (location.hash === "#leaderboard") { if (user) showBoardView(); }
+  else { boardView.hidden = true; boardPushed = false; }
+});
+document.getElementById("board-back").onclick = closeBoardView;
+document.getElementById("board-refresh").onclick = () => showBoardView();
+function showBoardView() {
+  closeModal();
+  boardView.hidden = false; boardView.scrollTop = 0;
+  const main = document.getElementById("board-main");
+  if (!SIGNUP_URL) { main.innerHTML = `<p class="empty">관리자가 가입자 명단 주소를 설정하면 다른 참여자들의 순위를 볼 수 있어요.</p>`; return; }
+  if (board) renderBoardView(); else main.innerHTML = `<p class="empty">순위를 불러오고 있어요…</p>`;
+  loadBoard(true).then(() => { if (!boardView.hidden) renderBoardView(); },
+    () => { if (!board) main.innerHTML = `<p class="empty">순위를 불러오지 못했어요. 잠시 뒤에 ↻를 눌러 주세요.</p>`; });
+}
+function renderBoardView() {
+  const rows = board.rows, me = myRow();
+  const ahead = me && rows.filter(r => r.xp > me.xp).pop();
+  const title = r => (LEVELS[r.lv - 1] || LEVELS[0]).title, nick = r => esc(r.nick || "이름 없음");
+  const meCard = me ? `<div class="bv-me"><div class="r">${me.rank}위 ${rankIcon(me)}</div>
+      <div><b>${esc(meName())}</b> · Lv.${me.lv} ${esc(title(me))} · ${me.xp} XP</div>
+      <div class="sub">${rows.length}명 중 ${me.rank}위 · ${ahead ? `${ahead.xp - me.xp} XP 더 모으면 ${ahead.rank}위로 올라가요` : "지금 1위예요! 자리를 지켜 보세요"}</div></div>`
+    : `<div class="bv-me"><div class="sub">내 기록은 시트에 올라간 뒤에 순위에 보여요.</div></div>`;
+  // 1~3위는 시상대 (가운데가 1위). XP가 0이면 메달을 주지 않는다
+  const top = rows.filter(r => r.xp && r.rank <= 3).slice(0, 3);
+  const podium = top.length ? `<div class="podium">${[top[1], top[0], top[2]].map(r => r
+    ? `<div class="${r === top[0] ? "p1" : ""}${r === me ? " mine" : ""}"><span class="m">${rankIcon(r)}</span><b>${nick(r)}${r === me ? " (나)" : ""}</b><span>Lv.${r.lv} ${esc(title(r))}</span><span>${r.xp} XP</span></div>`
+    : `<div class="empty-slot"></div>`).join("")}</div>` : "";
+  const rest = rows.filter(r => !top.includes(r)).slice(0, 50);
+  if (me && !top.includes(me) && !rest.includes(me)) rest.push(me);
+  document.getElementById("board-main").innerHTML = meCard + podium + (rows.length ? `<ul class="board">${rest.map(r => {
+      const icon = rankIcon(r);
+      return `<li class="${r === me ? "mine" : ""}"><span class="n">${r.rank}</span>
+        <span class="t"><b>${icon ? icon + " " : ""}${nick(r)}${r === me ? " (나)" : ""}</b>
+        <span>Lv.${r.lv} ${esc(title(r))} · 🔥 ${r.streak}일 · 🏅 ${r.badges}</span></span>
+        <span class="s">${r.xp} XP</span></li>`;
+    }).join("")}</ul>` : `<p class="empty">아직 순위에 오른 사람이 없어요. 리포트를 읽고 첫 번째로 올라가 보세요!</p>`)
+    + `<p class="bv-note">🥇🥈🥉 1~3위 · ⭐ 4~10위 · XP가 같으면 같은 순위예요. 닉네임·직급·XP만 보이고 이름·전화번호는 보이지 않아요.</p>`;
+}
+
+/* ───────────────────────── 오늘의 채용 공고 ───────────────────────── */
+// 메인 화면 버튼. 링크는 시트 "연결 링크" 탭의 ogonggo 줄에서 관리자가 바꾼다 (비우면 버튼이 숨는다).
+const JOBS_LINK = { key: "ogonggo", url: "" };
+function renderJobs() {
+  const a = document.getElementById("jobs-btn"), u = linkUrl(JOBS_LINK);
+  a.hidden = !u;
+  if (u) a.href = linkHref(JOBS_LINK, "main_jobs");
+}
+
+/* ───────────────────────── 사용법 안내 ───────────────────────── */
+// 처음 가입한 사람에게 화면 곳곳을 짚어가며 쓰는 법을 알려준다. 설정의 "사용법 다시 보기"로 언제든 다시.
+// 안내 내용이 크게 바뀌면 TOUR_VERSION을 올린다. 예전 안내를 본 사람에게도 한 번 더 보여준다.
+const TOUR_VERSION = 2;
+const TOUR = [
+  { title: () => save.tourSeen ? "새 기능이 생겼어요! ✨" : `${meName()}님, 입사를 축하해요! 🎉`,
+    text: () => save.tourSeen ? "아이디어 메모, 지원 브랜드, 승진 쿠폰, 리더보드가 새로 생겼어요. 30초만 같이 둘러볼까요?" : "여기는 매일 마케팅 트렌드 리포트가 도착하는 작은 사무실이에요. 30초만 같이 둘러볼까요?" },
+  { sel: ".stage", title: "팀원들이 리포트를 들고 와요",
+    text: () => `출근 시각이 되면 팀원들이 국내 마케팅 트렌드를 조사해 리포트를 쓰고, 다 쓰면 내 책상으로 가져와요. ${who("daily")}의 데일리는 ${TEAM.daily.when}에 도착해요.` },
+  { sel: "#roster", title: "읽고, 퀴즈로 확인해요", text: "팀원이나 이 목록을 누르면 리포트가 열려요. 끝까지 읽으면 XP를 받고, 이어지는 확인 퀴즈로 한 번 더 정리해요. 틀린 문제는 📝 오답노트에 모여요." },
+  { sel: "#btn-level", title: "읽을수록 승진하고, 쿠폰도 받아요", text: "XP가 쌓이면 인턴에서 CMO까지 승진하고 사무실이 꾸며져요. 대리·차장·CMO로 승진하면 렛츠커리어 특별 할인 쿠폰 코드를 드려요. 🎟 매일 이어서 읽으면 🔥 연속 보너스도 있어요." },
+  { sel: "#btn-scrap", title: "스크랩하고, 세 칸으로 생각을 정리해요",
+    text: "리포트 카드의 ☆를 누르면 스크랩북에 모여요. 카드마다 👀 무엇이 눈에 띄었나 → 🔍 왜 먹혔나 → 🚀 나라면 어떻게 할까를 채우면 ⭐ 완성 아이디어(+5 XP)가 돼요. 이렇게 쌓은 아이디어는 포트폴리오와 자소서에서 트렌드 서치 역량의 증거가 돼요." },
+  { sel: "#btn-settings", title: "🎯 지원 브랜드를 정해 보세요",
+    text: "⚙️ 설정에서 지원하고 싶은 브랜드를 적으면 세 번째 질문이 \"올리브영이라면 어떻게 할까\"처럼 바뀌어요. 브랜드를 두고 쓴 아이디어는 자소서 지원동기와 입사 후 포부의 재료가 돼요." },
+  { sel: "#jobs-btn", when: () => !document.getElementById("jobs-btn").hidden, title: "오늘의 채용 공고도 챙겨요",
+    text: "트렌드를 읽은 김에 마케팅 채용 공고도 확인해 보세요. 이 버튼을 누르면 오늘 모아 둔 공고로 바로 가요." },
+  { sel: "#btn-board", title: "다른 참여자와 같이 달려요", text: "가입하면 닉네임으로 리더보드에 올라가요. 누르면 순위 화면으로 바뀌고, 다른 참여자의 직급과 XP를 보며 함께 성장해요. 1~3위는 시상대에 🥇🥈🥉, 4~10위는 ⭐가 붙어요." },
+  { title: "준비 끝! 🚀", text: "스크랩과 아이디어가 쌓이면 다음 단계에 도움이 될 렛츠커리어 자료와 챌린지를 안내해 드려요. 같은 전화번호와 이름으로 들어오면 다른 기기에서도 기록이 이어지고, 이 안내는 ⚙️ 설정의 '사용법 다시 보기'에서 언제든 다시 볼 수 있어요." },
+];
+let tourStep = -1, tourList = TOUR;
+function startTour() {
+  closeModal();
+  if (!boardView.hidden) closeBoardView();
+  tourList = TOUR.filter(s => !s.when || s.when());  // 링크가 없어 숨은 버튼은 건너뛴다
+  tourStep = 0;
+  document.getElementById("coach").hidden = false;
+  showTourStep();
+}
+function endTour() {
+  tourStep = -1;
+  document.getElementById("coach").hidden = true;
+  delete save.tourPending; save.tourSeen = TOUR_VERSION; persist();
+}
+const tourVal = v => typeof v === "function" ? v() : v;
+function showTourStep() {
+  const s = tourList[tourStep], last = tourStep === tourList.length - 1, el = s.sel && document.querySelector(s.sel);
+  if (el) {  // 화면 밖이면 보이게 굴려 둔다 (휴대폰에선 팀원 목록이 아래에 있다)
+    const r = el.getBoundingClientRect();
+    if (r.top < 0 || r.bottom > innerHeight) el.scrollIntoView({ block: "center" });
+  }
+  placeSpot();
+  document.getElementById("coach-card").innerHTML = `<div class="step">사용법 ${tourStep + 1} / ${tourList.length}</div>
+    <h3>${esc(tourVal(s.title))}</h3><p>${esc(tourVal(s.text))}</p>
+    <div class="row"><button class="skip" id="tour-skip">${last ? "" : "건너뛰기"}</button>
+      <span>${tourStep ? `<button class="btn ghost" id="tour-prev">이전</button> ` : ""}<button class="btn" id="tour-next">${last ? "시작하기" : "다음"}</button></span></div>`;
+  document.getElementById("tour-skip").onclick = endTour;
+  document.getElementById("tour-next").onclick = () => { if (last) endTour(); else { tourStep++; showTourStep(); } };
+  const prev = document.getElementById("tour-prev");
+  if (prev) prev.onclick = () => { tourStep--; showTourStep(); };
+  document.getElementById("tour-next").focus();
+}
+// 짚는 곳 둘레만 밝게 남기고, 안내 카드는 짚는 곳과 겹치지 않게 위나 아래에 둔다
+function placeSpot() {
+  const s = tourList[tourStep], el = s && s.sel && document.querySelector(s.sel);
+  const spot = document.getElementById("coach-spot"), card = document.getElementById("coach-card");
+  if (!el || !el.getClientRects().length) { spot.className = "coach-spot none"; spot.removeAttribute("style"); card.classList.remove("top"); return; }
+  const r = el.getBoundingClientRect(), pad = 6;
+  spot.className = "coach-spot";
+  Object.assign(spot.style, { left: `${r.left - pad}px`, top: `${r.top - pad}px`, width: `${r.width + pad * 2}px`, height: `${r.height + pad * 2}px` });
+  card.classList.toggle("top", r.top + r.height / 2 > innerHeight / 2);
+}
+window.addEventListener("resize", () => { if (tourStep >= 0) placeSpot(); });
+window.addEventListener("scroll", () => { if (tourStep >= 0) placeSpot(); }, true);
+document.addEventListener("keydown", e => { if (tourStep >= 0 && e.key === "Escape") endTour(); });
 
 /* ───────────────────────── 시작 ───────────────────────── */
 function start() {
   applyTeamNames();
   refreshStates(false);
   checkBadges();
+  if (!save.profile.pid) { save.profile.pid = newPid(); persist(); }  // 리더보드에서 내 줄을 알아보는 무작위 표시
+  // 열 때마다 다른 기기에서 쌓은 기록을 합치고, 합친 기록과 진행 상황을 다시 올린다
+  fetchBackup(save.profile.phone, save.profile.name).then(r => {
+    if (!r || !r.save) return;
+    save = mergeSave(save, r.save); persist();
+    applyTeamNames(); refreshStates(false); checkBadges(); renderHud();
+  }).catch(() => {}).finally(() => {
+    syncProfile(save.profile.syncEvent || "progress");
+    loadBoard().catch(() => {});  // 상위권이면 HUD에 메달을 단다
+  });
+  // 새로 가입했거나 안내가 바뀌었으면. 다른 기기에서 이미 봤을 수 있으니 띄우기 직전에 한 번 더 본다 (그새 기록이 합쳐짐)
+  const tourDue = () => save.tourPending || (save.tourSeen || 0) < TOUR_VERSION;
+  if (tourDue()) setTimeout(() => { if (tourDue()) startTour(); }, 1200);
+  if (location.hash === "#leaderboard") showBoardView();  // 리더보드 주소로 바로 들어온 경우
   setInterval(() => refreshStates(false), 15000);   // 출근·퇴근 시각 확인
   setInterval(reloadData, 120000);                  // 새 리포트 확인
 }
