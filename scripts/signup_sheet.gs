@@ -36,8 +36,8 @@ const COUPON_LEVELS = [[4, "대리"], [6, "차장"], [10, "CMO"]];
 const LINK_SHEET = "연결 링크";
 // [구분, 언제 뜨나, 처음 넣어 둘 링크]. 구분은 office.html의 PROMOS key와 같아야 한다.
 const LINK_ROWS = [
-  ["sns_guide", "스크랩 5개 → SNS 계정 키우기 가이드북 (무료)", "https://l.letscareer.co.kr/OXx5b"],
-  ["interview_guide", "스크랩 10개 → 면접 준비 7일 끝장 챌린지", ""],
+  ["mktguidebook_guide", "스크랩 5개 → 마케팅 취준 총정리 자료집 (무료)", ""],
+  ["interview_guide", "스크랩 10개 → 면접 준비 끝장 가이드북", ""],
   ["portfolio_challenge", "완성 아이디어 5개 → 포트폴리오 2주 완성 챌린지 (주 버튼)", ""],
   ["portfolio_template", "완성 아이디어 5개 → 포트폴리오 템플릿 무료 자료 (보조 버튼)", ""],
   ["coverletter_challenge", "지원 브랜드 아이디어 3개 → 자기소개서 2주 완성 챌린지", ""],
