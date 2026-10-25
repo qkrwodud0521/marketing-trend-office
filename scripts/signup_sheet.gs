@@ -38,9 +38,9 @@ const LINK_SHEET = "연결 링크";
 const LINK_ROWS = [
   ["mktguidebook_guide", "스크랩 5개 → 마케팅 취준 총정리 자료집 (무료)", ""],
   ["interview_guide", "스크랩 10개 → 면접 준비 끝장 가이드북", ""],
-  ["portfolio_challenge", "완성 아이디어 5개 → 포트폴리오 2주 완성 챌린지 (주 버튼)", ""],
-  ["portfolio_template", "완성 아이디어 5개 → 포트폴리오 템플릿 무료 자료 (보조 버튼)", ""],
-  ["coverletter_challenge", "지원 브랜드 아이디어 3개 → 자기소개서 2주 완성 챌린지", ""],
+  ["portfolio_challenge", "아이디어 3개 → 포트폴리오 2주 완성 챌린지 (주 버튼)", ""],
+  ["portfolio_template", "아이디어 3개 → 포트폴리오 템플릿 무료 자료 (보조 버튼)", ""],
+  ["coverletter_challenge", "아이디어 5개 → 자기소개서 2주 완성 챌린지", ""],
   ["ogonggo", "메인 화면 '오늘의 마케팅 채용 공고 보러가기' 버튼 (비우면 버튼 숨김)", ""],
 ];
 
