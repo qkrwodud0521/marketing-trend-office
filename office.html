@@ -436,6 +436,7 @@ if (user && !save.profile.name) user = "";  // 이름 칸이 생기기 전에 �
 const SIGNUP_URL = "https://script.google.com/macros/s/AKfycbxAW0-foll2KK-ftKucJI6BooCooLN7NAItK8nb2MyRnp_kUmy-YTiMRjLjIprcUXbtrg/exec";
 let board = null, boardAt = 0;  // 리더보드 캐시 (아래 리더보드 부분)
 let promoLinks = null;  // 시트 "연결 링크" 탭의 링크 (리더보드와 함께 받아온다)
+let couponInfo = null;  // 시트 "쿠폰" 탭의 레벨별 안내 문구 (다음 쿠폰 미리보기용, 코드는 없음)
 let syncTimer, lastBackup = "";  // 시트에 마지막으로 보낸 기록 (아래 로그인 부분)
 function persist() {
   if (!user) return;
@@ -1101,7 +1102,7 @@ function showLevelUp(lv) {
   // 시트가 새 레벨을 알아야 쿠폰을 내주므로, 진행 상황을 먼저 보내고 받아온다
   syncProfile(save.profile.syncEvent || "progress").then(() => fetchCoupon(lv)).catch(() => null).then(() => {
     const el = document.getElementById("lv-coupon");
-    if (el) { el.outerHTML = couponHtml(lv) + couponPairHtml(lv); bindCopy(modal); }
+    if (el) { el.outerHTML = couponHtml(lv).replace(/<\/div>$/, nextCouponNote(lv) + "</div>") + couponPairHtml(lv); bindCopy(modal); }
   });
 }
 // 쿠폰이 맥락 없이 오지 않게, 아직 안 본 유료 안내 중 다음 단계(포폴 → 자소서 → 면접)를 쿠폰 창에 함께 띄운다.
@@ -1224,9 +1225,16 @@ function promoBanner() {
   return p ? `<div class="coupon" style="margin-top:0"><div class="c-t">${p.banner}</div><p>${p.what}</p>${couponNote(p)}${promoBtns(p, "scrapbook")}</div>` : "";
 }
 
+// "다음 쿠폰은 Lv.6 차장 달성 시 · ○○ 할인 (150 XP 남음)"
+function nextCouponNote(lv) {
+  const next = COUPON_LEVELS.find(l => l > lv);
+  if (!next) return "";
+  const desc = couponInfo && couponInfo[next], left = LEVELS[next - 1].xp - save.xp;
+  return `<p class="link" style="margin:8px 0 0;text-align:left">🎟 다음 쿠폰은 <b>Lv.${next} ${esc(LEVELS[next - 1].title)}</b> 달성 시${desc ? ` · ${esc(desc)}` : "에 받을 수 있어요"}${left > 0 ? ` (${left} XP 남음)` : ""}</p>`;
+}
 const myCoupons = () => {
   const got = COUPON_LEVELS.filter(l => level() >= l);
-  return got.length ? got.map(couponHtml).join("") : `<p class="link">대리·차장·CMO로 승진하면 렛츠커리어 특별 할인 쿠폰을 드려요.</p>`;
+  return (got.length ? got.map(couponHtml).join("") : `<p class="link">대리·차장·CMO로 승진하면 렛츠커리어 특별 할인 쿠폰을 드려요.</p>`) + nextCouponNote(level());
 };
 
 /* ───────────────────────── 모달 ───────────────────────── */
@@ -2014,6 +2022,7 @@ function loadBoard(force) {
     rows.forEach((r, i) => r.rank = i && rows[i - 1].xp === r.xp ? rows[i - 1].rank : i + 1);  // 동점은 같은 순위
     board = { rows }; boardAt = Date.now();
     if (d.links) { promoLinks = d.links; renderJobs(); }
+    if (d.couponInfo) couponInfo = d.couponInfo;
     renderHud();
     return board;
   });

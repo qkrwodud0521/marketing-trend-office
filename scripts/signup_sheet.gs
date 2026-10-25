@@ -97,8 +97,11 @@ function doGet(e) {
   const q = (e && e.parameter) || {};
   if (q.action === "restore") return restore(q);
   if (q.action === "coupon") return coupon(q);
-  couponSheet();  // 관리자가 코드를 넣을 탭을 미리 만들어 둔다
   const links = readLinks();
+  // 다음 쿠폰 미리보기: 레벨별 안내 문구만 (코드는 그 레벨에 오른 사람에게만 coupon()으로 준다)
+  const cs = couponSheet();
+  const couponInfo = {};
+  cs.getRange(2, 1, Math.max(cs.getLastRow() - 1, 1), 4).getDisplayValues().forEach(r => { if (Number(r[0])) couponInfo[Number(r[0])] = String(r[3]).trim(); });
   const sh = sheet();
   const rows = Math.max(sh.getLastRow() - 1, 0);
   const all = rows ? sh.getRange(2, 1, rows, HEADER.length).getValues() : [];
@@ -108,7 +111,7 @@ function doGet(e) {
       streak: Number(r[p + 2]) || 0, badges: Number(r[p + 3]) || 0 }))
     .sort((a, b) => b.xp - a.xp)
     .slice(0, 200);
-  return reply({ ok: true, rows: out, links });
+  return reply({ ok: true, rows: out, links, couponInfo });
 }
 
 // 본인 확인: 번호가 명단에 있고 이름이 맞는지. 번호가 없으면 found: false, 이름이 다르면 match: false. 10번 틀리면 1시간 잠금.
