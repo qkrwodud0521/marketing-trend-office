@@ -1100,8 +1100,19 @@ function showLevelUp(lv) {
   // 시트가 새 레벨을 알아야 쿠폰을 내주므로, 진행 상황을 먼저 보내고 받아온다
   syncProfile(save.profile.syncEvent || "progress").then(() => fetchCoupon(lv)).catch(() => null).then(() => {
     const el = document.getElementById("lv-coupon");
-    if (el) { el.outerHTML = couponHtml(lv); bindCopy(modal); }
+    if (el) { el.outerHTML = couponHtml(lv) + couponPairHtml(lv); bindCopy(modal); }
   });
+}
+// 쿠폰이 맥락 없이 오지 않게, 아직 안 본 유료 안내 중 다음 단계(포폴 → 자소서 → 면접)를 쿠폰 창에 함께 띄운다.
+// 함께 띄운 안내는 본 것으로 쳐서 나중에 따로 다시 뜨지 않는다.
+const PAIR_ORDER = ["portfolio_challenge", "coverletter_challenge", "interview_guide"];
+function couponPairHtml(lv) {
+  if (!((save.coupons || {})[lv] || {}).code) return "";  // 쿠폰이 준비 중이면 붙이지 않는다
+  const p = PAIR_ORDER.map(k => PROMOS.find(x => x.key === k)).find(x => x && promoOn(x) && !(save.promoShown || {})[x.key]);
+  if (!p) return "";
+  (save.promoShown = save.promoShown || {})[p.key] = ymd(NOW()); persist();
+  return `<div class="coupon" style="text-align:left"><div class="c-t">${p.icon} 이 쿠폰, ${esc(p.name)}에 써 보세요</div>
+    <p>${p.pitch}</p>${promoBtns(p, "coupon")}</div>`;
 }
 
 /* ───────────────────────── 승진 쿠폰 ───────────────────────── */
@@ -1146,6 +1157,7 @@ const PROMOS = [
     links: [{ key: "mktguidebook_guide", url: "", btn: "무료 자료집 확인하기" }],
     banner: "📘 트렌드 공부, 취업 준비로 이어가 볼까요?" },
   { key: "interview_guide", count: scrapCount, at: 10, unit: "스크랩", icon: "🎤", paid: true,
+    name: "면접 준비 끝장 가이드북", pitch: "면접 단골 질문, 아직 답이 없다면? 가이드북 한 권으로 준비 끝내요!",
     head: "모아 둔 트렌드, 이제 면접에서 꺼내 쓸 차례예요",
     body: n => `벌써 마케팅 트렌드를 ${n}개나 스크랩했어요!<br>모아만 두지 말고, 내가 고른 트렌드를 면접 답변으로 연결해 보세요.`,
     card: "🎤 렛츠커리어 면접 준비 끝장 가이드북", what: "스크랩한 트렌드를 면접 답변으로 연결해 나만의 컨셉을 잡아 보세요.",
@@ -1153,6 +1165,7 @@ const PROMOS = [
     banner: "🎤 모은 트렌드, 면접 답변으로 연결해 볼까요?" },
   // 아이디어 계단: 3개 → 포트폴리오, 5개 → 자기소개서. 완성 아이디어와 지원 브랜드 아이디어 중 많은 쪽으로 센다.
   { key: "portfolio_challenge", count: ideaStep, at: 3, unit: "아이디어", icon: "🗂️", paid: true,
+    name: "포트폴리오 2주 완성 챌린지", pitch: "아직도 마스터 포트폴리오가 없다면? 2주 안에 구조화된 포트폴리오 완성해요!",
     head: "트렌드를 아카이빙한 경험, 그 자체가 역량이에요",
     body: n => `벌써 아이디어를 ${n}개나 정리했어요.<br>매일 트렌드를 찾아보고 '왜 먹혔는지, 나라면 어떻게 할지'까지 정리해 온 경험은 마케터에게 꼭 필요한 <b>트렌드 서치 역량</b>이에요. 지금까지 정리한 아이디어로 이 역량을 포트폴리오에서 바로 보여줄 수 있어요.`,
     card: "🚀 혼자 만들기 막막하다면?", what: "렛츠커리어와 함께 2주 안에 마스터 포트폴리오를 만들어요.",
@@ -1160,6 +1173,7 @@ const PROMOS = [
     banner: "🗂️ 정리한 아이디어로 트렌드 서치 역량을 보여주세요" },
   // 지원 브랜드를 정했으면 그 브랜드 이야기로, 아니면 자소서 문항 일반으로
   { key: "coverletter_challenge", count: ideaStep, at: 5, unit: "아이디어", icon: "✍️", paid: true,
+    name: "자기소개서 2주 완성 챌린지", pitch: "자소서 첫 문장부터 막막하다면? 2주 안에 설득력 있는 자소서 완성해요!",
     head: () => save.target ? `${withIrago(save.target)} 어떻게 할지, 벌써 답이 모였어요` : "쌓인 아이디어, 자소서 문장이 될 수 있어요",
     body: n => save.target
       ? `${esc(save.target)}에 적용할 아이디어까지 ${n}개를 정리했어요.<br>자기소개서의 지원동기와 입사 후 포부는 '이 회사를 얼마나 알고, 들어가서 무엇을 해 보고 싶은가'를 묻는 문항이에요. 지원할 브랜드를 두고 쓴 아이디어는 그 질문에 대한 가장 구체적인 답이 돼요.`
