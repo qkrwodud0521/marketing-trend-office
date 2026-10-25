@@ -984,10 +984,11 @@ function statusText(k) {
     // scripts/run.py가 assets/run-status.js에 남기는 실제 작성 상태
     const run = (window.RUN_STATUS || {})[k];
     if (run && run.id === expectedId(k, now)) {
-      if (run.state === "failed") return ["#ff7a59", "작성 실패 (logs 확인)"];
+      // 참여자 모두가 보는 화면이라 실패 같은 내부 사정은 드러내지 않는다 (관리자는 맥 알림과 logs로 안다)
+      if (run.state === "failed") return ["#5bd1ff", "리포트가 조금 늦어지고 있어요"];
       if (run.state === "running") return ["#5bd1ff", "리포트 작성 중"];
     }
-    return ["#5bd1ff", "작성 준비 중 · 맥이 깨어 있으면 곧 시작해요"];
+    return ["#5bd1ff", "리포트 준비 중"];
   }
   if (c.mode === "arriving") return ["#4fd1a5", "출근하는 중"];
   if (c.mode === "away" || c.mode === "leaving") {
