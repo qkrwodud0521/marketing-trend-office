@@ -1135,7 +1135,7 @@ function couponHtml(lv) {
   return `<div class="coupon"><div class="c-t">🎁 ${esc(title)} 승진 기념 렛츠커리어 특별 할인 쿠폰</div>
     <div class="c-code"><b>${esc(c.code)}</b><button class="btn ghost" data-copy="${esc(c.code)}">복사</button></div>
     ${c.desc ? `<p>${esc(c.desc)}</p>` : ""}${c.until ? `<p class="link" style="margin:0">사용 기한: ${esc(c.until)}</p>` : ""}
-    ${c.link ? `<a class="btn" href="${esc(c.link)}" target="_blank" rel="noopener">쿠폰 쓰러 가기</a>` : ""}</div>`;
+    ${c.link ? `<a class="btn" href="${esc(withContent(c.link, `coupon_lv${lv}`))}" target="_blank" rel="noopener">쿠폰 쓰러 가기</a>` : ""}</div>`;
 }
 function bindCopy(root) {
   root.querySelectorAll("[data-copy]").forEach(b => b.onclick = () =>
@@ -1184,10 +1184,9 @@ const PROMOS = [
     banner: "✍️ 정리한 아이디어, 자소서로 옮겨 볼까요?" },
 ];
 const linkUrl = l => promoLinks ? promoLinks[l.key] || "" : l.url;
-function linkHref(l, where) {
-  const u = linkUrl(l);
-  return /[?&]utm_content=/.test(u) ? u : `${u}${u.includes("?") ? "&" : "?"}utm_content=${where}`;
-}
+// 어느 자리에서 눌렀는지 utm_content로 덧붙인다 (관리자가 링크에 이미 넣었으면 그대로)
+const withContent = (u, where) => /[?&]utm_content=/.test(u) ? u : `${u}${u.includes("?") ? "&" : "?"}utm_content=${where}`;
+const linkHref = (l, where) => withContent(linkUrl(l), where);
 const promoOn = p => p.links.some(linkUrl);
 const promoBtns = (p, where) => p.links.filter(linkUrl).map((l, i) =>
   `<a class="btn${i ? " ghost" : ""}" href="${esc(linkHref(l, where))}" target="_blank" rel="noopener">${l.btn}</a>`).join(" ");
