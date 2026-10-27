@@ -34,6 +34,7 @@ const BACKUP_SHEET = "기록", CHUNK = 45000, MAX_BACKUP = 450000;  // 칸 하�
 const COUPON_SHEET = "쿠폰", COUPON_LOG = "쿠폰 발급";
 const COUPON_LEVELS = [[4, "대리"], [6, "차장"], [10, "CMO"]];
 const LINK_SHEET = "연결 링크";
+const FEEDBACK_SHEET = "의견";
 // [구분, 언제 뜨나, 처음 넣어 둘 링크]. 구분은 office.html의 PROMOS key와 같아야 한다.
 const LINK_ROWS = [
   ["mktguidebook_guide", "스크랩 5개 → 마케팅 취준 총정리 자료집 (무료)", ""],
@@ -44,10 +45,11 @@ const LINK_ROWS = [
   ["ogonggo", "메인 화면 '오늘의 마케팅 채용 공고 보러가기' 버튼 (비우면 버튼 숨김)", ""],
 ];
 
-// 시트를 열 때마다 "쿠폰"·"연결 링크" 탭과 새로 생긴 줄을 만들어 둔다 (배포와 상관없이 저장만 하면 동작)
+// 시트를 열 때마다 "쿠폰"·"연결 링크"·"의견" 탭과 새로 생긴 줄을 만들어 둔다 (배포와 상관없이 저장만 하면 동작)
 function onOpen() {
   couponSheet();
   readLinks();
+  feedbackSheet();
 }
 
 function doPost(e) {
@@ -55,6 +57,24 @@ function doPost(e) {
   lock.waitLock(10000);  // 동시에 들어와도 같은 사람이 두 줄로 생기지 않게
   try {
     const d = JSON.parse(e.postData.contents);
+    if (d.event === "feedback") {
+      const msg = clean(d.message, 2000);
+      if (!msg) return reply({ ok: false, error: "empty" });
+      feedbackSheet().appendRow([
+        new Date(),
+        clean(d.category || "기타", 20),
+        msg,
+        clean(d.contact, 100),
+        clean(d.name, 20),
+        clean(d.nick, 20),
+        fmtPhone(d.phone) || clean(d.phone, 20),
+        clean(d.email, 100),
+        num(d.lv, 10) || 1,
+        num(d.xp, 100000),
+        "접수",
+      ]);
+      return reply({ ok: true });
+    }
     const phone = fmtPhone(d.phone);
     if (!phone) return reply({ ok: false, error: "phone" });
     const name = clean(d.name, 20), nick = clean(d.nick, 20), email = clean(d.email, 100);
@@ -196,6 +216,20 @@ function couponSheet() {
     sh.setFrozenRows(1);
     sh.getRange(1, 1, 1, 6).setFontWeight("bold");
     sh.getRange("C:F").setNumberFormat("@");  // 코드·날짜를 입력한 그대로 보이게
+  }
+  return sh;
+}
+
+function feedbackSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sh = ss.getSheetByName(FEEDBACK_SHEET);
+  if (!sh) {
+    sh = ss.insertSheet(FEEDBACK_SHEET);
+    sh.appendRow(["접수 시각", "구분", "내용", "답변 연락처", "이름", "닉네임", "전화번호", "이메일", "레벨", "XP", "처리 상태"]);
+    sh.setFrozenRows(1);
+    sh.getRange(1, 1, 1, 11).setFontWeight("bold");
+    sh.getRange("D:D").setNumberFormat("@");
+    sh.getRange("G:G").setNumberFormat("@");
   }
   return sh;
 }

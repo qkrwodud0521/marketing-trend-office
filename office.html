@@ -278,6 +278,10 @@ canvas#office { display: block; width: 100%; height: auto; image-rendering: pixe
 .agree summary { cursor: pointer; }
 .agree ul { margin: 6px 0 0; padding-left: 16px; line-height: 1.6; }
 .account { margin: 0 0 6px; padding: 10px 12px; border: 2px solid var(--paper-line); border-radius: 10px; font-size: 13px; line-height: 1.6; }
+.cs-fab { position: fixed; right: 20px; bottom: 20px; z-index: 9; display: inline-flex; align-items: center; gap: 6px; background: var(--panel); color: var(--ink); border: 2px solid var(--line); border-radius: 999px; padding: 10px 16px; font-size: 13.5px; font-weight: 700; box-shadow: 0 4px 12px rgba(0,0,0,.4); transition: transform .15s, border-color .15s; }
+.cs-fab:hover { border-color: var(--accent); transform: translateY(-2px); }
+.cs-fab:active { transform: translateY(0); }
+@media (max-width: 600px) { .cs-fab { right: 12px; bottom: 12px; padding: 8px 13px; font-size: 13px; } }
 .toast { visibility: hidden; position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(120px); background: #1b1726; color: #fff; border: 2px solid var(--gold); padding: 8px 16px; border-radius: 10px; font-weight: 700; transition: transform .3s; z-index: 20; }
 .toast.show { visibility: visible; transform: translateX(-50%) translateY(0); }
 </style>
@@ -323,6 +327,7 @@ canvas#office { display: block; width: 100%; height: auto; image-rendering: pixe
 </div>
 
 <div class="modal-bg" id="modal-bg"><div class="modal" id="modal"></div></div>
+<button class="cs-fab" id="btn-cs" type="button">💬 의견 보내기</button>
 <div class="toast" id="toast"></div>
 <section class="board-view" id="board-view" hidden aria-label="리더보드"><div class="bv-wrap">
   <header class="bv-head"><button class="hud-btn" id="board-back">← 사무실로</button><h2 class="pixel">🏆 리더보드</h2><button class="hud-btn" id="board-refresh" aria-label="순위 새로 불러오기">↻</button></header>
@@ -1891,6 +1896,51 @@ document.getElementById("btn-level").onclick = openLevels;
 document.getElementById("btn-wrong").onclick = openWrongNote;
 document.getElementById("btn-badges").onclick = openBadges;
 document.getElementById("btn-board").onclick = openBoard;
+document.getElementById("btn-cs").onclick = openFeedback;
+
+const CS_TYPES = ["💡 기능 건의", "🐛 오류 제보", "❓ 이용 문의", "💬 기타 의견"];
+function openFeedback() {
+  let category = CS_TYPES[0];
+  const defaultContact = save.profile.email || phoneLabel(save.profile.phone || "");
+  openModal(`<div class="modal-head"><img src="${ME_AVATAR}" alt=""><div class="say"><div class="from">고객의 소리</div><div class="line">💬 의견 보내기</div></div><button class="x" data-close aria-label="닫기">×</button></div>
+    <div class="modal-body">
+      <p class="r-period" style="margin:0 0 10px">불편했던 점이나 바라는 기능, 궁금한 점이 있다면 편하게 남겨주세요.</p>
+      <div class="tabs" id="cs-tabs">${CS_TYPES.map((t, i) => `<button type="button" data-cs-cat="${esc(t)}" class="${i === 0 ? "on" : ""}">${esc(t)}</button>`).join("")}</div>
+      <label class="field">내용<textarea id="cs-text" rows="4" maxlength="2000" placeholder="어떤 점이 좋았거나 아쉬웠나요? 자세히 적어주시면 더 빠르게 확인할 수 있어요."></textarea></label>
+      <label class="field">답변 받을 연락처 / 이메일 <span class="opt">(선택)</span><input id="cs-contact" maxlength="100" value="${esc(defaultContact)}" placeholder="이메일 또는 전화번호"></label>
+      <div class="toolbar" style="margin-top:14px;margin-bottom:0">
+        <button class="btn" id="cs-send" type="button">보내기</button>
+        <button class="btn ghost" type="button" data-close>취소</button>
+      </div>
+    </div>`, true);
+  modal.querySelectorAll("[data-cs-cat]").forEach(b => b.onclick = () => {
+    category = b.dataset.csCat;
+    modal.querySelectorAll("[data-cs-cat]").forEach(x => x.classList.toggle("on", x === b));
+  });
+  document.getElementById("cs-text").focus();
+  document.getElementById("cs-send").onclick = () => {
+    const message = document.getElementById("cs-text").value.trim();
+    const contact = document.getElementById("cs-contact").value.trim();
+    if (!message) return toast("내용을 입력해주세요");
+    if (!SIGNUP_URL) return toast("전송 주소가 설정되지 않았어요");
+    const btn = document.getElementById("cs-send");
+    btn.disabled = true; btn.textContent = "보내는 중…";
+    const p = save.profile || {};
+    fetch(SIGNUP_URL, {
+      method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain;charset=utf-8" },
+      body: JSON.stringify(Object.assign({
+        event: "feedback", category, message, contact,
+        nick: save.me, name: p.name, phone: p.phone, email: p.email,
+      }, myStats())),
+    }).then(() => {
+      closeModal();
+      toast("소중한 의견 고맙습니다! 💌");
+    }, () => {
+      btn.disabled = false; btn.textContent = "보내기";
+      toast("전송하지 못했어요. 잠시 뒤에 다시 시도해주세요.");
+    });
+  };
+}
 
 /* ───────────────────────── 로그인 ───────────────────────── */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
