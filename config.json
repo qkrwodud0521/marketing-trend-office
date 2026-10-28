@@ -1,6 +1,6 @@
 {
   "claude_bin": "",
-  "model": "",
+  "model": "sonnet",
   "timeout_minutes": 40,
   "notify": true,
   "open_on_complete": false,
