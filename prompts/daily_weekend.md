@@ -16,4 +16,11 @@ CLAUDE.md와 sources.md를 읽고, 주말에 가볍게 훑어볼 **밈 위주의
 
 퀴즈는 2문제만 만든다.
 
+{{SCRAPED_ARTICLES}}
+
 {{RECENT}}
+
+## JSON 작성 주의사항 (누락 금지)
+- 최상위에 `headline`, `period_id`, `period_label`, `summary`, `sections`, `keywords`, `follow_up`, `quiz`가 반드시 포함되어야 한다.
+- 퀴즈 문제 질문 필드는 반드시 `q`로 작성한다. (`options`, `answer`, `explain` 포함)
+- 결과물은 반드시 {{OUTPUT}} 파일에 JSON 형식으로 Write 도구를 사용하여 저장한다.

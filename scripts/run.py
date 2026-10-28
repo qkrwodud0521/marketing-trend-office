@@ -25,6 +25,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
+import fetch_sources  # noqa: E402
 import render  # noqa: E402
 
 CONFIG = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
@@ -170,6 +171,22 @@ def build_prompt(kind, today, out_path, extra=""):
     pid, label, start, end = period(kind, today)
     name = "daily_weekend" if is_weekend(kind, today) else kind
     text = (ROOT / "prompts" / f"{name}.md").read_text(encoding="utf-8")
+
+    scraped_md = ""
+    has_scraped = False
+    if kind == "daily" and CONFIG.get("use_pre_fetch", True):
+        try:
+            log("파이썬 크롤러로 최신 마케팅 기사 사전 수집 중 (무료, 토큰 절약)...")
+            articles = fetch_sources.collect_latest_sources(limit=25)
+            if articles:
+                log(f"최신 기사 {len(articles)}건 사전 수집 완료")
+                scraped_md = fetch_sources.format_scraped_articles_markdown(articles)
+                has_scraped = True
+            else:
+                log("사전 수집 기사 없음 (기본 웹 검색 모드로 진행)")
+        except Exception as e:
+            log(f"기사 사전 수집 중 예외 ({e}), 기본 웹 검색 모드로 진행")
+
     for key, val in {
         "PERIOD_ID": pid, "PERIOD_LABEL": label,
         "START": start.isoformat(), "END": end.isoformat(),
@@ -178,9 +195,10 @@ def build_prompt(kind, today, out_path, extra=""):
         "RECENT": recent_titles(today) if kind == "daily" else "",
         "INSTA": (ROOT / "prompts" / "insta_section.md").read_text(encoding="utf-8")
                  if is_insta_day(kind, today) else "",
+        "SCRAPED_ARTICLES": scraped_md,
     }.items():
         text = text.replace("{{" + key + "}}", val)
-    return text + extra
+    return text + extra, has_scraped
 
 
 def has_network(host="api.anthropic.com"):
@@ -214,12 +232,13 @@ class RateLimited(Exception):
     """claude 사용량 한도에 걸렸다. 한도가 풀릴 때까지 실패 횟수로 세지 않고 멈춘다."""
 
 
-def run_agent(prompt):
+def run_agent(prompt, tools=None):
     wait_for_network()
-    cmd = [find_claude(), "-p", "--output-format", "text", "--allowedTools", *ALLOWED_TOOLS]
+    active_tools = tools if tools is not None else ALLOWED_TOOLS
+    cmd = [find_claude(), "-p", "--output-format", "text", "--allowedTools", *active_tools]
     if CONFIG.get("model"):
         cmd += ["--model", CONFIG["model"]]
-    log(f"에이전트 실행: {cmd[0]}")
+    log(f"에이전트 실행: {cmd[0]} (도구: {', '.join(active_tools)})")
     proc = subprocess.run(cmd, input=prompt, text=True, cwd=ROOT,
                           capture_output=True, timeout=CONFIG.get("timeout_minutes", 40) * 60)
     if proc.stdout.strip():
@@ -317,8 +336,19 @@ def generate(kind, today, notify_fail=True):
     extra = ""
     for attempt in (1, 2):
         log(f"{kind} {pid} 생성 시도 {attempt}")
+        prompt, has_scraped = build_prompt(kind, today, out_path, extra)
+
+        # 사전 수집된 기사가 있거나 하위 리포트 기반인 경우 불필요한 웹 탐색을 방지하여 토큰 90% 절약
+        if not CONFIG.get("force_all_tools", False) and (has_scraped or kind in ("weekly", "monthly", "quarterly")):
+            if is_insta_day(kind, today):
+                tools = ["Write", "Read", "WebSearch"]
+            else:
+                tools = ["Write", "Read"]
+        else:
+            tools = ALLOWED_TOOLS
+
         try:
-            run_agent(build_prompt(kind, today, out_path, extra))
+            run_agent(prompt, tools=tools)
         except (AuthExpired, RateLimited):
             set_status(kind, pid, "failed")
             raise
