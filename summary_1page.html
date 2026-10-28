@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>마케팅 트렌드 리포트 자동화 - 주요 기능 요약</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Segoe UI", sans-serif;
+    color: #1e293b;
+    background-color: #ffffff;
+    width: 210mm;
+    height: 297mm;
+    max-height: 297mm;
+    padding: 13mm 14mm;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Header */
+  .header {
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 8px;
+    margin-bottom: 9px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .header-left {
+    display: flex;
+    flex-direction: column;
+  }
+  .header-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .header-title-row svg {
+    flex-shrink: 0;
+  }
+  .header-title {
+    font-size: 19pt;
+    font-weight: 800;
+    color: #0f172a;
+    letter-spacing: -0.5px;
+  }
+  .header-desc {
+    font-size: 8.8pt;
+    color: #64748b;
+    margin-top: 3px;
+    font-weight: 500;
+  }
+  .header-badge {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1px solid #bfdbfe;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 8.5pt;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  /* Intro Banner */
+  .intro-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #2563eb;
+    border-radius: 6px;
+    padding: 7px 11px;
+    font-size: 8.6pt;
+    line-height: 1.45;
+    color: #334155;
+    margin-bottom: 10px;
+  }
+  .intro-box strong {
+    color: #1d4ed8;
+  }
+
+  /* Section Titles */
+  .section-title {
+    font-size: 10.5pt;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .section-title .dot {
+    width: 6px;
+    height: 6px;
+    background-color: #2563eb;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* Report Table / Grid */
+  .report-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+    margin-bottom: 11px;
+  }
+  .report-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 7px 8px;
+    display: flex;
+    flex-direction: column;
+  }
+  .report-card.daily { border-top: 3px solid #3b82f6; }
+  .report-card.weekly { border-top: 3px solid #10b981; }
+  .report-card.monthly { border-top: 3px solid #8b5cf6; }
+  .report-card.quarter { border-top: 3px solid #f59e0b; }
+  
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 3px;
+  }
+  .member-tag {
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  .cycle-badge {
+    font-size: 7.2pt;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+  .daily .cycle-badge { background: #dbeafe; color: #1e40af; }
+  .weekly .cycle-badge { background: #d1fae5; color: #065f46; }
+  .monthly .cycle-badge { background: #ede9fe; color: #5b21b6; }
+  .quarter .cycle-badge { background: #fef3c7; color: #92400e; }
+  
+  .card-time {
+    font-size: 7.3pt;
+    color: #64748b;
+    margin-bottom: 4px;
+  }
+  .card-desc {
+    font-size: 7.8pt;
+    color: #475569;
+    line-height: 1.38;
+    flex-grow: 1;
+  }
+  .card-sub {
+    margin-top: 4px;
+    padding-top: 4px;
+    border-top: 1px dashed #e2e8f0;
+    font-size: 7.3pt;
+    color: #2563eb;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  /* Office Features Grid (2 columns) */
+  .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 11px;
+  }
+  .feature-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 7px 9px;
+  }
+  .feature-box-title {
+    font-size: 8.8pt;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .feature-box-title svg {
+    flex-shrink: 0;
+  }
+  .feature-box ul {
+    list-style: none;
+    font-size: 7.8pt;
+    color: #475569;
+    line-height: 1.42;
+  }
+  .feature-box li {
+    position: relative;
+    padding-left: 9px;
+    margin-bottom: 2px;
+  }
+  .feature-box li::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #2563eb;
+    font-weight: bold;
+  }
+
+  /* Step tags for idea scrapbook */
+  .step-tag {
+    display: inline-block;
+    padding: 0px 4px;
+    border-radius: 3px;
+    font-size: 7.2pt;
+    font-weight: 700;
+  }
+  .tag-observe { background: #e0f2fe; color: #0369a1; }
+  .tag-insight { background: #fef3c7; color: #92400e; }
+  .tag-apply { background: #dcfce7; color: #15803d; }
+
+  /* Bottom Tech & Operations (2 columns) */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .tech-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 7px 9px;
+  }
+  .tech-card-title {
+    font-size: 8.5pt;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tech-card-title svg {
+    flex-shrink: 0;
+  }
+  .tech-card ul {
+    font-size: 7.8pt;
+    color: #475569;
+    line-height: 1.38;
+    list-style: none;
+  }
+  .tech-card li {
+    position: relative;
+    padding-left: 9px;
+    margin-bottom: 2px;
+  }
+  .tech-card li::before {
+    content: "-";
+    position: absolute;
+    left: 0;
+    color: #64748b;
+  }
+  .code-inline {
+    background: #e2e8f0;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-family: Menlo, Monaco, monospace;
+    font-size: 7.2pt;
+    color: #0f172a;
+  }
+
+  /* Footer */
+  .footer {
+    border-top: 1px solid #e2e8f0;
+    padding-top: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 7.5pt;
+    color: #94a3b8;
+  }
+  .footer-links {
+    display: flex;
+    gap: 12px;
+    color: #64748b;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Top Content Wrapper -->
+  <div>
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <div class="header-title-row">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          <div class="header-title">마케팅 트렌드 리포트 자동화</div>
+        </div>
+        <p class="header-desc">Claude AI 기반 웹 리서치 리포트 &amp; 게이미피케이션 오피스 시스템 요약</p>
+      </div>
+      <div class="header-badge">팀 공유용 한 장 요약</div>
+    </div>
+
+    <!-- Overview Intro -->
+    <div class="intro-box">
+      <strong>프로젝트 목적:</strong> 마케팅 준비생 및 실무자가 매일 쏟아지는 최신 트렌드를 빠르게 파악할 수 있도록, <strong>Claude AI가 웹을 자동 조사·검증하여 주기별 리포트를 발행</strong>합니다. 팀원은 픽셀아트 오피스(<code>office.html</code>)에서 가상 팀원들과 상호작용하며 퀴즈, 스크랩, 아이디어 메모를 통해 마케팅 인사이트를 체득합니다.
+    </div>
+
+    <!-- 1. 리포트 주기 & 가상 팀원 -->
+    <div class="section-title"><span class="dot"></span>4대 주기별 리포트 &amp; 가상 팀원 역할</div>
+    <div class="report-grid">
+      <div class="report-card daily">
+        <div class="card-top">
+          <span class="member-tag">하루 사원</span>
+          <span class="cycle-badge">데일리</span>
+        </div>
+        <div class="card-time">매일 09:00 (최근 48시간)</div>
+        <div class="card-desc">아이디어, 밈, 브랜드·업계 속보 요약. 최근 7일 내 다룬 소재 자동 중복 방지.</div>
+        <div class="card-sub">화·금 릴스/캐러셀 심층 분석<br>토·일 밈 위주 주말판 발행</div>
+      </div>
+      <div class="report-card weekly">
+        <div class="card-top">
+          <span class="member-tag">주디 대리</span>
+          <span class="cycle-badge">위클리</span>
+        </div>
+        <div class="card-time">매주 월 09:10 (지난주 월~일)</div>
+        <div class="card-desc">한 주간 가장 화제가 된 트렌드 TOP, 베스트 마케팅 캠페인 총결산.</div>
+        <div class="card-sub">데일리 데이터 1차 취합 후<br>금요일 주간 복습 퀴즈 진행</div>
+      </div>
+      <div class="report-card monthly">
+        <div class="card-top">
+          <span class="member-tag">달래 과장</span>
+          <span class="cycle-badge">먼슬리</span>
+        </div>
+        <div class="card-time">매월 1일 09:20 (지난달)</div>
+        <div class="card-desc">월간 핵심 키워드, 업계 메가트렌드 및 브랜드 전략 변화 심층 분석.</div>
+        <div class="card-sub">위클리 리포트 종합 및<br>웹 보완 리서치 결합</div>
+      </div>
+      <div class="report-card quarter">
+        <div class="card-top">
+          <span class="member-tag">쿼터 차장</span>
+          <span class="cycle-badge">분기</span>
+        </div>
+        <div class="card-time">1·4·7·10월 1일 09:30 (지난 분기)</div>
+        <div class="card-desc">대기업·대행사·전문 리서치 기관의 공식 트렌드 리포트 핵심 총정리.</div>
+        <div class="card-sub">공신력 있는 리포트 기반<br>중장기 시장 인사이트 제공</div>
+      </div>
+    </div>
+
+    <!-- 2. 오피스 핵심 인터랙션 & 게이미피케이션 -->
+    <div class="section-title"><span class="dot"></span>마케팅팀 오피스(office.html) 주요 인터랙션 기능</div>
+    <div class="features-grid">
+      <div class="feature-box">
+        <div class="feature-box-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+          출근·보고 &amp; 승진 시스템
+        </div>
+        <ul>
+          <li><strong>스케줄별 출근:</strong> 가상 팀원이 정해진 시간에 출근해 책상으로 찾아와 리포트 보고 (미열람 시 야근).</li>
+          <li><strong>레벨업 &amp; 오피스 인테리어:</strong> 완독 시 XP를 획득하여 인턴 → 사원 → … → CMO(Lv.10)로 승진.</li>
+          <li>승진 단계마다 화분, 커피머신, 소파, 네온사인, 고양이 등 오피스 오브젝트 순차 해금.</li>
+        </ul>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 11l3 3L22 4"></path>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          확인 퀴즈 &amp; 오답노트
+        </div>
+        <ul>
+          <li><strong>학습 점검 퀴즈:</strong> 리포트 완독 후 담당 팀원이 3문항 출제 (정답 및 만점 보너스 XP 지급).</li>
+          <li><strong>오답노트 복습:</strong> 틀린 문제는 오답노트에 보관되며, 다음 날 하루 사원과 복습 후 재해결(+3 XP).</li>
+          <li><strong>주간 복습 탭:</strong> 매주 금요일 주디 대리의 안내로 한 주간 데일리 퀴즈 10문항 종합 풀이.</li>
+        </ul>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 18h6"></path><path d="M10 22h4"></path>
+            <path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"></path>
+          </svg>
+          3단계 아이디어 스크랩북
+        </div>
+        <ul>
+          <li><strong>실전형 메모 템플릿:</strong> 스크랩 카드별 <span class="step-tag tag-observe">1. 관찰</span> &rarr; <span class="step-tag tag-insight">2. 인사이트</span> &rarr; <span class="step-tag tag-apply">3. 실무적용</span> 3단계 구조화 메모 (완성 시 +5 XP).</li>
+          <li><strong>희망 브랜드 맞춤 적용:</strong> 관심 기업(예: 올리브영) 설정 시 적용 질문이 브랜드 맞춤형으로 전환.</li>
+          <li><strong>포트폴리오 연계:</strong> 스크랩된 카드를 마크다운으로 원클릭 복사하여 면접/자소서에 즉시 활용.</li>
+        </ul>
+      </div>
+      <div class="feature-box">
+        <div class="feature-box-title">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+            <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+            <path d="M4 22h16"></path>
+            <path d="M10 14.66V17c0 .55-.45 1-1 1H7"></path>
+            <path d="M14 14.66V17c0 .55.45 1 1 1h2"></path>
+            <path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path>
+          </svg>
+          리더보드 &amp; 커리어 연계
+        </div>
+        <ul>
+          <li><strong>실시간 랭킹 &amp; 배지:</strong> 팀원 간 경험치 순위표(시상대), 14종의 성장 업적 배지 게시판 전시.</li>
+          <li><strong>채용 공고 &amp; 승진 쿠폰:</strong> 메인 화면 실시간 마케팅 채용공고 연동 및 특정 직급 달성 시 혜택 지급.</li>
+          <li><strong>마일스톤 추천:</strong> 스크랩/아이디어 달성도에 따라 실전 챌린지 및 가이드북 안내.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. 자동화 아키텍처 & 사용 안내 -->
+    <div class="section-title"><span class="dot"></span>시스템 아키텍처 &amp; 운영 가이드</div>
+    <div class="bottom-grid">
+      <div class="tech-card">
+        <div class="tech-card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="23 4 23 10 17 10"></polyline>
+            <polyline points="1 20 1 14 7 14"></polyline>
+            <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+          </svg>
+          자동화 파이프라인 (Catch-up)
+        </div>
+        <ul>
+          <li><strong>무중단 캐치업:</strong> 맥이 꺼져 있어도 켜지는 즉시 5분 주기로 누락된 리포트(최근 3일) 자동 감지·발행.</li>
+          <li><strong>데이터 검증:</strong> Claude CLI 헤드리스 실행 후 JSON 스키마·출처 URL을 자동 검증하여 오류 방지.</li>
+          <li><strong>macOS 네이티브 알림:</strong> 신규 리포트 발행 완료 시 맥 시스템 알림 즉시 발송.</li>
+        </ul>
+      </div>
+      <div class="tech-card">
+        <div class="tech-card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+            <line x1="12" y1="18" x2="12.01" y2="18"></line>
+          </svg>
+          모바일 지원 &amp; 빠른 실행
+        </div>
+        <ul>
+          <li><strong>GitHub Pages &amp; 멀티 기기:</strong> 발행 시 자동 push되어 모바일 웹/PWA로 열람 및 구글 시트 데이터 백업.</li>
+          <li><strong>스케줄 등록:</strong> <span class="code-inline">./scripts/schedule.sh install</span></li>
+          <li><strong>수동 직접 실행:</strong> <span class="code-inline">python3 scripts/run.py daily</span> (특정일 지정 가능)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div><strong>마케팅 트렌드 리포트 자동화 시스템</strong> &bull; Claude Code 기반 자동화 프로젝트</div>
+    <div class="footer-links">
+      <span>메인 오피스: office.html</span>
+      <span>리포트 목록: list.html</span>
+      <span>환경 설정: config.json</span>
+    </div>
+  </div>
+
+</body>
+</html>

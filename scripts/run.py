@@ -210,9 +210,13 @@ class AuthExpired(Exception):
     """claude 로그인이 만료됐다. 다시 시도해도 소용없으므로 바로 멈추고 알린다."""
 
 
+class RateLimited(Exception):
+    """claude 사용량 한도에 걸렸다. 한도가 풀릴 때까지 실패 횟수로 세지 않고 멈춘다."""
+
+
 def run_agent(prompt):
     wait_for_network()
-    cmd =[find_claude(), "-p", "--output-format", "text", "--allowedTools", *ALLOWED_TOOLS]
+    cmd = [find_claude(), "-p", "--output-format", "text", "--allowedTools", *ALLOWED_TOOLS]
     if CONFIG.get("model"):
         cmd += ["--model", CONFIG["model"]]
     log(f"에이전트 실행: {cmd[0]}")
@@ -222,8 +226,12 @@ def run_agent(prompt):
         log("에이전트 응답 마지막 부분:\n" + proc.stdout.strip()[-1500:])
     if proc.returncode != 0:
         log(f"에이전트 종료 코드 {proc.returncode}: {proc.stderr.strip()[-1500:]}")
-        if "Failed to authenticate" in proc.stdout + proc.stderr:
+        combined = proc.stdout + proc.stderr
+        if "Failed to authenticate" in combined:
             raise AuthExpired()
+        if "hit your" in combined and "limit" in combined:
+            msg = (proc.stdout.strip() or proc.stderr.strip()).splitlines()[-1]
+            raise RateLimited(msg)
 
 
 def notify(title, message):
@@ -283,6 +291,20 @@ def auth_expired_notice():
     notify("🏢 Claude 로그인이 만료됐어요", "터미널에서 claude를 실행해 다시 로그인해주세요. 밀린 리포트는 자동으로 이어서 써요.")
 
 
+def rate_limited_notice(detail=""):
+    """사용량 한도 도달 알림. 하루에 한 번만 알리고 한도가 풀리면 자동으로 이어서 쓴다."""
+    log(f"claude 사용량 한도에 도달해 멈춥니다 ({detail}). 한도가 초기화되면 밀린 리포트를 자동으로 이어서 씁니다.")
+    flag = ROOT / "logs" / "limit-notified"
+    today = dt.date.today().isoformat()
+    try:
+        if flag.read_text().strip() == today:
+            return
+    except OSError:
+        pass
+    flag.write_text(today)
+    notify("🏢 Claude 사용량 한도에 도달했어요", detail or "한도가 초기화되면 밀린 리포트를 자동으로 이어서 써요.")
+
+
 def generate(kind, today, notify_fail=True):
     """성공하면 True."""
     pid = period(kind, today)[0]
@@ -297,7 +319,7 @@ def generate(kind, today, notify_fail=True):
         log(f"{kind} {pid} 생성 시도 {attempt}")
         try:
             run_agent(build_prompt(kind, today, out_path, extra))
-        except AuthExpired:
+        except (AuthExpired, RateLimited):
             set_status(kind, pid, "failed")
             raise
         errors = render.validate(out_path)
@@ -401,6 +423,9 @@ def catchup():
         except AuthExpired:  # 실패 횟수로 세지 않는다: 다시 로그인하면 같은 날 바로 이어서 쓴다
             auth_expired_notice()
             return
+        except RateLimited as e:  # 한도가 풀리면 같은 날 바로 이어서 쓴다
+            rate_limited_notice(str(e))
+            return
         if not ok:
             state[key] = {"day": today, "fails": fails + 1}
             state_path.write_text(json.dumps(state, ensure_ascii=False), encoding="utf-8")
@@ -429,6 +454,9 @@ def main():
         ok = generate(args.kind, today)
     except AuthExpired:
         auth_expired_notice()
+        ok = False
+    except RateLimited as e:
+        rate_limited_notice(str(e))
         ok = False
     if not ok:
         sys.exit(1)

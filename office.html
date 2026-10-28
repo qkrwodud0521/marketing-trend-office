@@ -510,9 +510,14 @@ const arrivalOf = (kind, now) => new Date(now.getFullYear(), now.getMonth(), now
 
 /* ───────────────────────── 리포트 데이터 ───────────────────────── */
 let DATA = window.REPORT_DATA || { version: "", reports: {} };
-// 새로 가입한 사람은 가입한 뒤에 발행된 리포트만 받는다 (joinedAt이 비어 있으면 전부)
+// 새로 가입한 사람은 가입한 날부터 나온 리포트를 받고, 아직 하나도 없으면 가장 최근 데일리 1편은 바로 볼 수 있게 한다 (joinedAt이 비어 있으면 전부)
 const allReportsOf = kind => DATA.reports[kind] || [];
-const reportsOf = kind => allReportsOf(kind).filter(r => !save.profile.joinedAt || (r.generatedAt || "") >= save.profile.joinedAt);
+const reportsOf = kind => {
+  const all = allReportsOf(kind), j = (save.profile.joinedAt || "").slice(0, 10);
+  if (!j) return all;
+  const list = all.filter(r => (r.generatedAt || "").slice(0, 10) >= j || r.id >= j);
+  return list.length || kind !== "daily" ? list : all.slice(-1);
+};
 const latestOf = kind => { const r = reportsOf(kind); return r[r.length - 1] || null; };
 const findReport = (kind, id) => reportsOf(kind).find(r => r.id === id);
 const readKey = (kind, id) => `${kind}/${id}`;
