@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>취준 회고 대시보드</title>
+<style>
+  :root {
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --ink: #0f172a;
+    --ink-light: #334155;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --primary: #4f46e5;
+    --primary-soft: #eef2ff;
+    --primary-hover: #4338ca;
+    --good: #10b981;
+    --good-soft: #ecfdf5;
+    --warn: #f59e0b;
+    --warn-soft: #fffbeb;
+    --bad: #ef4444;
+    --bad-soft: #fef2f2;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    padding: 32px 20px 80px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1200px; margin: 0 auto; }
+
+  /* Header */
+  header.top {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 24px 28px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 20px;
+  }
+  .head-row { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+  header.top h1 { font-size: 24px; font-weight: 800; color: var(--ink); letter-spacing: -0.5px; }
+  header.top p { color: var(--muted); font-size: 14px; margin-top: 6px; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--primary-soft); color: var(--primary);
+    font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 9999px;
+  }
+
+  /* Navigation Tabs */
+  .tabs { display: flex; gap: 8px; margin-bottom: 20px; border-bottom: 2px solid var(--line); padding-bottom: 2px; }
+  .tab {
+    border: none; background: none; padding: 12px 20px; font-size: 15px; font-weight: 700;
+    color: var(--muted); cursor: pointer; border-radius: 8px 8px 0 0;
+    position: relative; transition: all 0.2s;
+  }
+  .tab:hover { color: var(--primary); background: #f1f5f9; }
+  .tab.active { color: var(--primary); }
+  .tab.active::after {
+    content: ""; position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 3px; background: var(--primary); border-radius: 3px;
+  }
+  .tabpane { display: none; }
+  .tabpane.active { display: block; animation: fadeIn 0.25s ease-in-out; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Panels */
+  section { margin-bottom: 20px; }
+  .panel {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 16px; padding: 22px 24px; box-shadow: var(--shadow-sm);
+  }
+  .panel-title-area { margin-bottom: 16px; }
+  .panel h2 { font-size: 16px; font-weight: 800; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+  .panel .desc { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  /* Top Stat Cards */
+  .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: transparent;
+  }
+  .card.primary-top::before { background: var(--primary); }
+  .card.bad-top::before { background: var(--bad); }
+  .card.good-top::before { background: var(--good); }
+  .card .lab { font-size: 13px; color: var(--muted); font-weight: 700; }
+  .card .val { font-size: 28px; font-weight: 800; margin-top: 8px; letter-spacing: -0.5px; }
+  .card .sub { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 500; }
+  .val.accent { color: var(--primary); }
+  .val.bad { color: var(--bad); }
+  .val.good { color: var(--good); }
+
+  /* Funnel & Bottleneck Layout */
+  .toprow { display: grid; grid-template-columns: 1fr 360px; gap: 20px; }
+  @media(max-width: 960px) {
+    .toprow { grid-template-columns: 1fr; }
+    .cards { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media(max-width: 580px) {
+    .cards { grid-template-columns: 1fr; }
+  }
+
+  /* Funnel Row */
+  .funnel-container { display: flex; flex-direction: column; gap: 12px; }
+  .funnel-row {
+    background: #f8fafc; border: 1px solid var(--line); border-radius: 12px;
+    padding: 12px 14px; transition: border-color 0.2s;
+  }
+  .funnel-row:hover { border-color: #cbd5e1; }
+  .fr-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .fr-head .name { font-weight: 800; font-size: 13.5px; display: flex; align-items: center; gap: 6px; }
+  .fr-head .badge-step {
+    background: #e2e8f0; color: #475569; font-size: 10.5px; padding: 2px 7px;
+    border-radius: 6px; font-weight: 700;
+  }
+  .fr-head .cnt { color: var(--ink); font-weight: 800; font-size: 14px; }
+  .bar-track { background: #e2e8f0; border-radius: 8px; height: 18px; overflow: hidden; position: relative; }
+  .bar-fill {
+    height: 100%; border-radius: 8px; display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 8px; color: #fff; font-size: 11px; font-weight: 700; min-width: 38px;
+    transition: width 0.4s ease;
+  }
+  .funnel-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; font-size: 11.5px; }
+  .funnel-meta .rate { font-weight: 700; color: var(--ink-light); }
+  .funnel-meta .drop { color: var(--bad); font-weight: 600; }
+  .funnel-meta .drop.keep { color: var(--good); }
+
+  /* Bottleneck Diagnosis Card */
+  .diag {
+    border-radius: 14px; padding: 18px; background: var(--bad-soft);
+    border: 1px solid #fecaca; margin-bottom: 14px;
+  }
+  .diag .tag {
+    display: inline-block; font-size: 11px; font-weight: 800; color: var(--bad);
+    background: #fee2e2; padding: 3px 8px; border-radius: 6px; letter-spacing: 0.3px;
+  }
+  .diag .big { font-size: 18px; font-weight: 800; color: #991b1b; margin: 8px 0 4px; }
+  .diag .why { font-size: 13px; color: #7f1d1d; line-height: 1.45; }
+
+  .rx { background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 14px; }
+  .rx .rx-lab { font-size: 12px; color: var(--muted); font-weight: 700; margin-bottom: 10px; }
+  .rxlinks { display: flex; flex-direction: column; gap: 8px; }
+  .rxlink {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px;
+    text-decoration: none; border: 1px solid var(--line); border-radius: 10px;
+    padding: 9px 12px; font-size: 12.5px; font-weight: 600; color: var(--ink);
+    background: #fff; transition: all 0.15s;
+  }
+  .rxlink:hover { border-color: var(--primary); background: #faf5ff; }
+  .rxlink.mentor { border-color: #c7d2fe; background: var(--primary-soft); color: var(--primary); }
+  .rxlink.mentor:hover { background: #e0e7ff; }
+  .k { font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 6px; white-space: nowrap; }
+  .k.magnet { background: #e0e7ff; color: var(--primary); }
+  .k.blog { background: #f1f5f9; color: #475569; }
+  .k.mentor { background: var(--primary); color: #fff; }
+
+  .concentration {
+    font-size: 12.5px; padding: 12px 14px; border-radius: 12px; line-height: 1.45; font-weight: 600;
+  }
+  .concentration.warn { background: var(--warn-soft); color: #92400e; border: 1px solid #fde68a; }
+  .concentration.ok { background: var(--good-soft); color: #065f46; border: 1px solid #a7f3d0; }
+
+  /* Job bars */
+  .jobs-grid { display: flex; flex-direction: column; gap: 12px; }
+  .jrow {
+    background: #f8fafc; border: 1px solid var(--line); border-radius: 12px;
+    padding: 12px 16px;
+  }
+  .jrow .jh { display: flex; justify-content: space-between; font-size: 13.5px; margin-bottom: 6px; }
+  .jrow .jh .jn { font-weight: 800; color: var(--ink); }
+  .jrow .jh .jr { color: var(--muted); font-weight: 600; font-size: 12.5px; }
+  .jtrack {
+    background: #e2e8f0; border-radius: 8px; height: 16px; overflow: hidden;
+    display: flex; position: relative;
+  }
+  .jfill { height: 100%; background: var(--primary); border-radius: 8px 0 0 8px; transition: width 0.4s ease; }
+  .jfail { height: 100%; background: #cbd5e1; }
+
+  /* Table styling */
+  .tablewrap { overflow-x: auto; }
+  .thead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 13px; min-width: 900px; }
+  th {
+    text-align: left; color: var(--muted); font-weight: 700; font-size: 12px;
+    padding: 10px 8px; border-bottom: 2px solid var(--line); background: #f8fafc;
+  }
+  th:first-child { border-top-left-radius: 8px; }
+  th:last-child { border-top-right-radius: 8px; }
+  td { padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  .mainrow { transition: background-color 0.15s; }
+  .mainrow:hover { background: #f8fafc; cursor: pointer; }
+
+  /* Inputs & Selects in table */
+  td input, td select {
+    width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 7px 8px;
+    font-family: inherit; font-size: 12.5px; background: #fff; color: var(--ink);
+    transition: border-color 0.15s;
+  }
+  td input:focus, td select:focus { outline: none; border-color: var(--primary); }
+
+  /* Color coded select statuses */
+  .status-select { font-weight: 700; }
+  .status-select[data-val="합격"] { background: #ecfdf5; color: #047857; border-color: #a7f3d0; }
+  .status-select[data-val="불합격"] { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+  .status-select[data-val="진행중"] { background: #eff6ff; color: #1d4ed8; border-color: #bfdbfe; }
+  .status-select[data-val="대기"] { background: #fffbeb; color: #b45309; border-color: #fde68a; }
+  .status-select[data-val="미응시"] { background: #f1f5f9; color: #64748b; border-color: #e2e8f0; }
+
+  .chev {
+    border: none; background: #f1f5f9; border-radius: 6px; cursor: pointer;
+    color: var(--muted); width: 26px; height: 26px; display: flex; align-items: center; justify-content: center;
+    font-size: 12px; transition: all 0.2s;
+  }
+  .chev:hover { background: #e2e8f0; color: var(--ink); }
+  .chev.open { transform: rotate(90deg); background: var(--primary-soft); color: var(--primary); }
+
+  .c2 { display: flex; align-items: center; gap: 8px; }
+  .sw-wrap { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--muted); font-weight: 600; }
+  .sw { position: relative; display: inline-block; width: 32px; height: 18px; flex: none; }
+  .sw input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .sw span { position: absolute; inset: 0; background: #cbd5e1; border-radius: 999px; transition: .2s; cursor: pointer; }
+  .sw span:before {
+    content: ""; position: absolute; width: 14px; height: 14px; left: 2px; top: 2px;
+    background: #fff; border-radius: 50%; transition: .2s;
+  }
+  .sw input:checked + span { background: var(--primary); }
+  .sw input:checked + span:before { transform: translateX(14px); }
+
+  .del {
+    border: none; background: #f1f5f9; color: var(--muted); border-radius: 8px;
+    width: 28px; height: 28px; cursor: pointer; font-size: 13px; transition: all 0.15s;
+  }
+  .del:hover { background: var(--bad-soft); color: var(--bad); }
+  .addbtn {
+    border: none; background: var(--primary); color: #fff;
+    font-weight: 700; font-size: 13px; padding: 9px 16px; border-radius: 10px; cursor: pointer;
+    box-shadow: 0 1px 2px rgba(79, 70, 229, 0.3); transition: background-color 0.15s;
+  }
+  .addbtn:hover { background: var(--primary-hover); }
+
+  /* Guide callout banner */
+  .guide-banner {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #eef2ff;
+    border: 1px solid #c7d2fe;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #3730a3;
+    line-height: 1.45;
+  }
+  .guide-banner b { color: #1e1b4b; font-weight: 700; }
+  .guide-badge {
+    background: var(--primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 2px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  /* Expanded detail drawer */
+  .detail.hidden { display: none; }
+  .detail td { background: #f8fafc; padding: 14px 18px; border-bottom: 2px solid var(--line); }
+  .dwrap {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+    background: #fff; border: 1px solid var(--line); border-radius: 12px; padding: 18px;
+  }
+  .df { display: flex; flex-direction: column; gap: 6px; }
+  .df.full { grid-column: 1 / -1; }
+  .df label { font-size: 12px; color: var(--ink-light); font-weight: 700; }
+  .df textarea {
+    min-height: 52px; resize: vertical; border: 1px solid var(--line); border-radius: 8px;
+    padding: 8px 10px; font-family: inherit; font-size: 12.5px;
+  }
+  .df textarea:focus, .df input:focus { outline: none; border-color: var(--primary); }
+  .foot { font-size: 12px; color: var(--muted); margin-top: 14px; line-height: 1.6; }
+
+  /* Questions section */
+  .collapse-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .qtoggle {
+    border: 1px solid var(--line); background: #fff; border-radius: 10px; padding: 8px 16px;
+    font-weight: 700; font-size: 13px; color: var(--primary); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .qtoggle:hover { background: var(--primary-soft); border-color: #c7d2fe; }
+  #qWrap { margin-top: 18px; }
+  #qWrap.hidden { display: none; }
+  .q2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media(max-width: 900px) { .q2 { grid-template-columns: 1fr; } }
+  .q-col { background: #f8fafc; border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  .qtag {
+    display: inline-block; font-size: 12px; font-weight: 800; padding: 4px 10px;
+    border-radius: 8px; margin-bottom: 14px;
+  }
+  .qtag.did { background: #e0e7ff; color: #3730a3; }
+  .qtag.will { background: #dcfce7; color: #166534; }
+  .qitem { margin-bottom: 14px; background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .qitem .ql { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+  .qitem .qhint { font-size: 11.5px; color: #b45309; margin-bottom: 8px; font-weight: 500; }
+  .qitem textarea {
+    width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px;
+    font-family: inherit; font-size: 12.5px; resize: vertical; min-height: 48px; color: var(--ink);
+  }
+  .qitem textarea:focus { outline: none; border-color: var(--primary); }
+
+  /* Calendar panel */
+  .cal-layout { display: grid; grid-template-columns: 320px 1fr; gap: 20px; }
+  @media(max-width: 760px) { .cal-layout { grid-template-columns: 1fr; } }
+  .cal-box { background: #f8fafc; border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  .cal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .cal-head .m { font-size: 15px; font-weight: 800; color: var(--ink); }
+  .cal-nav {
+    border: 1px solid var(--line); background: #fff; border-radius: 8px; width: 30px; height: 30px;
+    cursor: pointer; color: var(--muted); font-size: 15px; display: flex; align-items: center; justify-content: center;
+  }
+  .cal-nav:hover { border-color: var(--primary); color: var(--primary); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-dow { font-size: 11px; color: var(--muted); text-align: center; font-weight: 700; padding: 4px 0; }
+  .cal-day {
+    aspect-ratio: 1; border-radius: 8px; border: 1px solid transparent; font-size: 12px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center; position: relative;
+    color: var(--ink); font-weight: 600; background: #fff; transition: all 0.15s;
+  }
+  .cal-day:hover { background: var(--primary-soft); color: var(--primary); }
+  .cal-day.empty { background: transparent; cursor: default; }
+  .cal-day.today { border-color: var(--primary); color: var(--primary); font-weight: 800; }
+  .cal-day.sel { background: var(--primary) !important; color: #fff !important; }
+  .cal-day .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--warn); position: absolute; bottom: 4px; }
+  .cal-day.sel .dot { background: #fff; }
+
+  .planbox {
+    background: #f8fafc; border: 1px solid var(--line); border-radius: 14px; padding: 16px;
+    display: flex; flex-direction: column; justify-content: flex-start;
+  }
+  .planbox .pl-date { font-size: 14px; font-weight: 800; color: var(--ink); margin-bottom: 10px; }
+  .planbox .pl-in { display: flex; gap: 8px; margin-bottom: 14px; }
+  .planbox input {
+    flex: 1; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px;
+    font-family: inherit; font-size: 13px; background: #fff;
+  }
+  .planbox input:focus { outline: none; border-color: var(--primary); }
+  .planbox .pl-save {
+    border: none; background: var(--primary); color: #fff; border-radius: 8px;
+    padding: 0 16px; font-weight: 700; cursor: pointer; font-size: 13px;
+  }
+  .pl-list { display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; }
+  .pl-item {
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 9px 12px; font-size: 13px;
+  }
+  .pl-item .d { color: var(--primary); font-weight: 800; margin-right: 8px; }
+  .pl-item .x { color: var(--muted); cursor: pointer; border: none; background: none; font-size: 13px; padding: 2px 6px; border-radius: 4px; }
+  .pl-item .x:hover { background: #fee2e2; color: var(--bad); }
+  .pl-empty { font-size: 13px; color: var(--muted); padding: 20px 0; text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="head-row">
+      <div>
+        <h1>취업 준비 회고 대시보드</h1>
+        <p>지난 시즌 지원 내역을 토대로 지원 퍼널과 최대 병목 구간을 분석하고, 다음 시즌 실행 전략을 세웁니다.</p>
+      </div>
+      <div>
+        <span class="pill">💡 실시간 자동 분석 중</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 탭 네비게이션 -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('paneStatus', this)">📊 취준 현황 및 병목 분석</button>
+    <button class="tab" onclick="switchTab('paneRecord', this)">✍️ 지원 로그 및 회고 노트</button>
+  </div>
+
+  <!-- ===== 탭 1: 취준 현황 ===== -->
+  <div id="paneStatus" class="tabpane active">
+    <!-- 상단 핵심 지표 카드 -->
+    <section class="cards" id="cards"></section>
+
+    <!-- 퍼널 & 병목 진단 -->
+    <section class="toprow">
+      <div class="panel">
+        <div class="panel-title-area">
+          <h2>🎯 채용 단계별 퍼널 (Funnel)</h2>
+          <div class="desc">서류부터 최종 합격까지 단계별 통과율과 이탈 인원을 직관적으로 추적합니다.</div>
+        </div>
+        <div class="funnel-container" id="funnel"></div>
+      </div>
+
+      <div class="panel" style="align-self: start;">
+        <div class="panel-title-area">
+          <h2>🚨 병목 구간 정밀 진단</h2>
+          <div class="desc">전환율이 가장 낮아 우선 개선해야 할 전형과 추천 액션입니다.</div>
+        </div>
+        <div id="diag"></div>
+        <div id="concentration" style="margin-top: 14px;"></div>
+      </div>
+    </section>
+
+    <!-- 직무별 서류 통과율 -->
+    <section class="panel">
+      <div class="panel-title-area">
+        <h2>💼 지원 직무별 서류 통과율 비교</h2>
+        <div class="desc">지원이 분산되었거나 특정 직무의 통과율이 저조한지 파악하여 다음 시즌 목표 직무를 좁힙니다.</div>
+      </div>
+      <div class="jobs-grid" id="jobs"></div>
+    </section>
+  </div>
+
+  <!-- ===== 탭 2: 취준 기록 ===== -->
+  <div id="paneRecord" class="tabpane">
+    <section class="panel tablewrap">
+      <div class="thead">
+        <div>
+          <h2>📝 지원 이력 관리</h2>
+          <div class="desc">시즌 동안 지원했던 기업들의 전형별 결과와 복기 내용을 기록합니다.</div>
+        </div>
+        <button class="addbtn" onclick="addRow()">+ 새 지원 추가</button>
+      </div>
+      <div class="guide-banner">
+        <span class="guide-badge">💡 작성 가이드</span>
+        <span>행 앞쪽의 <b>펼침(▸) 버튼</b>을 누르면 <b>면접 복기, 탈락 원인 가설, 오답노트</b>를 자세히 입력할 수 있습니다.</span>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px; text-align:center;"></th>
+            <th style="width:14%">기업명</th>
+            <th style="width:11%">직무</th>
+            <th style="width:10%">기업 규모</th>
+            <th style="width:11%">서류 결과</th>
+            <th style="width:12%">인적성·과제</th>
+            <th style="width:11%">1차 면접</th>
+            <th style="width:14%">2차 면접</th>
+            <th style="width:11%">최종 결과</th>
+            <th style="width:36px; text-align:center;"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="foot">
+        • <b>상태 자동 연동</b>: 서류/면접 결과를 변경하면 '취준 현황' 탭의 통계에 즉시 반영됩니다.<br>
+        • <b>2차 면접 스위치</b>: 전형에 2차 면접이 포함되어 있을 때 켜주시면 퍼널 계산에 포함됩니다.
+      </div>
+    </section>
+
+    <!-- 정성적 회고 질문 -->
+    <section class="panel">
+      <div class="collapse-head">
+        <div>
+          <h2>💡 심층 취준 회고 질문지</h2>
+          <div class="desc">정량 데이터로 드러나지 않는 심리, 준비 과정, 개선 과제를 기록합니다.</div>
+        </div>
+        <button class="qtoggle" id="qBtn" onclick="toggleQ()">질문 열기 ▾</button>
+      </div>
+      <div id="qWrap" class="hidden">
+        <div class="q2">
+          <div class="q-col">
+            <span class="qtag did">DID WHAT · 지난 시즌 철저한 복기</span>
+            <div id="qDid"></div>
+          </div>
+          <div class="q-col">
+            <span class="qtag will">WILL DO · 다음 시즌 액션 플랜</span>
+            <div id="qWill"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 캘린더 -->
+    <section class="panel">
+      <div class="panel-title-area">
+        <h2>📅 다음 시즌 준비 일정 캘린더</h2>
+        <div class="desc">기업별 공고 마감일, 자소서 작성 마감일, 스터디 일정을 등록하고 관리하세요.</div>
+      </div>
+      <div class="cal-layout">
+        <div class="cal-box">
+          <div class="cal-head">
+            <button class="cal-nav" onclick="calMove(-1)">‹</button>
+            <span class="m" id="calTitle"></span>
+            <button class="cal-nav" onclick="calMove(1)">›</button>
+          </div>
+          <div class="cal-grid" id="calDow"></div>
+          <div class="cal-grid" id="calGrid" style="margin-top: 4px;"></div>
+        </div>
+        <div class="planbox">
+          <div class="pl-date" id="plDate">날짜를 선택하세요</div>
+          <div class="pl-in">
+            <input id="plInput" placeholder="할 일 입력 후 Enter 또는 저장" onkeydown="if(event.key==='Enter')savePlan()">
+            <button class="pl-save" onclick="savePlan()">저장</button>
+          </div>
+          <div class="pl-list" id="plList"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+const JOBS = ["마케팅", "PM", "영업", "개발", "기타"];
+const SIZES = ["대기업", "중견", "스타트업"];
+const OPT = {
+  seo: ["합격", "불합격", "대기"],
+  apt: ["합격", "불합격", "미응시"],
+  f1:  ["합격", "불합격", "미응시"],
+  f2:  ["합격", "불합격", "미응시"],
+  fin: ["합격", "불합격", "진행중", "미응시"]
+};
+const KIND = { magnet: "무료자료", blog: "블로그", mentor: "1:1 멘토링" };
+
+const DID = [
+  { q: "나의 메인 직무 역량, 강점 키워드는 무엇이었나요?", hint: "한 번에 답하지 못한다면 자기소개서·포트폴리오가 빈약했을 가능성이 커요." },
+  { q: "가장 많이 지원한 직무가 무엇인가요?", hint: "지원 직무가 3개 이상이면 준비가 쉽지 않아요. 아래 질문으로 집중할 직무를 정해보세요." },
+  { q: "서류 합격 수가 가장 많았던 직무는 무엇인가요?" },
+  { q: "서류 탈락 수가 가장 많았던 직무는 무엇인가요?" },
+  { q: "탈락이 가장 잦은 전형이 무엇인가요?" },
+  { q: "부족한 것이 무엇이며, 현실적으로 3~6개월 내에 보완할 수 있는 것은 무엇인가요?", hint: "내가 지원한 공고에서 가장 많이 요구한 사항을 확인해보세요." },
+  { q: "지난 취업 시즌에서 가장 잘했다고 생각하는 것은 무엇인가요?" },
+  { q: "지난 취업 시즌에서 가장 아쉽다고 생각하는 것은 무엇인가요?" },
+  { q: "취업 준비로 인한 스트레스와 멘탈 건강을 잘 관리했나요?", hint: "가장 중요한 부분이에요. 멘탈·체력·컨디션 유지도 실력입니다." }
+];
+
+const WILL = [
+  { q: "내년 채용을 잘 잡기 위해서 무엇을 개선해야 할까요?" },
+  { q: "내년 채용 시즌(메인: 2월 말~3월)이 되기 전 미리 해야 할 것은 무엇인가요?", hint: "추천: 1~2월 중 기업·산업 분석으로 마음에 드는 자소서 2~3세트 미리 쓰기." },
+  { q: "내년 시즌에 목표로 할 기업이나 직무는 무엇인가요?" },
+  { q: "내년 시즌에 나는 어떤 취업 준비 생활을 할 것인가요? (습관·멘탈·일정 관리 등)" }
+];
+
+let rows = [
+  { co: "네이버", job: "PM", size: "대기업", seo: "합격", apt: "합격", f1: "불합격", has2: false, f2: "미응시", fin: "미응시", date: "2026-09-07", url: "", archive: "", review: "PM 프로젝트 질문에서 정량 성과 설명이 약했음. '사용자 20% 증가' 같은 수치로 답하지 못함.", cause: "경험을 수치로 구조화하지 못함", insight: "다음 시즌엔 모든 경험을 숫자로 말하는 연습 필요" },
+  { co: "배달의민족", job: "PM", size: "중견", seo: "합격", apt: "합격", f1: "합격", has2: true, f2: "합격", fin: "진행중", date: "2026-09-12", url: "", archive: "", review: "1차는 직무 케이스 과제 중심이라 무난. 2차 컬처핏 질문 대비가 필요.", cause: "", insight: "최종 임원 면접 전 회사 인재상·최근 뉴스 정리할 것" },
+  { co: "삼성전자", job: "마케팅", size: "대기업", seo: "불합격", apt: "미응시", f1: "미응시", has2: false, f2: "미응시", fin: "미응시", date: "2026-09-02", url: "", archive: "", review: "", cause: "직무 경험 어필 부족으로 추정", insight: "" }
+];
+
+const RX = {
+  "서류": {
+    why: "경험과 역량이 서류(자소서·이력서)에 명확히 드러나지 않았을 가능성이 큽니다.",
+    links: [
+      { t: "포트폴리오 템플릿", kind: "magnet" },
+      { t: "자유양식 이력서/자소서 템플릿", kind: "magnet" },
+      { t: "합격하는 자기소개서 작성 공식", kind: "blog" },
+      { t: "공채 시즌 마스터 자소서 작성 전략", kind: "blog" }
+    ]
+  },
+  "인적성·과제": {
+    why: "수리/추리 인적성 검사 유형 대비나 시간 관리 훈련이 부족했을 수 있습니다.",
+    links: [
+      { t: "GSAT 기출 유형 분석 자료집", kind: "magnet" },
+      { t: "서류 합격 전 시작하는 단기 인적성 합격 전략", kind: "blog" }
+    ]
+  },
+  "1차 면접": {
+    why: "직무 경험의 정량적 성과 답변 및 두괄식 구조화가 아쉬웠을 수 있습니다.",
+    links: [
+      { t: "대기업 현직자 1:1 멘토링", kind: "mentor" },
+      { t: "면접 답변 복기 & 질문 노트 템플릿", kind: "magnet" },
+      { t: "빈출 직무 면접 질문 및 STAR 답변 공식", kind: "blog" }
+    ]
+  },
+  "2차 면접": {
+    why: "심층 역량 검증이나 컬처핏(조직 적합도) 질문 답변에 보완이 필요합니다.",
+    links: [
+      { t: "대기업 현직자 1:1 멘토링", kind: "mentor" },
+      { t: "CJ그룹 현직자의 면접 유형별 팁!", kind: "blog" }
+    ]
+  },
+  "최종": {
+    why: "임원 면접 태도, 입사 후 포부, 처우 협상 전략 등을 다듬을 필요가 있습니다.",
+    links: [
+      { t: "대기업 현직자 1:1 멘토링", kind: "mentor" },
+      { t: "CJ그룹 현직자의 면접 유형별 팁!", kind: "blog" }
+    ]
+  }
+};
+
+const pct = (a, b) => b > 0 ? Math.round(a / b * 100) : 0;
+const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+
+function compute() {
+  const n = rows.length;
+  const c = (f, v) => rows.filter(r => r[f] === v).length;
+  const seo = c("seo", "합격");
+  const apt = c("apt", "합격");
+  const f1 = c("f1", "합격");
+  const fin = c("fin", "합격");
+  const anyHas2 = rows.some(r => r.has2);
+
+  const f2denom = rows.filter(r => r.has2 && r.f1 === "합격").length;
+  const f2pass = rows.filter(r => r.has2 && r.f2 === "합격").length;
+  const finDenom = rows.filter(r => (r.has2 && r.f2 === "합격") || (!r.has2 && r.f1 === "합격")).length;
+
+  const disp = [
+    { name: "전체 지원", step: "1단계", cnt: n, denom: n, rate: 100, first: true },
+    { name: "서류 합격", step: "2단계", cnt: seo, denom: n, rate: pct(seo, n) },
+    { name: "인적성·과제 합격", step: "3단계", cnt: apt, denom: seo, rate: pct(apt, seo) },
+    { name: "1차 면접 합격", step: "4단계", cnt: f1, denom: apt, rate: pct(f1, apt) }
+  ];
+
+  if (anyHas2) {
+    disp.push({ name: "2차 면접 합격", step: "5단계", cnt: f2pass, denom: f2denom, rate: pct(f2pass, f2denom) });
+  }
+  disp.push({ name: "최종 합격", step: anyHas2 ? "6단계" : "5단계", cnt: fin, denom: finDenom, rate: pct(fin, finDenom) });
+
+  const cand = [
+    { key: "서류", denom: n, rate: pct(seo, n) },
+    { key: "인적성·과제", denom: seo, rate: pct(apt, seo) },
+    { key: "1차 면접", denom: apt, rate: pct(f1, apt) }
+  ];
+  if (anyHas2) cand.push({ key: "2차 면접", denom: f2denom, rate: pct(f2pass, f2denom) });
+  cand.push({ key: "최종", denom: finDenom, rate: pct(fin, finDenom) });
+
+  let bott = null;
+  cand.forEach(x => {
+    if (x.denom >= 3) {
+      if (!bott || x.rate < bott.rate) bott = x;
+    }
+  });
+  if (!bott) bott = cand[0];
+
+  return { n, seo, apt, f1, fin, anyHas2, disp, bott };
+}
+
+function renderCards(m) {
+  document.getElementById("cards").innerHTML = `
+    <div class="card primary-top">
+      <div class="lab">총 지원 건수</div>
+      <div class="val">${m.n}<span style="font-size:15px;font-weight:600;color:var(--muted);margin-left:2px">건</span></div>
+      <div class="sub">기록된 전체 지원</div>
+    </div>
+    <div class="card">
+      <div class="lab">서류 통과율</div>
+      <div class="val accent">${pct(m.seo, m.n)}%</div>
+      <div class="sub">총 ${m.seo}건 합격 / ${m.n}건 중</div>
+    </div>
+    <div class="card ${m.fin > 0 ? 'good-top' : ''}">
+      <div class="lab">최종 전환율</div>
+      <div class="val ${m.fin > 0 ? 'good' : ''}">${pct(m.fin, m.n)}%</div>
+      <div class="sub">최종 합격 ${m.fin}건</div>
+    </div>
+    <div class="card bad-top">
+      <div class="lab">최대 병목 전형</div>
+      <div class="val bad" style="font-size:22px;margin-top:10px">${m.bott.key}</div>
+      <div class="sub">전환율 ${m.bott.rate}% (이탈 집중)</div>
+    </div>
+  `;
+}
+
+function renderFunnel(m) {
+  const colors = ["#6366f1", "#4f46e5", "#4338ca", "#3730a3", "#312e81", "#1e1b4b"];
+  let h = "";
+  m.disp.forEach((s, i) => {
+    const widthPct = m.n > 0 ? Math.max((s.cnt / m.n) * 100, 4) : 4;
+    const dropCnt = Math.max(s.denom - s.cnt, 0);
+
+    h += `
+      <div class="funnel-row">
+        <div class="fr-head">
+          <span class="name"><span class="badge-step">${s.step}</span> ${s.name}</span>
+          <span class="cnt">${s.cnt}<span style="font-size:12px;font-weight:600;color:var(--muted)">건</span></span>
+        </div>
+        <div class="bar-track">
+          <div class="bar-fill" style="width:${widthPct}%;background:${colors[i % colors.length]}">
+            ${s.cnt > 0 ? s.cnt : ''}
+          </div>
+        </div>
+        <div class="funnel-meta">
+          <span class="rate">${s.first ? '기준 모수' : `직전 대비 통과율: <b>${s.rate}%</b>`}</span>
+          ${!s.first ? `<span class="drop ${s.rate >= 50 ? 'keep' : ''}">↓ ${dropCnt}건 탈락</span>` : ''}
+        </div>
+      </div>
+    `;
+  });
+  document.getElementById("funnel").innerHTML = h;
+}
+
+function renderDiag(m) {
+  const info = RX[m.bott.key] || RX["서류"];
+  const links = info.links.map(l =>
+    `<a class="rxlink ${l.kind === 'mentor' ? 'mentor' : ''}" href="#">
+      <span>${l.t}</span>
+      <span class="k ${l.kind}">${KIND[l.kind]}</span>
+    </a>`
+  ).join("");
+
+  document.getElementById("diag").innerHTML = `
+    <div class="diag">
+      <span class="tag">집중 개선 필요</span>
+      <div class="big">${m.bott.key} 전형 (통과율 ${m.bott.rate}%)</div>
+      <div class="why">${info.why}</div>
+    </div>
+    <div class="rx">
+      <div class="rx-lab">추천 처방 및 액션 리소스</div>
+      <div class="rxlinks">${links}</div>
+    </div>
+  `;
+}
+
+function renderConcentration() {
+  const u = [...new Set(rows.map(r => r.job))];
+  const el = document.getElementById("concentration");
+  if (u.length >= 3) {
+    el.className = "concentration warn";
+    el.innerHTML = `⚠️ <b>지원 직무 분산 경고</b>: 지원 직무가 총 ${u.length}개(${u.join(", ")})로 넓게 분산되어 있습니다. 다음 시즌에는 통과율이 검증된 핵심 직무로 집중하는 것을 추천합니다.`;
+  } else {
+    el.className = "concentration ok";
+    el.innerHTML = `✅ <b>타겟 직무 집중 상태</b>: 지원 직무가 ${u.length}개로 적절히 집중되어 있습니다. 포트폴리오의 일관성을 높이기에 유리합니다.`;
+  }
+}
+
+function renderJobs() {
+  const map = {};
+  rows.forEach(r => {
+    map[r.job] = map[r.job] || { n: 0, p: 0 };
+    map[r.job].n++;
+    if (r.seo === "합격") map[r.job].p++;
+  });
+
+  const arr = Object.entries(map).map(([k, v]) => ({
+    job: k,
+    n: v.n,
+    pass: v.p,
+    fail: v.n - v.p,
+    rate: pct(v.p, v.n)
+  })).sort((a, b) => b.n - a.n);
+
+  document.getElementById("jobs").innerHTML = arr.map(j => `
+    <div class="jrow">
+      <div class="jh">
+        <span class="jn">${j.job}</span>
+        <span class="jr">총 ${j.n}건 지원 (합격 <b>${j.pass}</b> / 탈락 <b>${j.fail}</b>) · 서류 통과율 <b>${j.rate}%</b></span>
+      </div>
+      <div class="jtrack">
+        <div class="jfill" style="width:${Math.max(j.rate, 2)}%" title="합격률 ${j.rate}%"></div>
+        <div class="jfail" style="width:${100 - Math.max(j.rate, 2)}%" title="탈락률 ${100 - j.rate}%"></div>
+      </div>
+    </div>
+  `).join("");
+}
+
+function updateSelectStyle(selectEl) {
+  selectEl.setAttribute("data-val", selectEl.value);
+}
+
+function renderTable() {
+  const sel = (f, v, dis) => {
+    const opts = OPT[f].map(o => `<option value="${o}" ${o === v ? "selected" : ""}>${o}</option>`).join("");
+    return `<select class="status-select" data-field="${f}" data-val="${v}" onchange="upd(this)" ${dis ? "disabled" : ""}>${opts}</select>`;
+  };
+
+  const lsel = (f, list, v) => `<select data-field="${f}" onchange="upd(this)">` +
+    list.map(o => `<option ${o === v ? "selected" : ""}>${o}</option>`).join("") + `</select>`;
+
+  let h = "";
+  rows.forEach((r, i) => {
+    h += `
+      <tr class="mainrow" data-i="${i}" onclick="rowClick(event, ${i})">
+        <td style="text-align:center;">
+          <button class="chev" id="chev${i}" onclick="toggleDetail(${i});event.stopPropagation()">▸</button>
+        </td>
+        <td><input data-field="co" value="${esc(r.co)}" oninput="upd(this)" placeholder="기업명"></td>
+        <td>${lsel("job", JOBS, r.job)}</td>
+        <td>${lsel("size", SIZES, r.size)}</td>
+        <td>${sel("seo", r.seo)}</td>
+        <td>${sel("apt", r.apt)}</td>
+        <td>${sel("f1", r.f1)}</td>
+        <td>
+          <div class="c2">
+            <div class="sw-wrap">
+              <label class="sw">
+                <input type="checkbox" ${r.has2 ? "checked" : ""} onchange="toggleHas2(${i}, this);event.stopPropagation()">
+                <span></span>
+              </label>
+              <span>${r.has2 ? "있음" : "없음"}</span>
+            </div>
+            ${sel("f2", r.f2, !r.has2)}
+          </div>
+        </td>
+        <td>${sel("fin", r.fin)}</td>
+        <td style="text-align:center;">
+          <button class="del" title="삭제" onclick="delRow(${i});event.stopPropagation()">✕</button>
+        </td>
+      </tr>
+      <tr class="detail hidden" id="d${i}">
+        <td colspan="10">
+          <div class="dwrap">
+            <div class="df">
+              <label>📅 지원일</label>
+              <input type="date" value="${esc(r.date)}" onchange="updD(this, ${i}, 'date')">
+            </div>
+            <div class="df">
+              <label>🔗 공고 URL</label>
+              <input type="text" value="${esc(r.url)}" oninput="updD(this, ${i}, 'url')" placeholder="https:// 채용공고 링크">
+            </div>
+            <div class="df">
+              <label>📁 제출 서류 / 포트폴리오</label>
+              <input type="text" value="${esc(r.archive)}" oninput="updD(this, ${i}, 'archive')" placeholder="노션/드라이브 링크">
+            </div>
+            <div class="df full">
+              <label>🗣️ 면접 복기 (받은 질문 · 내 답변 · 아쉬웠던 점)</label>
+              <textarea oninput="updD(this, ${i}, 'review')" placeholder="면접 분위기, 질문 내용과 나의 답변 내용을 최대한 상세히 기록해두세요.">${esc(r.review)}</textarea>
+            </div>
+            <div class="df full">
+              <label>🔍 탈락 원인 가설 (왜 떨어졌다고 생각하나요?)</label>
+              <textarea oninput="updD(this, ${i}, 'cause')" placeholder="스펙, 직무 적합도, 질문에 대한 대응력 등 냉정한 셀프 분석을 적어보세요.">${esc(r.cause)}</textarea>
+            </div>
+            <div class="df full">
+              <label>💡 다음 시즌 오답노트 & 액션</label>
+              <input type="text" value="${esc(r.insight)}" oninput="updD(this, ${i}, 'insight')" placeholder="예: 프로젝트 경험을 수치로 정리하고 인재상 키워드를 1차 면접 때 적극 언급하기">
+            </div>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+  document.getElementById("tbody").innerHTML = h;
+}
+
+function rowClick(e, i) {
+  if (e.target.closest("input, select, textarea, button, label")) return;
+  toggleDetail(i);
+}
+
+function toggleDetail(i) {
+  document.getElementById("d" + i).classList.toggle("hidden");
+  document.getElementById("chev" + i).classList.toggle("open");
+}
+
+function upd(el) {
+  const i = +el.closest("tr").dataset.i;
+  rows[i][el.dataset.field] = el.value;
+  if (el.classList.contains("status-select")) {
+    updateSelectStyle(el);
+  }
+  renderDash();
+}
+
+function updD(el, i, f) {
+  rows[i][f] = el.value;
+}
+
+function toggleHas2(i, cb) {
+  rows[i].has2 = cb.checked;
+  renderTable();
+  renderDash();
+}
+
+function addRow() {
+  rows.unshift({
+    co: "", job: "마케팅", size: "대기업",
+    seo: "대기", apt: "미응시", f1: "미응시",
+    has2: false, f2: "미응시", fin: "미응시",
+    date: new Date().toISOString().split('T')[0],
+    url: "", archive: "", review: "", cause: "", insight: ""
+  });
+  renderTable();
+  renderDash();
+}
+
+function delRow(i) {
+  if (confirm(`'${rows[i].co || "이 지원"}' 기록을 삭제하시겠습니까?`)) {
+    rows.splice(i, 1);
+    renderTable();
+    renderDash();
+  }
+}
+
+function renderDash() {
+  const m = compute();
+  renderCards(m);
+  renderFunnel(m);
+  renderDiag(m);
+  renderConcentration();
+  renderJobs();
+}
+
+function renderQuestions() {
+  const build = (list, pre) => list.map((o, i) => `
+    <div class="qitem">
+      <div class="ql">${i + 1}. ${o.q}</div>
+      ${o.hint ? `<div class="qhint">💡 ${o.hint}</div>` : ""}
+      <textarea id="${pre}${i}" placeholder="내용을 기록해보세요..."></textarea>
+    </div>
+  `).join("");
+
+  document.getElementById("qDid").innerHTML = build(DID, "did");
+  document.getElementById("qWill").innerHTML = build(WILL, "will");
+}
+
+function toggleQ() {
+  const w = document.getElementById("qWrap");
+  const b = document.getElementById("qBtn");
+  const open = w.classList.toggle("hidden") === false;
+  b.textContent = open ? "질문 닫기 ▴" : "질문 열기 ▾";
+}
+
+function switchTab(id, btn) {
+  document.querySelectorAll(".tabpane").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  btn.classList.add("active");
+}
+
+/* Calendar */
+const DOW = ["일", "월", "화", "수", "목", "금", "토"];
+let cal = new Date(2026, 9, 1);
+let selKey = null;
+let plans = {
+  "2026-11-10": "OO기업 공고 마감",
+  "2026-11-24": "기업분석 3곳 정리",
+  "2026-12-15": "자소서 2세트 초안 완성"
+};
+
+function keyOf(y, m, d) {
+  return `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+}
+
+function renderCalendar() {
+  const y = cal.getFullYear(), m = cal.getMonth();
+  document.getElementById("calTitle").textContent = `${y}년 ${m + 1}월`;
+  document.getElementById("calDow").innerHTML = DOW.map(d => `<div class="cal-dow">${d}</div>`).join("");
+
+  const first = new Date(y, m, 1).getDay();
+  const last = new Date(y, m + 1, 0).getDate();
+  const t = new Date();
+  const todayKey = keyOf(t.getFullYear(), t.getMonth(), t.getDate());
+
+  let h = "";
+  for (let i = 0; i < first; i++) h += `<div class="cal-day empty"></div>`;
+  for (let d = 1; d <= last; d++) {
+    const k = keyOf(y, m, d);
+    h += `<div class="cal-day ${k === todayKey ? 'today' : ''} ${k === selKey ? 'sel' : ''}" onclick="selectDay('${k}')">
+      ${d}${plans[k] ? '<span class="dot"></span>' : ''}
+    </div>`;
+  }
+  document.getElementById("calGrid").innerHTML = h;
+  renderPlanList();
+}
+
+function selectDay(k) {
+  selKey = k;
+  document.getElementById("plInput").value = plans[k] || "";
+  renderCalendar();
+  document.getElementById("plInput").focus();
+}
+
+function savePlan() {
+  if (!selKey) return;
+  const v = document.getElementById("plInput").value.trim();
+  if (v) plans[selKey] = v;
+  else delete plans[selKey];
+  renderCalendar();
+}
+
+function renderPlanList() {
+  const y = cal.getFullYear(), m = cal.getMonth();
+  const items = Object.keys(plans).filter(k => k.startsWith(`${y}-${String(m + 1).padStart(2, "0")}`)).sort();
+  document.getElementById("plDate").textContent = selKey ? `선택 날짜: ${selKey}` : "날짜를 클릭해 할 일을 추가하세요";
+
+  const box = document.getElementById("plList");
+  if (!items.length) {
+    box.innerHTML = `<div class="pl-empty">이 달에 등록된 일정이 없습니다.</div>`;
+    return;
+  }
+  box.innerHTML = items.map(k => `
+    <div class="pl-item">
+      <span><span class="d">${+k.slice(8)}일</span> ${esc(plans[k])}</span>
+      <button class="x" onclick="delPlan('${k}')" title="삭제">✕</button>
+    </div>
+  `).join("");
+}
+
+function delPlan(k) {
+  delete plans[k];
+  renderCalendar();
+}
+
+function calMove(n) {
+  cal = new Date(cal.getFullYear(), cal.getMonth() + n, 1);
+  selKey = null;
+  document.getElementById("plInput").value = "";
+  renderCalendar();
+}
+
+// Initial render
+renderTable();
+renderDash();
+renderQuestions();
+renderCalendar();
+</script>
+</body>
+</html>
+
