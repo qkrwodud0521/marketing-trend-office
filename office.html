@@ -195,16 +195,27 @@ canvas#office { display: block; width: 100%; height: auto; image-rendering: pixe
 .chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
 .chips span { background: #ffe9e1; color: #d4512f; font-weight: 700; font-size: 12.5px; padding: 2px 10px; border-radius: 999px; }
 .r-sec { margin-top: 26px; }
+.r-sec.hidden { display: none; }
 .r-sec > h3 { font-size: 18px; margin: 0 0 10px; }
 .r-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 10px; }
 .r-card { background: #fff; border: 2px solid var(--paper-line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; }
+.r-card.hidden { display: none !important; }
 .r-card.scrapped { border-color: var(--gold); }
 .r-meta { display: flex; gap: 6px; align-items: center; font-size: 12px; }
 .r-meta .rank { background: var(--paper-ink); color: #fff; width: 22px; height: 22px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; }
+.r-meta .ind-badge { font-size: 11px; font-weight: 800; padding: 1px 7px; border-radius: 6px; border: 1px solid transparent; flex: none; }
 .r-meta .tag { color: #d4512f; font-weight: 800; }
 .r-meta .brand { color: var(--paper-muted); font-weight: 600; }
 .r-meta .scrap { margin-left: auto; background: none; border: 2px solid var(--paper-line); border-radius: 8px; padding: 1px 8px; font-size: 12px; font-weight: 700; color: var(--paper-muted); }
 .r-card.scrapped .scrap { background: var(--gold); border-color: var(--gold); color: var(--paper-ink); }
+.ind-filter-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 14px 0 6px; padding: 10px 14px; background: #fff; border: 2px solid var(--paper-line); border-radius: 12px; }
+.ind-filter-bar .lbl { font-size: 12px; font-weight: 800; color: var(--paper-muted); margin-right: 4px; display: inline-flex; align-items: center; gap: 4px; }
+.ind-chip { border: 2px solid var(--paper-line); background: var(--paper); border-radius: 999px; padding: 3px 10px; font-size: 12.5px; font-weight: 700; color: var(--paper-ink); cursor: pointer; transition: all .15s; }
+.ind-chip:hover { border-color: var(--paper-ink); }
+.ind-chip.on { background: var(--paper-ink); color: #fff; border-color: var(--paper-ink); }
+.ind-chip .cnt { font-size: 11px; opacity: .75; margin-left: 2px; font-weight: 600; }
+.ind-empty { display: none; text-align: center; padding: 32px 16px; color: var(--paper-muted); font-size: 14px; background: #fff; border: 2px dashed var(--paper-line); border-radius: 12px; margin-top: 20px; }
+.ind-empty.show { display: block; }
 .r-card h4 { font-size: 16px; line-height: 1.4; margin: 8px 0 4px; }
 .r-card p { margin: 0; font-size: 14px; }
 .r-card ul.pts { margin: 6px 0 0; padding-left: 18px; font-size: 14px; }
@@ -1281,6 +1292,39 @@ function toast(msg) {
 }
 
 /* ───────────────────────── 리포트 보기 ───────────────────────── */
+const INDUSTRIES = [
+  { id: "all", name: "전체" },
+  { id: "tech_platform", name: "IT·플랫폼", color: "#2b6cb0", bg: "#bee3f8", border: "#90cdf4", match: /플랫폼|네이버|카카오|인공지능|\bAI\b|오디오|검색|구독|멤버십|MTS|애플리케이션|\b앱\b|SaaS|디지털|유튜브|인스타|틱톡|숏폼|스포티파이|넷플릭스|증권|빅테크|딥페이크/i },
+  { id: "fnb", name: "F&B·식음료", color: "#c05621", bg: "#feebc8", border: "#fbd38d", match: /식품|식음료|원조 라면|컵라면|신라면|불닭|커피|음료|맥주|소주|외식|식당|버거|치킨|디저트|삼양|빙그레|블루샥|대선소주|이디야|롯데칠성|캪틴큐|파리바게뜨|롯데리아|파워에이드|코카콜라|안주|먹거리/i },
+  { id: "fashion_beauty", name: "패션·뷰티", color: "#b83280", bg: "#fed7e2", border: "#fbb6ce", match: /뷰티|화장품|코스메틱|스킨케어|파운데이션|패션|의류|신발|플래그십|성수 팝업|목욕탕|센녹|e\.l\.f|착한구두|핍스모터사이클|데님|워싱|자라|무신사|올리브영|스타일/i },
+  { id: "content_ent", name: "콘텐츠·엔터", color: "#6b46c1", bg: "#e9d8fd", border: "#d6bcfa", match: /밈|콘텐츠|캐릭터|아이돌|영화|웹툰|음악|노래|치이카와|부캉이|장원영|스윙스|변요한|한국민속촌|귀신|뮤지컬|K팝|CJ ENM|BIFF|한화|시네마|상황극|IP|유행어|챌린지/i },
+  { id: "retail_consumer", name: "유통·소비재", color: "#234e52", bg: "#b2f5ea", border: "#81e6d9", match: /편의점|마트|패밀리마트|맥도날드|면세점|팝업|리테일|이커머스|커머스|소비재|선물하기/i },
+  { id: "public_culture", name: "공공·문화·기타", color: "#4a5568", bg: "#edf2f7", border: "#cbd5e0", match: /지자체|부산|국방부|공공|관광|오슬로|D&AD|LIA|제일기획|이노션|재규어|광고주|식약처|광고제|박람회|축제|캠페인/i }
+];
+
+function detectIndustry(it) {
+  if (it.industry) {
+    const found = INDUSTRIES.find(ind => ind.id === it.industry || ind.name === it.industry);
+    if (found) return found;
+  }
+  const titleText = (it.title || "") + " " + (it.brand || "");
+  const otherText = (it.tag || "") + " " + ((it.keywords || []).join(" ")) + " " + (it.body || "") + " " + (it.why || "");
+
+  let bestInd = null, maxScore = 0;
+  for (let i = 1; i < INDUSTRIES.length; i++) {
+    const ind = INDUSTRIES[i];
+    if (!ind.match) continue;
+    const titleMatches = (titleText.match(new RegExp(ind.match.source, "gi")) || []).length;
+    const otherMatches = (otherText.match(new RegExp(ind.match.source, "gi")) || []).length;
+    const score = titleMatches * 3 + otherMatches;
+    if (score > maxScore) {
+      maxScore = score;
+      bestInd = ind;
+    }
+  }
+  return bestInd || INDUSTRIES.find(i => i.id === "public_culture") || INDUSTRIES[INDUSTRIES.length - 1];
+}
+
 const scrapKey = (k, id, si, ii) => `${k}/${id}/${si}/${ii}`;
 function openReport(k, id) {
   const r = findReport(k, id); if (!r) return;
@@ -1288,12 +1332,36 @@ function openReport(k, id) {
   const weekend = doc.edition === "weekend";
   const line = (read ? "다시 보시는군요! 필요한 건 스크랩해두세요." : (weekend && m.weekendDeliver) || m.deliver).replace("{me}", esc(meName()));
   const qz = save.quiz[readKey(k, id)];
+
+  const indCounts = {};
+  let totalItems = 0;
+  (doc.sections || []).forEach(s => {
+    (s.items || []).forEach(it => {
+      const ind = detectIndustry(it);
+      it._industry = ind;
+      indCounts[ind.id] = (indCounts[ind.id] || 0) + 1;
+      totalItems++;
+    });
+  });
+
+  const activeIndustries = INDUSTRIES.filter(ind => ind.id === "all" || (indCounts[ind.id] && indCounts[ind.id] > 0));
+  const filterBarHtml = activeIndustries.length > 2 ? `
+    <div class="ind-filter-bar" id="ind-filter-bar">
+      <span class="lbl">🏷️ 산업군별 모아보기</span>
+      ${activeIndustries.map(ind => `
+        <button type="button" class="ind-chip${ind.id === 'all' ? ' on' : ''}" data-ind="${ind.id}">
+          ${esc(ind.name)}<span class="cnt">(${ind.id === 'all' ? totalItems : indCounts[ind.id]})</span>
+        </button>
+      `).join("")}
+    </div>` : "";
+
   const secs = (doc.sections || []).map((s, si) => `
-    <section class="r-sec"><h3>${esc(s.title)}</h3>${s.description ? `<p class="link">${esc(s.description)}</p>` : ""}
+    <section class="r-sec" data-si="${si}"><h3>${esc(s.title)}</h3>${s.description ? `<p class="link">${esc(s.description)}</p>` : ""}
     <div class="r-cards">${(s.items || []).map((it, ii) => {
       const key = scrapKey(k, id, si, ii), sc = save.scraps[key];
-      return `<article class="r-card${sc ? " scrapped" : ""}" data-key="${key}" data-si="${si}" data-ii="${ii}">
-        <div class="r-meta">${it.rank ? `<span class="rank">${esc(it.rank)}</span>` : ""}${it.tag ? `<span class="tag">${esc(it.tag)}</span>` : ""}${it.brand ? `<span class="brand">${esc(it.brand)}</span>` : ""}
+      const ind = it._industry || detectIndustry(it);
+      return `<article class="r-card${sc ? " scrapped" : ""}" data-key="${key}" data-si="${si}" data-ii="${ii}" data-ind="${ind.id}">
+        <div class="r-meta">${it.rank ? `<span class="rank">${esc(it.rank)}</span>` : ""}<span class="ind-badge" style="color:${ind.color};background:${ind.bg};border-color:${ind.border}">${esc(ind.name)}</span>${it.tag ? `<span class="tag">${esc(it.tag)}</span>` : ""}${it.brand ? `<span class="brand">${esc(it.brand)}</span>` : ""}
           <button class="scrap">${sc ? "★ 스크랩됨" : "☆ 스크랩"}</button></div>
         <h4>${esc(it.title)}</h4><p>${esc(it.body)}</p>
         ${it.points && it.points.length ? `<ul class="pts">${it.points.map(p => `<li>${esc(p)}</li>`).join("")}</ul>` : ""}
@@ -1315,14 +1383,48 @@ function openReport(k, id) {
       <h2 class="r-headline">${esc(doc.headline)}</h2>
       ${doc.summary && doc.summary.length ? `<ol class="r-summary">${doc.summary.map(s => `<li>${esc(s)}</li>`).join("")}</ol>` : ""}
       ${doc.keywords && doc.keywords.length ? `<div class="chips">${doc.keywords.map(x => `<span>#${esc(x)}</span>`).join("")}</div>` : ""}
+      ${filterBarHtml}
       ${secs}
-      ${doc.follow_up && doc.follow_up.length ? `<section class="r-sec"><h3>다음에 지켜볼 것</h3><ul>${doc.follow_up.map(f => `<li>${esc(f)}</li>`).join("")}</ul></section>` : ""}
+      <div class="ind-empty" id="ind-empty">해당 산업군의 트렌드 항목이 없습니다.</div>
+      ${doc.follow_up && doc.follow_up.length ? `<section class="r-sec r-followup"><h3>다음에 지켜볼 것</h3><ul>${doc.follow_up.map(f => `<li>${esc(f)}</li>`).join("")}</ul></section>` : ""}
       <div class="r-foot">
         <button class="btn" id="mark-read" ${read ? "disabled" : ""}>${read ? "✓ 읽음 완료" : `✅ 다 읽었어요 (+${XP_READ[k]} XP)`}</button>
         ${read ? `<button class="btn ghost" id="take-quiz">${qz ? `🧠 퀴즈 ${qz.score}/${qz.total} · 다시 풀기` : "🧠 퀴즈 풀기"}</button>` : ""}
         <a class="link" href="${esc(r.html)}" target="_blank">원본 리포트 페이지로 보기 ↗</a>
       </div>
     </div>`);
+
+  const filterBar = modal.querySelector("#ind-filter-bar");
+  if (filterBar) {
+    const emptyEl = modal.querySelector("#ind-empty");
+    const cards = modal.querySelectorAll(".r-card");
+    const secEls = modal.querySelectorAll(".r-sec:not(.r-followup)");
+    const chips = filterBar.querySelectorAll(".ind-chip");
+
+    chips.forEach(chip => {
+      chip.onclick = () => {
+        chips.forEach(c => c.classList.remove("on"));
+        chip.classList.add("on");
+        const selected = chip.dataset.ind;
+
+        let visibleCount = 0;
+        cards.forEach(c => {
+          const match = selected === "all" || c.dataset.ind === selected;
+          c.classList.toggle("hidden", !match);
+          if (match) visibleCount++;
+        });
+
+        secEls.forEach(sec => {
+          const hasVisibleCards = !!sec.querySelector(".r-card:not(.hidden)");
+          sec.classList.toggle("hidden", !hasVisibleCards);
+        });
+
+        if (emptyEl) {
+          emptyEl.classList.toggle("show", visibleCount === 0);
+        }
+      };
+    });
+  }
 
   modal.querySelectorAll(".r-card").forEach(card => {
     const key = card.dataset.key;
