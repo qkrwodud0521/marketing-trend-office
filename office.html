@@ -295,9 +295,28 @@ canvas#office { display: block; width: 100%; height: auto; image-rendering: pixe
 @media (max-width: 600px) { .cs-fab { right: 12px; bottom: 12px; padding: 8px 13px; font-size: 13px; } }
 .toast { visibility: hidden; position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%) translateY(120px); background: #1b1726; color: #fff; border: 2px solid var(--gold); padding: 8px 16px; border-radius: 10px; font-weight: 700; transition: transform .3s; z-index: 20; }
 .toast.show { visibility: visible; transform: translateX(-50%) translateY(0); }
+
+/* 공지 띠배너 */
+.notice-banner { background: linear-gradient(90deg, #ff7a59, #ff5722); color: #fff; padding: 9px 16px; font-size: 13.5px; border-bottom: 2px solid #1b1726; box-shadow: 0 2px 8px rgba(0,0,0,.25); position: relative; z-index: 8; }
+.notice-banner[hidden] { display: none !important; }
+.nb-wrap { max-width: 1120px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 8px; text-align: center; }
+.nb-text { flex: 1; min-width: 0; line-height: 1.4; }
+.nb-text b { font-weight: 800; }
+.nb-close { background: none; border: none; color: #fff; font-size: 15px; font-weight: 800; cursor: pointer; padding: 2px 8px; border-radius: 6px; opacity: .85; transition: opacity .15s, background .15s; flex: none; line-height: 1; }
+.nb-close:hover { opacity: 1; background: rgba(0,0,0,.15); }
+@media (max-width: 600px) {
+  .notice-banner { font-size: 12px; padding: 7px 12px; }
+  .nb-wrap { justify-content: space-between; text-align: left; }
+}
 </style>
 </head>
 <body>
+<aside class="notice-banner" id="notice-banner" hidden>
+  <div class="nb-wrap">
+    <span class="nb-text">✨ <b>새 기능 안내:</b> 트렌드 리포트에 <b>산업군별 필터</b>(F&B, 패션·뷰티, IT·플랫폼 등)가 추가되었습니다! 보고서 상단에서 원하는 분야만 모아보세요.</span>
+    <button type="button" class="nb-close" id="nb-close" aria-label="공지 닫기">✕</button>
+  </div>
+</aside>
 <div class="app">
   <header class="hud">
     <h1 class="pixel">🏢 마케팅팀 오피스</h1>
@@ -2333,6 +2352,31 @@ function start() {
   setInterval(() => refreshStates(false), 15000);   // 출근·퇴근 시각 확인
   setInterval(reloadData, 120000);                  // 새 리포트 확인
 }
+/* ───────────────────────── 공지 띠배너 ───────────────────────── */
+function initNoticeBanner() {
+  const banner = document.getElementById("notice-banner");
+  if (!banner) return;
+  const CLOSED_KEY = "mkt-office-notice-ind-filter";
+  // 3일간 노출 (2026-11-05 23:59:59 KST까지)
+  const EXPIRE_AT = new Date("2026-11-05T23:59:59+09:00").getTime();
+  const now = NOW().getTime();
+
+  if (now > EXPIRE_AT || storeGet(CLOSED_KEY)) {
+    banner.hidden = true;
+    return;
+  }
+  banner.hidden = false;
+
+  const closeBtn = document.getElementById("nb-close");
+  if (closeBtn) {
+    closeBtn.onclick = () => {
+      banner.hidden = true;
+      storeSet(CLOSED_KEY, "1");
+    };
+  }
+}
+initNoticeBanner();
+
 requestAnimationFrame(loop);  // 로그인 전에도 빈 사무실은 보인다
 if (user) start(); else showLogin();
 </script>
